@@ -1,3 +1,29 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer base {
+    html {
+        font-family: "Plus Jakarta Sans", system-ui, sans-serif;
+    }
+}
+@layer components {
+    .page-container {
+        @apply p-4 pb-20; /* Adds padding at the bottom for the nav bar */
+    }
+}
+
+body {
+    background-image: url("./assets/Gradient.svg");
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    min-height: 100%; /* Ensure the body takes up at least the full viewport height */
+    margin: 0; /* Remove default margin */
+    padding: 0; /* Remove default padding */
+}
+
+html {
+    height: 100%; /* Ensure html takes up full height */
+}
