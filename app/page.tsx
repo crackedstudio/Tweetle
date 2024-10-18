@@ -10,21 +10,21 @@ import HomeStats from "./components/home-stats";
 import DailyChallengeCard from "./components/daily-challenge-card";
 
 export default function Home() {
-  return (
-    <>
-      {/* {true &&
+    return (
+        <>
+            {/* {true &&
         createPortal(
           <LoadingFullPage />,
           document.querySelector(".main-application") as Element
         )} */}
-      <div className="h-full overflow-auto">
-        <HomeHeroSection />
-        <div className="bg-black p-4 flex flex-col gap-y-5">
-          <HomeStats />
-          <DailyChallengeCard />
-          <DailyChallengeCard />
-        </div>
-      </div>
-    </>
-  );
+            <div className="h-full overflow-auto">
+                <HomeHeroSection />
+                <div className="bg-black p-4 flex flex-col gap-y-5">
+                    <HomeStats />
+                    <DailyChallengeCard />
+                    <DailyChallengeCard />
+                </div>
+            </div>
+        </>
+    );
 }
