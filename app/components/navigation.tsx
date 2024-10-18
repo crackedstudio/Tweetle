@@ -39,7 +39,7 @@ function NavButton({
 
 export default function Navigation() {
   return (
-    <div className="flex justify-between items-center px-6 absolute w-full bottom-0 left-0 z-30 bg-[#0A0B0F]">
+    <div className="flex justify-between items-center px-6 w-full bg-[#0A0B0F]">
       {navItems.map((item, i) => (
         <NavButton navItem={item} key={i} />
       ))}

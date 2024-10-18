@@ -1,25 +1,30 @@
+"use client";
+import { createPortal } from "react-dom";
 import ConnectButton from "./components/connect-button";
 import GameTitle from "./components/game-title";
 import Navigation from "./components/navigation";
 import PoweredBy from "./components/powered-by";
+import LoadingFullPage from "./components/laoding-full-page";
+import HomeHeroSection from "./components/home-hero-section";
+import HomeStats from "./components/home-stats";
+import DailyChallengeCard from "./components/daily-challenge-card";
 
 export default function Home() {
   return (
-    <div className="bg-white h-[100dvh] w-[100dvw] flex justify-center items-center">
-      <div className="w-[400px] relative  max-w-[400px] bg-[#00B1FF] min-h-[720px] text-white">
-        <div className="pt-[34px] px-6">
-          <PoweredBy />
-          <div className="pt-[130px] pb-[100px]">
-            <GameTitle />
-            <h3 className="text-2xl leading-[30px] font-semibold text-center mb-[29px] mt-[39px]">
-              Play to win
-            </h3>
-            <ConnectButton />
-          </div>
+    <>
+      {/* {true &&
+        createPortal(
+          <LoadingFullPage />,
+          document.querySelector(".main-application") as Element
+        )} */}
+      <div className="h-full overflow-auto">
+        <HomeHeroSection />
+        <div className="bg-black p-4 flex flex-col gap-y-5">
+          <HomeStats />
+          <DailyChallengeCard />
+          <DailyChallengeCard />
         </div>
-
-        <Navigation />
       </div>
-    </div>
+    </>
   );
 }
