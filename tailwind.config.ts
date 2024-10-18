@@ -7,10 +7,16 @@ const config: Config = {
     "./app/**/*.{js,ts,jsx,tsx,mdx}",
   ],
   theme: {
+    fontFamily: {
+      sans: ["Plus Jakarta Sans", "sans-serif"],
+    },
     extend: {
       colors: {
         background: "var(--background)",
         foreground: "var(--foreground)",
+      },
+      boxShadow: {
+        letterShadow: "-2.97px 2.97px 2.97px 0px #000000",
       },
     },
   },
