@@ -13,7 +13,7 @@ export default function KeyboardButton({
 }: KeyboardButtonProps) {
     return (
         <button
-            className="bg-white w-[36.6px] h-[42px] rounded-[4.6px] text-[22px] text-black mr-[2px] uppercase mb-1"
+            className="bg-white w-[36.6px] h-[42px] rounded-[4.6px] text-[22px] text-black mr-[2px] mb-1"
             onClick={() => onClick(keyChar)}
         >
             {keyChar}

@@ -11,7 +11,7 @@ export default function LetterBox({ letter, correct, wrong }: LetterBoxProps) {
     } else if (wrong) {
         return <Letter letterColor="bg-yellow-600" letter={letter} />;
     } else {
-        return <Letter letterColor="bg-slate-100" letter={letter} />;
+        return <Letter letterColor="bg-[#121213]" letter={letter} />;
     }
 }
 
@@ -24,7 +24,7 @@ function Letter({
 }) {
     return (
         <div
-            className={`w-[62px] h-[62px] border-[2px] border-[#3A3A3C] justify-center items-center ${letterColor} text-4xl uppercase font-bold text-white bg-transparent`}
+            className={`w-[62px] h-[62px] border-[2px] border-[#3A3A3C] justify-center items-center ${letterColor} text-4xl uppercase font-bold text-white flex justify-center items-center`}
         >
             {letter}
         </div>
