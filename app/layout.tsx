@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
-import Navigation from "./components/navigation";
+import Navbar from "./components/navbar";
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -15,12 +15,9 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className="bg-white w-[100dvw] relative h-[100dvh]">
-        {/* Main container for the app content */}
-        <div className="w-full main-application relative max-w-[400px] bg-[#00B1FF] h-full text-white flex flex-col overflow-hidden">
-          {/* Scrollable content */}
+        <div className="w-full relative max-w-[400px] bg-[#00B1FF] h-full text-white flex flex-col overflow-hidden">
           <div className="flex-1 overflow-y-auto">{children}</div>
-          {/* Fixed navigation at the bottom */}
-          <Navigation />
+          <Navbar />
         </div>
       </body>
     </html>

@@ -5,10 +5,10 @@ export const metadata: Metadata = {
   description: "Created with love",
 };
 
-export default function RootLayout({
+export default function LeaderboardRootLayout({
   children,
-}: Readonly<{
+}: {
   children: React.ReactNode;
-}>) {
+}) {
   return <>{children}</>;
 }

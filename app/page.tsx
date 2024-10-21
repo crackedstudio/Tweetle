@@ -2,7 +2,6 @@
 import { createPortal } from "react-dom";
 import ConnectButton from "./components/connect-button";
 import GameTitle from "./components/game-title";
-import Navigation from "./components/navigation";
 import PoweredBy from "./components/powered-by";
 import LoadingFullPage from "./components/laoding-full-page";
 import HomeHeroSection from "./components/home-hero-section";
@@ -11,20 +10,13 @@ import DailyChallengeCard from "./components/daily-challenge-card";
 
 export default function Home() {
   return (
-    <>
-      {/* {true &&
-        createPortal(
-          <LoadingFullPage />,
-          document.querySelector(".main-application") as Element
-        )} */}
-      <div className="h-full overflow-auto">
-        <HomeHeroSection />
-        <div className="bg-black p-4 flex flex-col gap-y-5">
-          <HomeStats />
-          <DailyChallengeCard />
-          <DailyChallengeCard />
-        </div>
+    <div className="h-full overflow-auto">
+      <HomeHeroSection />
+      <div className="bg-black p-4 flex flex-col gap-y-5">
+        <HomeStats />
+        <DailyChallengeCard />
+        <DailyChallengeCard />
       </div>
-    </>
+    </div>
   );
 }

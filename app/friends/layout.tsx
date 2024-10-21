@@ -5,7 +5,7 @@ export const metadata: Metadata = {
   description: "Created with love",
 };
 
-export default function RootLayout({
+export default function FriendsLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
