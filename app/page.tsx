@@ -9,14 +9,21 @@ import HomeStats from "./components/home-stats";
 import DailyChallengeCard from "./components/daily-challenge-card";
 
 export default function Home() {
-  return (
-    <div className="h-full overflow-auto">
-      <HomeHeroSection />
-      <div className="bg-black p-4 flex flex-col gap-y-5">
-        <HomeStats />
-        <DailyChallengeCard />
-        <DailyChallengeCard />
-      </div>
-    </div>
-  );
+    return (
+        <>
+            {/* {true &&
+        createPortal(
+          <LoadingFullPage />,
+          document.querySelector(".main-application") as Element
+        )} */}
+            <div className="h-full overflow-auto">
+                <HomeHeroSection />
+                <div className="bg-black p-4 flex flex-col gap-y-5">
+                    <HomeStats />
+                    <DailyChallengeCard />
+                    <DailyChallengeCard />
+                </div>
+            </div>
+        </>
+    );
 }
