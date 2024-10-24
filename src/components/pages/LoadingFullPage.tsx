@@ -20,11 +20,11 @@ export default function LoadingFullPage() {
                 Solve. Score. Win Rewards
             </h4>
 
-            <div className="flex items-center mt-6">
+            <div className="flex items-center mt-6 mb-12">
                 <img src={coin} className="animate-rotateX h-6 w-6" alt="" />
             </div>
 
-            <div className="mt-24 first-letter:text-center">
+            <div className="first-letter:text-center">
                 <PoweredBy />
             </div>
         </div>

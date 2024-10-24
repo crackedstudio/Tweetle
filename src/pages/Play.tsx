@@ -12,6 +12,7 @@ const Play = () => {
     const [currentWordbox, setCurrentWordbox] = useState(0);
     const [currentLetterbox, setCurrentLetterbox] = useState(0);
     const [userWon, setUserWon] = useState(false);
+    const [claimPointsLoading, setClaimPointsLoading] = useState(false);
 
     const initialOrder = [
         [false, false, false, false, false],
@@ -151,8 +152,12 @@ const Play = () => {
             return newOrder;
         });
     };
-
+    // MODAL FUNCTIONS
     const closeModal = () => setUserWon(false);
+
+    const claimHandler = () => {
+        setClaimPointsLoading(true);
+    };
 
     return (
         <div>
@@ -179,7 +184,13 @@ const Play = () => {
                     </div>
                 </div>
             </div>
-            {userWon && <WinModal cancelHandler={closeModal} />}
+            {userWon && (
+                <WinModal
+                    cancelHandler={closeModal}
+                    claimHandler={claimHandler}
+                    loadingState={claimPointsLoading}
+                />
+            )}
         </div>
     );
 };
