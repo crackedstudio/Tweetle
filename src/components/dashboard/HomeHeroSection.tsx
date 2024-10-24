@@ -1,11 +1,23 @@
+import { useOutletContext } from "react-router-dom";
 import readingOwl from "../../assets/reading-owl.png";
 import CoinPill from "../ui/CoinPill";
 import ConnectWalletBtn from "../ui/ConnectWalletBtn";
 
+interface OutletContextType {
+    account: any | null; 
+    handleConnectButton: () => void;
+    handleClearSessionButton: () => void;
+    isConnected: boolean;
+}
+
+
 export default function HomeHeroSection() {
+    const {account, handleConnectButton, isConnected, handleClearSessionButton} = useOutletContext<OutletContextType>();
+
     return (
         <div className="py-6 pt-[40px] flex flex-col items-center bg-gradient-svg">
-            <ConnectWalletBtn text="Connect Wallet" />
+            { !isConnected && <ConnectWalletBtn text="Connect Wallet" connect={handleConnectButton} />}
+            { isConnected && <ConnectWalletBtn text={account?.address.slice(0, 6)} connect={handleClearSessionButton} />}
             <img src={readingOwl} className="mb-2 w-[80px]" />
             <h1 className="mb-4 font-bold text-[28px] leading-5">
                 Birdle Challenge
