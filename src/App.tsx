@@ -4,6 +4,7 @@ import Home from "./pages/Home";
 import MainLayout from "./pages/MainLayout";
 import Friends from "./pages/Friends";
 import Leaderboard from "./pages/Leaderboard";
+import Play from "./pages/Play";
 function App() {
     return (
         <Router>
@@ -13,6 +14,7 @@ function App() {
                     <Route path="friends" element={<Friends />} />
                     <Route path="leaderboard" element={<Leaderboard />} />
                 </Route>
+                <Route path="play" element={<Play />} />
             </Routes>
         </Router>
     );
