@@ -1,12 +1,24 @@
 "use client";
 import { useState } from "react";
 import GameBottomNav from "../components/gameplay/GameBottomNav";
+import {Contract, cairo, AccountInterface} from 'starknet'
+import gameAbi from '../utils/gameAbi.json';
+
+import { SessionAccountInterface } from "@argent/tma-wallet";
 
 import WordBox from "../components/gameplay/WordBox";
 import GameTopNav from "../components/gameplay/GameTopNav";
 import WinModal from "../components/modal/WinModal";
 import Keyboard from "../components/gameplay/Keyboard";
+import { useOutletContext } from "react-router-dom";
 const SAMPLE_WORD = ["C", "O", "V", "I", "D"];
+
+interface OutletContextType {
+    account: any | null; 
+    handleConnectButton: () => void;
+    handleClearSessionButton: () => void;
+    isConnected: boolean;
+}
 
 const Play = () => {
     const [currentWordbox, setCurrentWordbox] = useState(0);
@@ -156,8 +168,30 @@ const Play = () => {
     const closeModal = () => setUserWon(false);
 
     const claimHandler = () => {
+        
         setClaimPointsLoading(true);
     };
+
+    const handleCliamRewards = async () => {
+
+        const {account} = useOutletContext<OutletContextType>();
+
+        const game_addr = "0x03891b46cdd780984a4954a3d54d00051ee761e068b56274c0762dfe80d7d4d9";
+    
+        const gameContract = new Contract(gameAbi, game_addr, account);
+
+        setClaimPointsLoading(true);
+    //    try {
+
+            await gameContract.claimPoints(Number(2)) 
+
+            setClaimPointsLoading(false);
+            
+    //    } catch (error: any) {
+    //         setClaimPointsLoading(false);
+    //    }
+
+    }
 
     return (
         <div>
