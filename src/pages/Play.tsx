@@ -1,8 +1,8 @@
 "use client";
 import { useState } from "react";
 import GameBottomNav from "../components/gameplay/GameBottomNav";
-import {Contract, cairo, AccountInterface} from 'starknet'
-import gameAbi from '../utils/gameAbi.json';
+import { Contract, cairo, AccountInterface } from "starknet";
+import gameAbi from "../utils/gameAbi.json";
 
 import { SessionAccountInterface } from "@argent/tma-wallet";
 
@@ -14,7 +14,7 @@ import { useOutletContext } from "react-router-dom";
 const SAMPLE_WORD = ["C", "O", "V", "I", "D"];
 
 interface OutletContextType {
-    account: any | null; 
+    account: any | null;
     handleConnectButton: () => void;
     handleClearSessionButton: () => void;
     isConnected: boolean;
@@ -50,6 +50,7 @@ const Play = () => {
     );
 
     const updateBox = (value: string) => {
+        setCurrentLetterbox(currentLetterbox + 1);
         setWordBoxes((prevBoxes) => {
             const newBoxes = [...prevBoxes];
             if (value.toLowerCase() === "del") {
@@ -57,13 +58,15 @@ const Play = () => {
                 newBoxes[currentWordbox][currentLetterbox - 1] = "";
                 setCurrentLetterbox(currentLetterbox - 1);
                 return newBoxes;
-            } else if (currentLetterbox < 5) {
+            } else if (currentLetterbox < 4) {
                 newBoxes[currentWordbox] = [...newBoxes[currentWordbox]];
                 newBoxes[currentWordbox][currentLetterbox] = value;
-                setCurrentLetterbox(currentLetterbox + 1);
+
                 console.log("currentLetterBox", currentLetterbox);
                 return newBoxes;
             } else {
+                newBoxes[currentWordbox] = [...newBoxes[currentWordbox]];
+                newBoxes[currentWordbox][currentLetterbox] = value;
                 console.log("I have got here");
 
                 let hasUserWon = manageGamePlay(newBoxes[currentWordbox]);
@@ -168,30 +171,28 @@ const Play = () => {
     const closeModal = () => setUserWon(false);
 
     const claimHandler = () => {
-        
         setClaimPointsLoading(true);
     };
 
     const handleCliamRewards = async () => {
+        const { account } = useOutletContext<OutletContextType>();
 
-        const {account} = useOutletContext<OutletContextType>();
+        const game_addr =
+            "0x03891b46cdd780984a4954a3d54d00051ee761e068b56274c0762dfe80d7d4d9";
 
-        const game_addr = "0x03891b46cdd780984a4954a3d54d00051ee761e068b56274c0762dfe80d7d4d9";
-    
         const gameContract = new Contract(gameAbi, game_addr, account);
 
         setClaimPointsLoading(true);
-    //    try {
+        //    try {
 
-            await gameContract.claimPoints(Number(2)) 
+        await gameContract.claimPoints(Number(2));
 
-            setClaimPointsLoading(false);
-            
-    //    } catch (error: any) {
-    //         setClaimPointsLoading(false);
-    //    }
+        setClaimPointsLoading(false);
 
-    }
+        //    } catch (error: any) {
+        //         setClaimPointsLoading(false);
+        //    }
+    };
 
     return (
         <div>
