@@ -1,0 +1,78 @@
+[
+    {
+      "type": "impl",
+      "name": "GameImpl",
+      "interface_name": "game_contract::game::IGame"
+    },
+    {
+      "type": "struct",
+      "name": "core::integer::u256",
+      "members": [
+        {
+          "name": "low",
+          "type": "core::integer::u128"
+        },
+        {
+          "name": "high",
+          "type": "core::integer::u128"
+        }
+      ]
+    },
+    {
+      "type": "interface",
+      "name": "game_contract::game::IGame",
+      "items": [
+        {
+          "type": "function",
+          "name": "claimPoints",
+          "inputs": [
+            {
+              "name": "_points",
+              "type": "core::integer::u256"
+            }
+          ],
+          "outputs": [],
+          "state_mutability": "external"
+        }
+      ]
+    },
+    {
+      "type": "constructor",
+      "name": "constructor",
+      "inputs": [
+        {
+          "name": "_token_addr",
+          "type": "core::starknet::contract_address::ContractAddress"
+        }
+      ]
+    },
+    {
+      "type": "event",
+      "name": "game_contract::game::Game::RewardCliamed",
+      "kind": "struct",
+      "members": [
+        {
+          "name": "player",
+          "type": "core::starknet::contract_address::ContractAddress",
+          "kind": "data"
+        },
+        {
+          "name": "amount",
+          "type": "core::integer::u256",
+          "kind": "data"
+        }
+      ]
+    },
+    {
+      "type": "event",
+      "name": "game_contract::game::Game::Event",
+      "kind": "enum",
+      "variants": [
+        {
+          "name": "RewardCliamed",
+          "type": "game_contract::game::Game::RewardCliamed",
+          "kind": "nested"
+        }
+      ]
+    }
+  ]

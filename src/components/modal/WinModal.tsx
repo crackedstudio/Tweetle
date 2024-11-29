@@ -48,7 +48,7 @@ const WinModal = ({
                         className="bg-[#EB69B7] text-center w-full block h-[48px] rounded-xl text-white"
                         onClick={claimHandler}
                     >
-                        Claim 23 points
+                        Claim 2 points
                     </button>
                     <button
                         className="bg-[#F5F5F5] text-center w-full block h-[48px] rounded-xl text-black"
