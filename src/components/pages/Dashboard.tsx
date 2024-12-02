@@ -3,6 +3,7 @@ import GlassCard from "../dashboard/GlassCard";
 import HomeHeroSection from "../dashboard/HomeHeroSection";
 import arrowRight from "../../assets/arrow-right.png";
 import PwdByStrk from "../ui/PwdByStrk";
+import calendar from "../../assets/solar_calendar-date-bold.png";
 // import HomeStats from "../dashboard/HomeStats";
 
 const Dashboard = () => {
@@ -14,12 +15,37 @@ const Dashboard = () => {
                     {/* <HomeStats /> */}
                     <GlassCard>
                         <>
-                            <DashboardButtons where="/">
-                                <p>DAILY CHALLENGE</p>
-                            </DashboardButtons>
-                            <DashboardButtons where="/">
-                                <p>CLASSIC</p>
-                            </DashboardButtons>
+                            <div className="flex items-center">
+                                <div className="w-3/4">
+                                    <DashboardButtons where="/play" hasPair>
+                                        <p>DAILY CHALLENGE</p>
+                                    </DashboardButtons>
+                                </div>
+
+                                <div className="border border-1 flex justify-center items-center p-5 bg-black rounded-r-lg">
+                                    <img
+                                        src={calendar}
+                                        alt="calendar"
+                                        className=""
+                                    />
+                                </div>
+                            </div>
+                            <div className="flex items-center">
+                                <div className="w-3/4">
+                                    <DashboardButtons where="/play" hasPair>
+                                        <p>CLASSIC</p>
+                                    </DashboardButtons>
+                                </div>
+
+                                <div className="border border-1 flex justify-center items-center p-4 bg-black rounded-r-lg">
+                                    <div className="text-center">
+                                        <p className="text-xl">24</p>
+                                        <p className="text-sm text-[#6AAA64]">
+                                            Played
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
                         </>
                     </GlassCard>
                     <div className="flex justify-between h-[50%]">
