@@ -6,6 +6,9 @@ export default {
             fontFamily: {
                 jakarta: ['"Plus Jakarta Sans"', "sans-serif"],
             },
+            backgroundImage: {
+                "button-image": "url('./assets/liquid.png')",
+            },
         },
     },
     plugins: [],

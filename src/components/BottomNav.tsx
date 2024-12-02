@@ -21,7 +21,7 @@ const BottomNav = () => {
                         to={item.path}
                         className={`flex flex-col items-center p-2 ${
                             location.pathname === item.path
-                                ? "text-blue-500"
+                                ? "text-[#FE97D5]"
                                 : "text-gray-500"
                         }`}
                     >

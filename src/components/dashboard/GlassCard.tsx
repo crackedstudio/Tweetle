@@ -1,10 +1,16 @@
-import hot from "../../assets/svg/hot.svg";
-import joystick from "../../assets/svg/joystick.svg";
+// import hot from "../../assets/svg/hot.svg";
+// import joystick from "../../assets/svg/joystick.svg";
 
-export default function DailyChallengeCard() {
+import { ReactElement } from "react";
+
+interface GlassCardProps {
+    children: ReactElement;
+}
+
+export default function GlassCard({ children }: GlassCardProps) {
     return (
         <div className="px-4 pt-3 pb-6 rounded-[20px] bg-[#18191B]">
-            <div className="flex justify-between items-center mb-[18px]">
+            {/* <div className="flex justify-between items-center mb-[18px]">
                 <h4>Today&apos;s Daily Challenge</h4>
                 <img src={hot} className="w-5 h-5" alt="" />
             </div>
@@ -23,7 +29,8 @@ export default function DailyChallengeCard() {
             >
                 <img src={joystick} alt="" />
                 Play
-            </a>
+            </a> */}
+            {children}
         </div>
     );
 }
