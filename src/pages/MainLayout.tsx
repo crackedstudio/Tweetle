@@ -3,6 +3,7 @@ import BottomNav from "../components/BottomNav";
 
 import { ArgentTMA, SessionAccountInterface } from "@argent/tma-wallet";
 import { useEffect, useState } from "react";
+import LoadingFullPage from "../components/pages/LoadingFullPage";
 
 const argentTMA = ArgentTMA.init({
     environment: "sepolia", // "sepolia" | "mainnet" (not supperted yet)
@@ -26,6 +27,16 @@ const MainLayout = () => {
 
     const [account, setAccount] = useState<SessionAccountInterface | undefined>();
     const [isConnected, setIsConnected] = useState<boolean>(false);
+    const [isLoading, setIsLoading] = useState(true);
+
+    useEffect(() => {
+        const timer = setTimeout(() => {
+          setIsLoading(false);
+        }, 5000);
+    
+        // Cleanup the timeout if the component unmounts before the timeout is done
+        return () => clearTimeout(timer);
+      }, []);
 
 
     useEffect(() => {
@@ -74,9 +85,14 @@ const MainLayout = () => {
         setAccount(undefined);
     };
 
+
+    if(isLoading) {
+    return <LoadingFullPage />
+  }
+
     return (
-        <div className="flex flex-col min-h-screen text-white">
-            <main className="flex-grow pb-16">
+        <div className="flex flex-col h-[100vh] overflow-hidden text-white relative">
+            <main className="flex-grow pb-[83px] h-full overflow-auto bg-black">
                 <Outlet context={{account, handleClearSessionButton, handleConnectButton, isConnected}} />
             </main>
             <BottomNav />
