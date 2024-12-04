@@ -26,6 +26,7 @@ const Play = () => {
     const [userWon, setUserWon] = useState(false);
     const [winModal, setWinModal] = useState(false);
     const [claimPointsLoading, setClaimPointsLoading] = useState(false);
+    const [vibratorsArray, setVibratorsArray] = useState<boolean[]>([]);
 
     const initialOrder = [
         [0, 0, 0, 0, 0],
@@ -84,6 +85,9 @@ const Play = () => {
                 const currentWordState = getWordState(newBoxes[currentWordbox]);
                 console.log("current word state is --__--", currentWordState);
                 updateCorrectOrder(currentWordbox, currentWordState);
+                //get Vibrating boxes
+                const _vibratorsArray = generateVibrators(currentWordState);
+                setVibratorsArray(_vibratorsArray);
 
                 let status = checkAllValid(currentWordState);
                 console.log("current status is --__--", status);
@@ -204,6 +208,16 @@ const Play = () => {
         return _returnArray;
     };
 
+    const generateVibrators = (_wordState: number[]) => {
+        const _vibrators = _wordState.map((state) => {
+            if (state != 0) {
+                return false;
+            }
+            return true;
+        });
+        return _vibrators;
+    };
+
     return (
         <div>
             <div className="flex flex-col">
@@ -216,6 +230,7 @@ const Play = () => {
                             wordArray={wordArray}
                             key={index}
                             wordState={correctOrder[index]}
+                            vibrators={vibratorsArray}
                         />
                     ))}
                 </div>

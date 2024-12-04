@@ -27,3 +27,15 @@ body {
 html {
     height: 100%; /* Ensure html takes up full height */
 }
+
+@keyframes vibrate {
+    0% {
+        transform: translate(-2px, -1px);
+    }
+    50% {
+        transform: translate(2px, 1px);
+    }
+    100% {
+        transform: translate(-2px, -1px);
+    }
+}
