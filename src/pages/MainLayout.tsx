@@ -92,7 +92,7 @@ const MainLayout = () => {
 
     return (
         <div className="flex flex-col h-[100vh] overflow-hidden text-white relative">
-            <main className="flex-grow pb-[110px] h-full overflow-auto bg-black">
+            <main className="flex-grow pb-[83px] h-full overflow-auto bg-black">
                 <Outlet context={{account, handleClearSessionButton, handleConnectButton, isConnected}} />
             </main>
             <BottomNav />
