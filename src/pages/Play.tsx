@@ -50,26 +50,31 @@ const Play = () => {
     );
 
     const updateBox = (value: string) => {
-        setCurrentLetterbox(currentLetterbox + 1);
+        // setCurrentLetterbox(currentLetterbox + 1);
         setWordBoxes((prevBoxes) => {
             const newBoxes = [...prevBoxes];
             if (userWon) {
                 return newBoxes;
             }
             if (value.toLowerCase() === "del") {
+                if (currentLetterbox === 0) {
+                    return newBoxes;
+                }
                 newBoxes[currentWordbox] = [...newBoxes[currentWordbox]];
                 newBoxes[currentWordbox][currentLetterbox - 1] = "";
                 setCurrentLetterbox(currentLetterbox - 1);
                 return newBoxes;
             } else if (currentLetterbox < 4) {
+                setCurrentLetterbox(currentLetterbox + 1);
                 newBoxes[currentWordbox] = [...newBoxes[currentWordbox]];
                 newBoxes[currentWordbox][currentLetterbox] = value;
 
                 console.log("currentLetterBox", currentLetterbox);
                 return newBoxes;
             } else {
+                setCurrentLetterbox(currentLetterbox + 1);
                 if (currentLetterbox > 4) {
-                    setCurrentLetterbox(currentLetterbox - 1);
+                    setCurrentLetterbox(currentLetterbox);
                     return newBoxes;
                 }
                 newBoxes[currentWordbox] = [...newBoxes[currentWordbox]];
