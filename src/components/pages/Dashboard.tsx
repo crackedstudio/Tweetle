@@ -11,7 +11,7 @@ const Dashboard = () => {
         <>
             <div className="h-full overflow-auto text-white">
                 <HomeHeroSection />
-                <div className="bg-black p-2 flex flex-col text-white">
+                <div className="bg-black p-2 flex flex-col text-white space-y-4">
                     {/* <HomeStats /> */}
                     <GlassCard>
                         <>
@@ -68,7 +68,7 @@ const Dashboard = () => {
                             className="inline"
                         />
                     </p>
-                    <div className="mt-3">
+                    <div className="">
                         <PwdByStrk />
                     </div>
                 </div>

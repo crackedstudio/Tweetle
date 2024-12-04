@@ -8,6 +8,7 @@ export default {
             },
             backgroundImage: {
                 "button-image": "url('./assets/liquid.png')",
+                "gradient-svg": "url('./assets/svg/Gradient.svg')",
             },
         },
     },

@@ -230,7 +230,6 @@ const Play = () => {
                             wordArray={wordArray}
                             key={index}
                             wordState={correctOrder[index]}
-                            vibrators={vibratorsArray}
                         />
                     ))}
                 </div>
