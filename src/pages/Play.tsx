@@ -24,6 +24,7 @@ const Play = () => {
     const [currentWordbox, setCurrentWordbox] = useState(0);
     const [currentLetterbox, setCurrentLetterbox] = useState(0);
     const [userWon, setUserWon] = useState(false);
+    const [winModal, setWinModal] = useState(false);
     const [claimPointsLoading, setClaimPointsLoading] = useState(false);
 
     const initialOrder = [
@@ -52,6 +53,9 @@ const Play = () => {
         setCurrentLetterbox(currentLetterbox + 1);
         setWordBoxes((prevBoxes) => {
             const newBoxes = [...prevBoxes];
+            if (userWon) {
+                return newBoxes;
+            }
             if (value.toLowerCase() === "del") {
                 newBoxes[currentWordbox] = [...newBoxes[currentWordbox]];
                 newBoxes[currentWordbox][currentLetterbox - 1] = "";
@@ -79,6 +83,11 @@ const Play = () => {
                 let status = checkAllValid(currentWordState);
                 console.log("current status is --__--", status);
                 let isReadyForNextWordbox = true;
+
+                if (status == "won") {
+                    setUserWon(true);
+                    setWinModal(true);
+                }
 
                 if (status == "fail") isReadyForNextWordbox = false;
 
@@ -150,7 +159,7 @@ const Play = () => {
     };
 
     // MODAL FUNCTIONS
-    const closeModal = () => setUserWon(false);
+    const closeModal = () => setWinModal(false);
 
     const claimHandler = () => {
         setClaimPointsLoading(true);
@@ -214,7 +223,7 @@ const Play = () => {
                     </div>
                 </div>
             </div>
-            {userWon && (
+            {winModal && (
                 <WinModal
                     cancelHandler={closeModal}
                     claimHandler={claimHandler}
