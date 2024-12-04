@@ -27,16 +27,15 @@ const Play = () => {
     const [claimPointsLoading, setClaimPointsLoading] = useState(false);
 
     const initialOrder = [
-        [false, false, false, false, false],
-        [false, false, false, false, false],
-        [false, false, false, false, false],
-        [false, false, false, false, false],
-        [false, false, false, false, false],
-        [false, false, false, false, false],
+        [0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0],
     ];
 
-    const [correctOrder, setCorrectOrder] = useState<boolean[][]>(initialOrder);
-    const [wrongOrder, setWrongOrder] = useState<boolean[][]>(initialOrder);
+    const [correctOrder, setCorrectOrder] = useState<number[][]>(initialOrder);
 
     const getKeyboardInput = (key: string) => {
         console.log(key);
@@ -65,40 +64,33 @@ const Play = () => {
                 console.log("currentLetterBox", currentLetterbox);
                 return newBoxes;
             } else {
+                if (currentLetterbox > 4) {
+                    setCurrentLetterbox(currentLetterbox - 1);
+                    return newBoxes;
+                }
                 newBoxes[currentWordbox] = [...newBoxes[currentWordbox]];
                 newBoxes[currentWordbox][currentLetterbox] = value;
                 console.log("I have got here");
 
-                let hasUserWon = manageGamePlay(newBoxes[currentWordbox]);
-                setUserWon(hasUserWon);
+                const currentWordState = getWordState(newBoxes[currentWordbox]);
+                console.log("current word state is --__--", currentWordState);
+                updateCorrectOrder(currentWordbox, currentWordState);
 
-                let isReadyForNextWordbox = false;
-                let _validWordArray: { [key: string]: { correct: boolean } }[] =
-                    [];
-                for (let i of newBoxes[currentWordbox]) {
-                    let index = newBoxes[currentWordbox].indexOf(i);
-                    if (checkIfValid(i)) {
-                        isReadyForNextWordbox = true;
+                let status = checkAllValid(currentWordState);
+                console.log("current status is --__--", status);
+                let isReadyForNextWordbox = true;
 
-                        updateWrongOrder(currentWordbox, index, true);
-                        if (
-                            checkIfInRightPosition(
-                                index,
-                                newBoxes[currentWordbox]
-                            )
-                        ) {
-                            updateCorrectOrder(currentWordbox, index, true);
-                        } else {
-                            updateCorrectOrder(currentWordbox, index, false);
-                        }
-                    } else {
-                        updateWrongOrder(currentWordbox, index, false);
-                    }
-                }
+                if (status == "fail") isReadyForNextWordbox = false;
+
+                console.log("is ready for next wordbox", isReadyForNextWordbox);
+
                 if (isReadyForNextWordbox) {
                     setCurrentLetterbox(0);
                     setCurrentWordbox(currentWordbox + 1);
+                } else {
+                    return newBoxes;
                 }
+
                 return newBoxes;
                 //we should check here if words are valid , keep those words and their
                 //index somewhere , then check If in right position before
@@ -112,14 +104,21 @@ const Play = () => {
     //keep on repeating above process , constantly check if all return true and in right position
     //if all pass , announce win
     //if all dont pass, end game and announce loss
-    const manageGamePlay = (currentWord: string[]) => {
-        let isAllValid = true;
-        for (let i in currentWord) {
-            let isRight = checkIfInRightPosition(Number(i), currentWord);
-            if (!isRight) {
-                isAllValid = isRight;
-            }
+    const checkAllValid = (currentWordState: number[]) => {
+        let isAllValid = "";
+        let total = 0;
+
+        for (let i of currentWordState) {
+            total += i;
         }
+        if (total === 0) {
+            isAllValid = "fail";
+        } else if (total === 10) {
+            isAllValid = "won";
+        } else {
+            isAllValid = "pass";
+        }
+
         return isAllValid;
     };
 
@@ -141,32 +140,15 @@ const Play = () => {
     };
 
     // To update a single value in correctOrder
-    const updateCorrectOrder = (
-        rowIndex: number,
-        colIndex: number,
-        value: boolean
-    ) => {
+    const updateCorrectOrder = (rowIndex: number, newWordState: number[]) => {
         setCorrectOrder((prevOrder) => {
             const newOrder = [...prevOrder];
-            newOrder[rowIndex] = [...newOrder[rowIndex]];
-            newOrder[rowIndex][colIndex] = value;
+            newOrder[rowIndex] = [...newWordState];
+
             return newOrder;
         });
     };
 
-    // To update an entire row in wrongOrder
-    const updateWrongOrder = (
-        rowIndex: number,
-        colIndex: number,
-        value: boolean
-    ) => {
-        setWrongOrder((prevOrder) => {
-            const newOrder = [...prevOrder];
-            newOrder[rowIndex] = [...newOrder[rowIndex]];
-            newOrder[rowIndex][colIndex] = value;
-            return newOrder;
-        });
-    };
     // MODAL FUNCTIONS
     const closeModal = () => setUserWon(false);
 
@@ -194,6 +176,20 @@ const Play = () => {
         //    }
     };
 
+    // A FUNCTION THAT SEARCHES TO RETURN THE ARRRAY EQUIV STATE OF THE USER INPUT
+    const getWordState = (word: string[]) => {
+        let _returnArray = [0, 0, 0, 0, 0];
+        for (let i in word) {
+            if (checkIfValid(word[i])) {
+                _returnArray[i] = 1;
+            }
+            if (checkIfInRightPosition(Number(i), word)) {
+                _returnArray[i] = 2;
+            }
+        }
+        return _returnArray;
+    };
+
     return (
         <div>
             <div className="flex flex-col">
@@ -205,8 +201,7 @@ const Play = () => {
                         <WordBox
                             wordArray={wordArray}
                             key={index}
-                            correctOrderMap={correctOrder[index]}
-                            wrongOrderMap={wrongOrder[index]}
+                            wordState={correctOrder[index]}
                         />
                     ))}
                 </div>

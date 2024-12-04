@@ -1,14 +1,13 @@
 interface LetterBoxProps {
+    state: number;
     letter: string;
-    correct?: boolean;
-    wrong?: boolean;
 }
 
 //wrong refers to right but in wrong place
-export default function LetterBox({ letter, correct, wrong }: LetterBoxProps) {
-    if (correct) {
+export default function LetterBox({ state, letter }: LetterBoxProps) {
+    if (state == 2) {
         return <Letter letterColor="bg-green-400" letter={letter} />;
-    } else if (wrong) {
+    } else if (state == 1) {
         return <Letter letterColor="bg-yellow-600" letter={letter} />;
     } else {
         return <Letter letterColor="bg-[#121213]" letter={letter} />;
