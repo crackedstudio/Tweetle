@@ -13,13 +13,13 @@ const BottomNav = () => {
     ];
 
     return (
-        <nav className="fixed bottom-0 left-0 right-0 bg-black py-5">
+        <nav className="absolute w-full bottom-0 left-0 right-0 bg-black py-3 z-[20]">
             <div className="flex justify-around">
                 {navItems.map((item) => (
                     <Link
                         key={item.path}
                         to={item.path}
-                        className={`flex flex-col items-center p-2 ${
+                        className={`flex flex-col items-center ${
                             location.pathname === item.path
                                 ? "text-[#FE97D5]"
                                 : "text-gray-500"
