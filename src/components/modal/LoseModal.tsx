@@ -1,20 +1,20 @@
-import celebrateGif from "../../assets/celebrate.gif";
 import cancel from "../../assets/cancel-circle.png";
-import { ClockLoader, PacmanLoader } from "react-spinners";
+import { PacmanLoader } from "react-spinners";
+import Adblock from "../../assets/ad-block.png";
 
-interface WinModalProps {
+interface LoseModalProps {
     cancelHandler: () => void;
     claimHandler?: () => void;
     shareHandler?: () => void;
     loadingState?: boolean;
 }
 
-const WinModal = ({
+const LoseModal = ({
     cancelHandler,
     claimHandler,
     shareHandler,
     loadingState,
-}: WinModalProps) => {
+}: LoseModalProps) => {
     return (
         <>
             <div
@@ -30,15 +30,15 @@ const WinModal = ({
                 >
                     <img src={cancel} alt="cancelCircle" />
                 </button>
-                <div className="py-4">
+                <div className="py-8">
                     <h1 className="text-[40px] text-[#71ED00] text-center my-4 bungee-regular">
-                        YOU'RE RIGHT
+                        TRY AGAIN
                     </h1>
-                    <div className="border-[#538D4E] border-[6px] w-[250px] h-[250px] mx-auto rounded-full">
+                    <div className="flex justify-center items-center">
                         <img
-                            src={celebrateGif}
-                            alt="celebrate"
-                            className="rounded-full"
+                            src={Adblock}
+                            alt="end"
+                            className="rounded-full block"
                         />
                     </div>
                 </div>
@@ -48,7 +48,7 @@ const WinModal = ({
                         className="bg-[#12830D] text-center w-[203px] block h-[73px] rounded-xl text-white border-[3px] border-[#71ED00] shadow-[0_10px_0_0_rgba(0,81,37,1),0_12px_0_0_rgba(113,237,0,1)]"
                         onClick={claimHandler}
                     >
-                        CLAIM POINTS
+                        Play Again
                     </button>
 
                     <button
@@ -76,4 +76,4 @@ const WinModal = ({
     );
 };
 
-export default WinModal;
+export default LoseModal;

@@ -19,7 +19,7 @@ export default function HomeHeroSection() {
     } = useOutletContext<OutletContextType>();
 
     return (
-        <div className="py-2 pt-[40px] flex flex-col items-center bg-gradient-svg">
+        <div className="py-2 pt-[40px] flex flex-col items-center">
             {!isConnected && (
                 <ConnectWalletBtn
                     text="Connect Wallet"

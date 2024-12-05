@@ -27,3 +27,30 @@ body {
 html {
     height: 100%; /* Ensure html takes up full height */
 }
+
+@keyframes vibrate {
+    0% {
+        transform: translate(-2px, -1px);
+    }
+    50% {
+        transform: translate(2px, 1px);
+    }
+    100% {
+        transform: translate(-2px, -1px);
+    }
+}
+@keyframes rollIn {
+    0% {
+        transform: translateX(-100%) rotate(-720deg);
+        opacity: 0;
+    }
+    100% {
+        transform: translateX(0) rotate(0deg);
+        opacity: 1;
+    }
+}
+.bungee-regular {
+    font-family: "Bungee", sans-serif;
+    font-weight: 400;
+    font-style: normal;
+}

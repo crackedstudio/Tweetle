@@ -9,6 +9,7 @@ import { SessionAccountInterface } from "@argent/tma-wallet";
 import WordBox from "../components/gameplay/WordBox";
 import GameTopNav from "../components/gameplay/GameTopNav";
 import WinModal from "../components/modal/WinModal";
+import LoseModal from "../components/modal/LoseModal";
 import Keyboard from "../components/gameplay/Keyboard";
 import { useOutletContext } from "react-router-dom";
 const SAMPLE_WORD = ["C", "O", "V", "I", "D"];
@@ -24,8 +25,11 @@ const Play = () => {
     const [currentWordbox, setCurrentWordbox] = useState(0);
     const [currentLetterbox, setCurrentLetterbox] = useState(0);
     const [userWon, setUserWon] = useState(false);
+    const [userLost, setUserLost] = useState(false);
     const [winModal, setWinModal] = useState(false);
+    const [loseModal, setLoseModal] = useState(false);
     const [claimPointsLoading, setClaimPointsLoading] = useState(false);
+    const [vibratorsArray, setVibratorsArray] = useState<boolean[]>([]);
 
     const initialOrder = [
         [0, 0, 0, 0, 0],
@@ -50,26 +54,31 @@ const Play = () => {
     );
 
     const updateBox = (value: string) => {
-        setCurrentLetterbox(currentLetterbox + 1);
+        // setCurrentLetterbox(currentLetterbox + 1);
         setWordBoxes((prevBoxes) => {
             const newBoxes = [...prevBoxes];
-            if (userWon) {
+            if (userWon || userLost) {
                 return newBoxes;
             }
             if (value.toLowerCase() === "del") {
+                if (currentLetterbox === 0) {
+                    return newBoxes;
+                }
                 newBoxes[currentWordbox] = [...newBoxes[currentWordbox]];
                 newBoxes[currentWordbox][currentLetterbox - 1] = "";
                 setCurrentLetterbox(currentLetterbox - 1);
                 return newBoxes;
             } else if (currentLetterbox < 4) {
+                setCurrentLetterbox(currentLetterbox + 1);
                 newBoxes[currentWordbox] = [...newBoxes[currentWordbox]];
                 newBoxes[currentWordbox][currentLetterbox] = value;
 
                 console.log("currentLetterBox", currentLetterbox);
                 return newBoxes;
             } else {
+                setCurrentLetterbox(currentLetterbox + 1);
                 if (currentLetterbox > 4) {
-                    setCurrentLetterbox(currentLetterbox - 1);
+                    setCurrentLetterbox(currentLetterbox);
                     return newBoxes;
                 }
                 newBoxes[currentWordbox] = [...newBoxes[currentWordbox]];
@@ -79,6 +88,9 @@ const Play = () => {
                 const currentWordState = getWordState(newBoxes[currentWordbox]);
                 console.log("current word state is --__--", currentWordState);
                 updateCorrectOrder(currentWordbox, currentWordState);
+                //get Vibrating boxes
+                const _vibratorsArray = generateVibrators(currentWordState);
+                setVibratorsArray(_vibratorsArray);
 
                 let status = checkAllValid(currentWordState);
                 console.log("current status is --__--", status);
@@ -89,7 +101,14 @@ const Play = () => {
                     setWinModal(true);
                 }
 
-                if (status == "fail") isReadyForNextWordbox = false;
+                if (status === "fail") isReadyForNextWordbox = false;
+
+                if (status === "pass" && currentWordbox === 5) {
+                    isReadyForNextWordbox = false;
+                    setLoseModal(true);
+                    setUserLost(true);
+                    return newBoxes;
+                }
 
                 console.log("is ready for next wordbox", isReadyForNextWordbox);
 
@@ -159,7 +178,10 @@ const Play = () => {
     };
 
     // MODAL FUNCTIONS
-    const closeModal = () => setWinModal(false);
+    const closeModal = () => {
+        setWinModal(false);
+        setLoseModal(false);
+    };
 
     const claimHandler = () => {
         setClaimPointsLoading(true);
@@ -199,6 +221,16 @@ const Play = () => {
         return _returnArray;
     };
 
+    const generateVibrators = (_wordState: number[]) => {
+        const _vibrators = _wordState.map((state) => {
+            if (state != 0) {
+                return false;
+            }
+            return true;
+        });
+        return _vibrators;
+    };
+
     return (
         <div>
             <div className="flex flex-col">
@@ -225,6 +257,13 @@ const Play = () => {
             </div>
             {winModal && (
                 <WinModal
+                    cancelHandler={closeModal}
+                    claimHandler={claimHandler}
+                    loadingState={claimPointsLoading}
+                />
+            )}
+            {loseModal && (
+                <LoseModal
                     cancelHandler={closeModal}
                     claimHandler={claimHandler}
                     loadingState={claimPointsLoading}

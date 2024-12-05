@@ -1,15 +1,15 @@
 import { Link, useLocation } from "react-router-dom";
-import homeIcon from "../assets/home.png";
-import leaderboardIcon from "../assets/align-bottom.png";
-import friendsIcon from "../assets/user-group.png";
+import HomeIcon from "./HomeIcon";
+import FriendsIcon from "./FriendsIcon";
+import LeaderboardIcon from "./LeaderboardIcon";
 
 const BottomNav = () => {
     const location = useLocation();
 
     const navItems = [
-        { path: "/", icon: homeIcon, label: "Home" },
-        { path: "/leaderboard", icon: leaderboardIcon, label: "Leaderboard" },
-        { path: "/friends", icon: friendsIcon, label: "Friends" },
+        { path: "/", icon: HomeIcon, label: "Home" },
+        { path: "/leaderboard", icon: LeaderboardIcon, label: "Leaderboard" },
+        { path: "/friends", icon: FriendsIcon, label: "Friends" },
     ];
 
     return (
@@ -25,7 +25,15 @@ const BottomNav = () => {
                                 : "text-gray-500"
                         }`}
                     >
-                        <img src={item.icon} alt={item.label} />
+                        {
+                            <item.icon
+                                color={
+                                    location.pathname === item.path
+                                        ? "#FE97D5"
+                                        : "#787A80"
+                                }
+                            />
+                        }
                         <span className="text-xs mt-2">{item.label}</span>
                     </Link>
                 ))}
