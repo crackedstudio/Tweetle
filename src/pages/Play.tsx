@@ -9,6 +9,7 @@ import { SessionAccountInterface } from "@argent/tma-wallet";
 import WordBox from "../components/gameplay/WordBox";
 import GameTopNav from "../components/gameplay/GameTopNav";
 import WinModal from "../components/modal/WinModal";
+import LoseModal from "../components/modal/LoseModal";
 import Keyboard from "../components/gameplay/Keyboard";
 import { useOutletContext } from "react-router-dom";
 const SAMPLE_WORD = ["C", "O", "V", "I", "D"];
@@ -24,7 +25,9 @@ const Play = () => {
     const [currentWordbox, setCurrentWordbox] = useState(0);
     const [currentLetterbox, setCurrentLetterbox] = useState(0);
     const [userWon, setUserWon] = useState(false);
+    const [userLost, setUserLost] = useState(false);
     const [winModal, setWinModal] = useState(false);
+    const [loseModal, setLoseModal] = useState(false);
     const [claimPointsLoading, setClaimPointsLoading] = useState(false);
     const [vibratorsArray, setVibratorsArray] = useState<boolean[]>([]);
 
@@ -54,7 +57,7 @@ const Play = () => {
         // setCurrentLetterbox(currentLetterbox + 1);
         setWordBoxes((prevBoxes) => {
             const newBoxes = [...prevBoxes];
-            if (userWon) {
+            if (userWon || userLost) {
                 return newBoxes;
             }
             if (value.toLowerCase() === "del") {
@@ -98,7 +101,14 @@ const Play = () => {
                     setWinModal(true);
                 }
 
-                if (status == "fail") isReadyForNextWordbox = false;
+                if (status === "fail") isReadyForNextWordbox = false;
+
+                if (status === "pass" && currentWordbox === 5) {
+                    isReadyForNextWordbox = false;
+                    setLoseModal(true);
+                    setUserLost(true);
+                    return newBoxes;
+                }
 
                 console.log("is ready for next wordbox", isReadyForNextWordbox);
 
@@ -168,7 +178,10 @@ const Play = () => {
     };
 
     // MODAL FUNCTIONS
-    const closeModal = () => setWinModal(false);
+    const closeModal = () => {
+        setWinModal(false);
+        setLoseModal(false);
+    };
 
     const claimHandler = () => {
         setClaimPointsLoading(true);
@@ -244,6 +257,13 @@ const Play = () => {
             </div>
             {winModal && (
                 <WinModal
+                    cancelHandler={closeModal}
+                    claimHandler={claimHandler}
+                    loadingState={claimPointsLoading}
+                />
+            )}
+            {loseModal && (
+                <LoseModal
                     cancelHandler={closeModal}
                     claimHandler={claimHandler}
                     loadingState={claimPointsLoading}
