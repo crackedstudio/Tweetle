@@ -30,8 +30,8 @@ const LoseModal = ({
                 >
                     <img src={cancel} alt="cancelCircle" />
                 </button>
-                <div className="py-8">
-                    <h1 className="text-[40px] text-[#71ED00] text-center my-4 bungee-regular">
+                <div className="py-4">
+                    <h1 className="text-[40px] text-[#71ED00] text-center my-3 bungee-regular">
                         TRY AGAIN
                     </h1>
                     <div className="flex justify-center items-center">
@@ -43,7 +43,7 @@ const LoseModal = ({
                     </div>
                 </div>
 
-                <div className="mt-5 px-3 flex flex-col space-y-8 items-center">
+                <div className="mt-5 px-3 flex flex-col space-y-6 items-center">
                     <button
                         className="bg-[#12830D] text-center w-[203px] block h-[73px] rounded-xl text-white border-[3px] border-[#71ED00] shadow-[0_10px_0_0_rgba(0,81,37,1),0_12px_0_0_rgba(113,237,0,1)]"
                         onClick={claimHandler}
