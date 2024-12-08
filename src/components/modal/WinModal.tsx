@@ -31,10 +31,10 @@ const WinModal = ({
                     <img src={cancel} alt="cancelCircle" />
                 </button>
                 <div className="py-4">
-                    <h1 className="text-[40px] text-[#71ED00] text-center my-4 bungee-regular">
+                    <h1 className="text-[40px] text-[#71ED00] text-center my-3 bungee-regular">
                         YOU'RE RIGHT
                     </h1>
-                    <div className="border-[#538D4E] border-[6px] w-[250px] h-[250px] mx-auto rounded-full">
+                    <div className="border-[#538D4E] border-[6px] w-[200px] h-[200px] mx-auto rounded-full">
                         <img
                             src={celebrateGif}
                             alt="celebrate"
@@ -43,7 +43,7 @@ const WinModal = ({
                     </div>
                 </div>
 
-                <div className="mt-5 px-3 flex flex-col space-y-8 items-center">
+                <div className="mt-3 px-3 flex flex-col space-y-6 items-center">
                     <button
                         className="bg-[#12830D] text-center w-[203px] block h-[73px] rounded-xl text-white border-[3px] border-[#71ED00] shadow-[0_10px_0_0_rgba(0,81,37,1),0_12px_0_0_rgba(113,237,0,1)]"
                         onClick={claimHandler}
