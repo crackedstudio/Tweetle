@@ -31,6 +31,8 @@ const Play = () => {
     const [claimPointsLoading, setClaimPointsLoading] = useState(false);
     const [vibratorsArray, setVibratorsArray] = useState<boolean[]>([]);
 
+    const [processingGuess, setProcessingGuess] = useState(false);
+
     const initialOrder = [
         [0, 0, 0, 0, 0],
         [0, 0, 0, 0, 0],
@@ -83,6 +85,10 @@ const Play = () => {
                 }
                 newBoxes[currentWordbox] = [...newBoxes[currentWordbox]];
                 newBoxes[currentWordbox][currentLetterbox] = value;
+
+                //UPDATE THE PROCESS GUESS HERE
+                handleProcessGuess(newBoxes[currentWordbox]);
+
                 console.log("I have got here");
 
                 const currentWordState = getWordState(newBoxes[currentWordbox]);
@@ -187,24 +193,33 @@ const Play = () => {
         setClaimPointsLoading(true);
     };
 
-    const handleCliamRewards = async () => {
+    const handleProcessGuess = async (wordArray: string[]) => {
         const { account } = useOutletContext<OutletContextType>();
 
         const game_addr =
-            "0x03891b46cdd780984a4954a3d54d00051ee761e068b56274c0762dfe80d7d4d9";
+            "0x04eb427210848b943c4ff67c9c43ddd2187e3e785e6d5efec15e7eec593ee367";
 
         const gameContract = new Contract(gameAbi, game_addr, account);
 
-        setClaimPointsLoading(true);
-        //    try {
+        setProcessingGuess(true);
+        try {
+            const returnVal = await gameContract.process_guess(
+                0,
+                convertWordArrayToString(wordArray)
+            );
+            console.log("return VALUE is ----------", returnVal);
+            setProcessingGuess(false);
+        } catch (error: any) {
+            setProcessingGuess(false);
+        }
+    };
 
-        await gameContract.claimPoints(Number(2));
-
-        setClaimPointsLoading(false);
-
-        //    } catch (error: any) {
-        //         setClaimPointsLoading(false);
-        //    }
+    const convertWordArrayToString = (wordArray: string[]) => {
+        let string = "";
+        for (let letter of wordArray) {
+            string += letter;
+        }
+        return string;
     };
 
     // A FUNCTION THAT SEARCHES TO RETURN THE ARRRAY EQUIV STATE OF THE USER INPUT
