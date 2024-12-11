@@ -14,8 +14,8 @@ const argentTMA = ArgentTMA.init({
             // List of contracts/methods allowed to be called by the session key
             {
                 contract:
-                    "0x03891b46cdd780984a4954a3d54d00051ee761e068b56274c0762dfe80d7d4d9",
-                selector: "claimPoints",
+                    "0x04eb427210848b943c4ff67c9c43ddd2187e3e785e6d5efec15e7eec593ee367",
+                selector: "process_guess",
             },
         ],
         validityDays: 90, // session validity (in days) - default: 90
@@ -85,7 +85,7 @@ const MainLayout = () => {
     if (isLoading) {
         return <LoadingFullPage />;
     }
-
+    console.log("Current window location is -- ", window.location.href);
     return (
         <div className="flex flex-col h-[100vh] overflow-hidden text-white relative">
             <main className="flex-grow h-full overflow-auto">

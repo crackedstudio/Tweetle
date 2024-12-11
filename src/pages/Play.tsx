@@ -22,6 +22,8 @@ interface OutletContextType {
 }
 
 const Play = () => {
+    const { account } = useOutletContext<OutletContextType>();
+
     const [currentWordbox, setCurrentWordbox] = useState(0);
     const [currentLetterbox, setCurrentLetterbox] = useState(0);
     const [userWon, setUserWon] = useState(false);
@@ -87,7 +89,7 @@ const Play = () => {
                 newBoxes[currentWordbox][currentLetterbox] = value;
 
                 //UPDATE THE PROCESS GUESS HERE
-                handleProcessGuess(newBoxes[currentWordbox]);
+                handleProcessGuess();
 
                 console.log("I have got here");
 
@@ -193,24 +195,25 @@ const Play = () => {
         setClaimPointsLoading(true);
     };
 
-    const handleProcessGuess = async (wordArray: string[]) => {
-        const { account } = useOutletContext<OutletContextType>();
-
+    const handleProcessGuess = async () => {
         const game_addr =
             "0x04eb427210848b943c4ff67c9c43ddd2187e3e785e6d5efec15e7eec593ee367";
-
         const gameContract = new Contract(gameAbi, game_addr, account);
-
         setProcessingGuess(true);
+
         try {
+            alert("trying now ");
             const returnVal = await gameContract.process_guess(
                 0,
-                convertWordArrayToString(wordArray)
+                convertWordArrayToString(["u", "n", "i", "o", "n"])
             );
             console.log("return VALUE is ----------", returnVal);
+            alert(returnVal);
+            alert("successful");
             setProcessingGuess(false);
         } catch (error: any) {
             setProcessingGuess(false);
+            alert("failll" + error);
         }
     };
 
@@ -266,7 +269,7 @@ const Play = () => {
                         <Keyboard clickHandler={getKeyboardInput} />
                     </div>
                     <div className="mt-2">
-                        <GameBottomNav />
+                        <GameBottomNav submitHandler={handleProcessGuess} />
                     </div>
                 </div>
             </div>
