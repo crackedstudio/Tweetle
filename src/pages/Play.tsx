@@ -197,18 +197,18 @@ const Play = () => {
 
     const handleProcessGuess = async () => {
         const game_addr =
-            "0x04eb427210848b943c4ff67c9c43ddd2187e3e785e6d5efec15e7eec593ee367";
+            "0x05167b1dec707de79e142938f443c7ad31652ffbf714fb824662213655e2680f";
         const gameContract = new Contract(gameAbi, game_addr, account);
         setProcessingGuess(true);
 
         try {
             alert("trying now ");
             const returnVal = await gameContract.process_guess(
-                0,
-                convertWordArrayToString(["u", "n", "i", "o", "n"])
+                1,
+                convertWordArrayToString(["v", "i", "c", "d", "o"])
             );
             console.log("return VALUE is ----------", returnVal);
-            alert(returnVal);
+            alert(JSON.stringify(returnVal));
             alert("successful");
             setProcessingGuess(false);
         } catch (error: any) {

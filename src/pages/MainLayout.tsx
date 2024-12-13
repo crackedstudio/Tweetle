@@ -14,7 +14,7 @@ const argentTMA = ArgentTMA.init({
             // List of contracts/methods allowed to be called by the session key
             {
                 contract:
-                    "0x04eb427210848b943c4ff67c9c43ddd2187e3e785e6d5efec15e7eec593ee367",
+                    "0x05167b1dec707de79e142938f443c7ad31652ffbf714fb824662213655e2680f",
                 selector: "process_guess",
             },
         ],
@@ -98,7 +98,7 @@ const MainLayout = () => {
                     }}
                 />
             </main>
-            <BottomNav />
+            {/* <BottomNav /> */}
         </div>
     );
 };
