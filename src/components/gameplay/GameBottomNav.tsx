@@ -1,11 +1,12 @@
 import hintIcon from "../../assets/hintIcon.png";
 import right from "../../assets/right.png";
 
-interface GameBottomNavProps{
+interface GameBottomNavProps {
     submitHandler: () => void;
+    isEnded: boolean;
 }
 
-const GameBottomNav = ({submitHandler} : GameBottomNavProps) => {
+const GameBottomNav = ({ submitHandler, isEnded }: GameBottomNavProps) => {
     return (
         <div className="flex justify-between w-full pb-5 pt-2 px-3">
             <div className="flex space-x-2 items-center w-full">
@@ -13,8 +14,12 @@ const GameBottomNav = ({submitHandler} : GameBottomNavProps) => {
                 <p>Hint</p>
             </div>
             <div className="w-full">
-                <button className="w-[109px] h-[42px] bg-[#EB69B7] rounded-[100px] text-white" onClick={submitHandler}>
-                    Submit
+                <button
+                    className="w-[109px] h-[42px] bg-[#EB69B7] rounded-[100px] text-white"
+                    onClick={submitHandler}
+                >
+                    {!isEnded && "Enter"}
+                    {isEnded && "Submit"}
                 </button>
             </div>
             <div>
