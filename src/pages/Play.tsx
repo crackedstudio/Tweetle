@@ -275,24 +275,42 @@ const Play = () => {
 
     const getWordState = async (word: string) => {
         setProcessingGuess(true);
-        if (word.length != 5) {
+
+        if (word.length !== 5) {
             setProcessingGuess(false);
             return [0, 0, 0, 0, 0];
         }
+
         try {
-            const response = await axios.post(
+            alert("word is ____" + word);
+
+            // Using fetch to make the POST request
+            const response = await fetch(
                 "https://tweetle-bot-backend.onrender.com/game",
-                { word }
+                {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json", // Set the content type to JSON
+                    },
+                    body: JSON.stringify({ word: word.toLowerCase() }), // Send the word as JSON
+                }
             );
-            setGottenData(response.data);
+
+            if (!response.ok) {
+                // If response is not OK (status code outside 2xx)
+                throw new Error(`Server error: ${response.status}`);
+            }
+
+            const data = await response.json(); // Parse the response JSON
             setProcessingGuess(false);
-            return response.data;
-        } catch (err) {
+            return data;
+        } catch (err: any) {
             setProcessingGuess(false);
-            alert("error is ___" + err);
-            return [0, 0, 0, 0, 0];
+
+            // Handle errors and display relevant message
+            alert(`Error occurred: ${err.message}`);
+            return [0, 0, 0, 0, 0]; // Return the default value on error
         }
-        return [0, 0, 0, 0, 0];
     };
 
     //A FUNCTION THAT SEARCHES TO RETURN THE ARRRAY EQUIV STATE OF THE USER INPUT
