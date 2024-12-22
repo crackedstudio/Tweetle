@@ -12,6 +12,7 @@ import WinModal from "../components/modal/WinModal";
 import LoseModal from "../components/modal/LoseModal";
 import Keyboard from "../components/gameplay/Keyboard";
 import { useOutletContext } from "react-router-dom";
+import axios from "axios";
 const SAMPLE_WORD = ["C", "O", "V", "I", "D"];
 
 interface OutletContextType {
@@ -36,7 +37,8 @@ const Play = () => {
     const [currentWordState, setCurrentWordState] = useState([0, 0, 0, 0, 0]);
 
     const [processingGuess, setProcessingGuess] = useState(false);
-    const [fetchingRecentPlay, setFetchingRecentPlay] = useState(false);
+    const [gottenData, setGottenData] = useState(false);
+    // const [fetchingRecentPlay, setFetchingRecentPlay] = useState(false);
 
     const initialOrder = [
         [0, 0, 0, 0, 0],
@@ -63,8 +65,9 @@ const Play = () => {
     const updateBox = async (value: string) => {
         // setCurrentLetterbox(currentLetterbox + 1);
         if (currentLetterbox >= 4) {
-            await handleProcessGuess(wordBoxes[currentWordbox]);
-            await handleFetchRecentPlay();
+            const _word = convertWordArrayToString(wordBoxes[currentWordbox]);
+            const _currentWordState = await getWordState(_word);
+            setCurrentWordState(_currentWordState);
         }
 
         setWordBoxes((prevBoxes) => {
@@ -98,7 +101,6 @@ const Play = () => {
 
                 console.log("I have got here");
 
-                // const currentWordState = _currentWordState;
                 console.log("current word state is --__--", currentWordState);
                 updateCorrectOrder(currentWordbox, currentWordState);
                 //get Vibrating boxes
@@ -170,22 +172,22 @@ const Play = () => {
         return isAllValid;
     };
 
-    const checkIfValid = (letter: string) => {
-        let is_valid = false;
-        for (let i of SAMPLE_WORD) {
-            if (i.toLowerCase() === letter.toLowerCase()) {
-                is_valid = true;
-            }
-        }
-        return is_valid;
-    };
-    const checkIfInRightPosition = (index: number, userWord: string[]) => {
-        let isInRightPosition = false;
-        if (SAMPLE_WORD[index] === userWord[index]) {
-            isInRightPosition = true;
-        }
-        return isInRightPosition;
-    };
+    // const checkIfValid = (letter: string) => {
+    //     let is_valid = false;
+    //     for (let i of SAMPLE_WORD) {
+    //         if (i.toLowerCase() === letter.toLowerCase()) {
+    //             is_valid = true;
+    //         }
+    //     }
+    //     return is_valid;
+    // };
+    // const checkIfInRightPosition = (index: number, userWord: string[]) => {
+    //     let isInRightPosition = false;
+    //     if (SAMPLE_WORD[index] === userWord[index]) {
+    //         isInRightPosition = true;
+    //     }
+    //     return isInRightPosition;
+    // };
 
     // To update a single value in correctOrder
     const updateCorrectOrder = (rowIndex: number, newWordState: number[]) => {
@@ -208,59 +210,59 @@ const Play = () => {
     };
 
     const submitHandler = async () => {
-        await handleProcessGuess(wordBoxes[currentWordbox]);
-        await handleFetchRecentPlay();
+        // await handleProcessGuess(wordBoxes[currentWordbox]);
+        // await handleFetchRecentPlay();
     };
 
-    const handleFetchRecentPlay = async () => {
-        const game_addr =
-            "0x03c9952e2a146c4aa9d327527416b1a448587d7a839f343ff73997e156e2d4dd";
-        const gameContract = new Contract(gameAbi, game_addr, account);
-        setFetchingRecentPlay(true);
-        alert("about to start fetching");
-        let _updatedWordState = [];
-        try {
-            alert("fetching now ");
-            const returnVal = await gameContract.get_user_recent_play(
-                account?.address,
-                1
-            );
-            console.log("return VALUE is ----------", returnVal);
-            _updatedWordState.push(returnVal.first);
-            _updatedWordState.push(returnVal.second);
-            _updatedWordState.push(returnVal.third);
-            _updatedWordState.push(returnVal.fourth);
-            _updatedWordState.push(returnVal.fifth);
-            alert(_updatedWordState);
-            alert("successful");
-            setFetchingRecentPlay(false);
-            return _updatedWordState;
-        } catch (error: any) {
-            setFetchingRecentPlay(false);
-            alert("failll" + error);
-            return [0, 0, 0, 0, 0];
-        }
-    };
+    // const handleFetchRecentPlay = async () => {
+    //     const game_addr =
+    //         "0x03c9952e2a146c4aa9d327527416b1a448587d7a839f343ff73997e156e2d4dd";
+    //     const gameContract = new Contract(gameAbi, game_addr, account);
+    //     setFetchingRecentPlay(true);
+    //     alert("about to start fetching");
+    //     let _updatedWordState = [];
+    //     try {
+    //         alert("fetching now ");
+    //         const returnVal = await gameContract.get_user_recent_play(
+    //             account?.address,
+    //             1
+    //         );
+    //         console.log("return VALUE is ----------", returnVal);
+    //         _updatedWordState.push(returnVal.first);
+    //         _updatedWordState.push(returnVal.second);
+    //         _updatedWordState.push(returnVal.third);
+    //         _updatedWordState.push(returnVal.fourth);
+    //         _updatedWordState.push(returnVal.fifth);
+    //         alert(_updatedWordState);
+    //         alert("successful");
+    //         setFetchingRecentPlay(false);
+    //         return _updatedWordState;
+    //     } catch (error: any) {
+    //         setFetchingRecentPlay(false);
+    //         alert("failll" + error);
+    //         return [0, 0, 0, 0, 0];
+    //     }
+    // };
 
-    const handleProcessGuess = async (wordArray: string[]) => {
-        const game_addr =
-            "0x03c9952e2a146c4aa9d327527416b1a448587d7a839f343ff73997e156e2d4dd";
-        const gameContract = new Contract(gameAbi, game_addr, account);
-        setProcessingGuess(true);
+    // const handleProcessGuess = async (wordArray: string[]) => {
+    //     const game_addr =
+    //         "0x03c9952e2a146c4aa9d327527416b1a448587d7a839f343ff73997e156e2d4dd";
+    //     const gameContract = new Contract(gameAbi, game_addr, account);
+    //     setProcessingGuess(true);
 
-        try {
-            alert("trying now ");
-            alert(convertWordArrayToString(wordArray));
-            const returnVal = await gameContract.process_guess(1, "vivid");
-            console.log("return VALUE is ----------", returnVal);
-            alert(JSON.stringify(returnVal));
-            alert("successful");
-            setProcessingGuess(false);
-        } catch (error: any) {
-            setProcessingGuess(false);
-            alert("failll" + error);
-        }
-    };
+    //     try {
+    //         alert("trying now ");
+    //         alert(convertWordArrayToString(wordArray));
+    //         const returnVal = await gameContract.process_guess(1, "vivid");
+    //         console.log("return VALUE is ----------", returnVal);
+    //         alert(JSON.stringify(returnVal));
+    //         alert("successful");
+    //         setProcessingGuess(false);
+    //     } catch (error: any) {
+    //         setProcessingGuess(false);
+    //         alert("failll" + error);
+    //     }
+    // };
 
     const convertWordArrayToString = (wordArray: string[]) => {
         let string = "";
@@ -269,20 +271,43 @@ const Play = () => {
         }
         return string;
     };
+    // A function that collects user input to return the array equivalent
+
+    const getWordState = async (word: string) => {
+        setProcessingGuess(true);
+        if (word.length != 5) {
+            setProcessingGuess(false);
+            return [0, 0, 0, 0, 0];
+        }
+        try {
+            const response = await axios.post(
+                "https://tweetle-bot-backend.onrender.com/game",
+                { word }
+            );
+            setGottenData(response.data);
+            setProcessingGuess(false);
+            return response.data;
+        } catch (err) {
+            setProcessingGuess(false);
+            alert("error is ___" + err);
+            return [0, 0, 0, 0, 0];
+        }
+        return [0, 0, 0, 0, 0];
+    };
 
     //A FUNCTION THAT SEARCHES TO RETURN THE ARRRAY EQUIV STATE OF THE USER INPUT
-    const getWordState = (word: string[]) => {
-        let _returnArray = [0, 0, 0, 0, 0];
-        for (let i in word) {
-            if (checkIfValid(word[i])) {
-                _returnArray[i] = 1;
-            }
-            if (checkIfInRightPosition(Number(i), word)) {
-                _returnArray[i] = 2;
-            }
-        }
-        return _returnArray;
-    };
+    // const getWordState = (word: string[]) => {
+    //     let _returnArray = [0, 0, 0, 0, 0];
+    //     for (let i in word) {
+    //         if (checkIfValid(word[i])) {
+    //             _returnArray[i] = 1;
+    //         }
+    //         if (checkIfInRightPosition(Number(i), word)) {
+    //             _returnArray[i] = 2;
+    //         }
+    //     }
+    //     return _returnArray;
+    // };
 
     const generateVibrators = (_wordState: number[]) => {
         const _vibrators = _wordState.map((state) => {
@@ -306,7 +331,7 @@ const Play = () => {
                             wordArray={wordArray}
                             key={index}
                             wordState={correctOrder[index]}
-                            isLoading={processingGuess || fetchingRecentPlay}
+                            isLoading={processingGuess}
                         />
                     ))}
                 </div>
