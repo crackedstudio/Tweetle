@@ -14,7 +14,7 @@ const argentTMA = ArgentTMA.init({
             // List of contracts/methods allowed to be called by the session key
             {
                 contract:
-                    "0x05167b1dec707de79e142938f443c7ad31652ffbf714fb824662213655e2680f",
+                    "0x03c9952e2a146c4aa9d327527416b1a448587d7a839f343ff73997e156e2d4dd",
                 selector: "process_guess",
             },
         ],

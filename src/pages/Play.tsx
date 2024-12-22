@@ -214,7 +214,7 @@ const Play = () => {
 
     const handleFetchRecentPlay = async () => {
         const game_addr =
-            "0x05167b1dec707de79e142938f443c7ad31652ffbf714fb824662213655e2680f";
+            "0x03c9952e2a146c4aa9d327527416b1a448587d7a839f343ff73997e156e2d4dd";
         const gameContract = new Contract(gameAbi, game_addr, account);
         setFetchingRecentPlay(true);
         alert("about to start fetching");
@@ -231,7 +231,7 @@ const Play = () => {
             _updatedWordState.push(returnVal.third);
             _updatedWordState.push(returnVal.fourth);
             _updatedWordState.push(returnVal.fifth);
-
+            alert(_updatedWordState);
             alert("successful");
             setFetchingRecentPlay(false);
             return _updatedWordState;
@@ -244,16 +244,14 @@ const Play = () => {
 
     const handleProcessGuess = async (wordArray: string[]) => {
         const game_addr =
-            "0x05167b1dec707de79e142938f443c7ad31652ffbf714fb824662213655e2680f";
+            "0x03c9952e2a146c4aa9d327527416b1a448587d7a839f343ff73997e156e2d4dd";
         const gameContract = new Contract(gameAbi, game_addr, account);
         setProcessingGuess(true);
 
         try {
             alert("trying now ");
-            const returnVal = await gameContract.process_guess(
-                1,
-                convertWordArrayToString(wordArray)
-            );
+            alert(convertWordArrayToString(wordArray));
+            const returnVal = await gameContract.process_guess(1, "vivid");
             console.log("return VALUE is ----------", returnVal);
             alert(JSON.stringify(returnVal));
             alert("successful");
