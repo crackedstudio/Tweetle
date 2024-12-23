@@ -1,8 +1,9 @@
 "use client";
 import { useState } from "react";
 import GameBottomNav from "../components/gameplay/GameBottomNav";
-import { Contract, cairo, AccountInterface } from "starknet";
+import { Contract, cairo, AccountInterface, CallData, Provider } from "starknet";
 import gameAbi from "../utils/gameAbi.json";
+import vrfAbi from "../utils/vrfAbi.json"
 
 import { SessionAccountInterface } from "@argent/tma-wallet";
 
@@ -13,6 +14,7 @@ import LoseModal from "../components/modal/LoseModal";
 import Keyboard from "../components/gameplay/Keyboard";
 import { useOutletContext } from "react-router-dom";
 import axios from "axios";
+import { source } from "framer-motion/client";
 const SAMPLE_WORD = ["C", "O", "V", "I", "D"];
 
 interface OutletContextType {
@@ -264,6 +266,55 @@ const Play = () => {
     //     }
     // };
 
+    const handleCreateNewGame = async () => {
+
+        const game_addr =
+            "0x06c9091b88d7e8f988f76a28468345c3bdcef0b6bb155fbe5d42e411bda2a6de";
+
+        const vrf_addr = '0x051fea4450da9d6aee758bdeba88b2f665bcbf549d2c61421aa724e9ac0ced8f';
+        const gameContract = new Contract(gameAbi, game_addr, account);
+        const vrfContract = new Contract(vrfAbi, vrf_addr, account);
+
+        try {
+            if (!account) {
+                return;
+              }
+              await vrfContract.connect(account);
+            const call = await account?.execute([
+                {
+                    contractAddress: '0x051fea4450da9d6aee758bdeba88b2f665bcbf549d2c61421aa724e9ac0ced8f',
+                    entrypoint: 'request_random',
+                    calldata: CallData.compile({
+                      caller: game_addr,
+                      source: {type: 0, address: account?.address},
+                    }),
+                },
+                // {
+                //     contractAddress: '0x051fea4450da9d6aee758bdeba88b2f665bcbf549d2c61421aa724e9ac0ced8f',
+                //     entrypoint: 'consume_random',
+                //     calldata: CallData.compile({
+                //         source: {type: 0, address: account?.address}
+                //     })
+                // }, 
+                {
+                    contractAddress: '0x06c9091b88d7e8f988f76a28468345c3bdcef0b6bb155fbe5d42e411bda2a6de',
+                    entrypoint: 'create_new_game',
+                }
+            ])
+
+            if(!call) {
+                return
+              }
+
+            await account.waitForTransaction(call.transaction_hash);
+
+            alert(call.transaction_hash)
+
+        } catch (error) {
+            alert(error)
+        }
+    }
+
     const convertWordArrayToString = (wordArray: string[]) => {
         let string = "";
         for (let letter of wordArray) {
@@ -340,6 +391,7 @@ const Play = () => {
     return (
         <div>
             <div className="flex flex-col">
+                <button onClick={handleCreateNewGame}>click</button>
                 <div>
                     <GameTopNav />
                 </div>
