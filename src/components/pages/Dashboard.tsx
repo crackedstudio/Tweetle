@@ -32,7 +32,7 @@ const Dashboard = () => {
                             </div>
                             <div className="flex items-center">
                                 <div className="w-3/4">
-                                    <DashboardButtons where="/play" hasPair>
+                                    <DashboardButtons where="/classic" hasPair>
                                         <p>CLASSIC</p>
                                     </DashboardButtons>
                                 </div>
