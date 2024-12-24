@@ -1,9 +1,15 @@
 "use client";
 import { useState } from "react";
 import GameBottomNav from "../components/gameplay/GameBottomNav";
-import { Contract, cairo, AccountInterface, CallData, Provider } from "starknet";
+import {
+    Contract,
+    cairo,
+    AccountInterface,
+    CallData,
+    Provider,
+} from "starknet";
 import gameAbi from "../utils/gameAbi.json";
-import vrfAbi from "../utils/vrfAbi.json"
+import vrfAbi from "../utils/vrfAbi.json";
 
 import { SessionAccountInterface } from "@argent/tma-wallet";
 
@@ -40,6 +46,7 @@ const Play = () => {
 
     const [processingGuess, setProcessingGuess] = useState(false);
     const [gottenData, setGottenData] = useState(false);
+    const [isCurrentWordBoxFull, setIsCurrentWordBoxFull] = useState(false);
     // const [fetchingRecentPlay, setFetchingRecentPlay] = useState(false);
 
     const initialOrder = [
@@ -65,97 +72,81 @@ const Play = () => {
     );
 
     const updateBox = async (value: string) => {
-        // setCurrentLetterbox(currentLetterbox + 1);
-        if (currentLetterbox >= 4) {
-            const _word = convertWordArrayToString(wordBoxes[currentWordbox]);
-            const _currentWordState = await getWordState(_word);
-            setCurrentWordState(_currentWordState);
+        if (userWon || userLost) {
+            return;
+        }
+
+        if (value.toLowerCase() === "del") {
+            if (currentLetterbox === 0) {
+                return;
+            }
+            setWordBoxes((prevBoxes) => {
+                const newBoxes = [...prevBoxes];
+                newBoxes[currentWordbox] = [...newBoxes[currentWordbox]];
+                newBoxes[currentWordbox][currentLetterbox - 1] = "";
+                return newBoxes;
+            });
+            setCurrentLetterbox((prev) => prev - 1);
+            return;
+        }
+
+        // Don't process more input if we're already at max letters
+        if (currentLetterbox > 4) {
+            return;
         }
 
         setWordBoxes((prevBoxes) => {
             const newBoxes = [...prevBoxes];
-            if (userWon || userLost) {
-                return newBoxes;
-            }
-            if (value.toLowerCase() === "del") {
-                if (currentLetterbox === 0) {
-                    return newBoxes;
-                }
-                newBoxes[currentWordbox] = [...newBoxes[currentWordbox]];
-                newBoxes[currentWordbox][currentLetterbox - 1] = "";
-                setCurrentLetterbox(currentLetterbox - 1);
-                return newBoxes;
-            } else if (currentLetterbox < 4) {
-                setCurrentLetterbox(currentLetterbox + 1);
-                newBoxes[currentWordbox] = [...newBoxes[currentWordbox]];
-                newBoxes[currentWordbox][currentLetterbox] = value;
+            newBoxes[currentWordbox] = [...newBoxes[currentWordbox]];
+            newBoxes[currentWordbox][currentLetterbox] = value;
+            return newBoxes;
+        });
 
-                console.log("currentLetterBox", currentLetterbox);
-                return newBoxes;
-            } else {
-                setCurrentLetterbox(currentLetterbox + 1);
-                if (currentLetterbox > 4) {
-                    setCurrentLetterbox(currentLetterbox);
-                    return newBoxes;
-                }
-                newBoxes[currentWordbox] = [...newBoxes[currentWordbox]];
-                newBoxes[currentWordbox][currentLetterbox] = value;
+        // If this input completes the word
+        if (currentLetterbox === 4) {
+            const updatedWord = [...wordBoxes[currentWordbox], value];
+            const wordString = convertWordArrayToString(updatedWord);
 
-                console.log("I have got here");
+            try {
+                const _currentWordState = await getWordState(wordString);
+                setCurrentWordState(_currentWordState);
+                updateCorrectOrder(currentWordbox, _currentWordState);
 
-                console.log("current word state is --__--", currentWordState);
-                updateCorrectOrder(currentWordbox, currentWordState);
-                //get Vibrating boxes
-                const _vibratorsArray = generateVibrators(currentWordState);
+                const _vibratorsArray = generateVibrators(_currentWordState);
                 setVibratorsArray(_vibratorsArray);
 
-                let status = checkAllValid(currentWordState);
-                console.log("current status is --__--", status);
-                let isReadyForNextWordbox = true;
+                const status = checkAllValid(_currentWordState);
 
-                if (status == "won") {
+                if (status === "won") {
                     setUserWon(true);
                     setWinModal(true);
+                    return;
                 }
 
-                if (status === "fail") isReadyForNextWordbox = false;
+                if (status === "fail") {
+                    return;
+                }
 
                 if (status === "pass" && currentWordbox === 5) {
-                    isReadyForNextWordbox = false;
                     setLoseModal(true);
                     setUserLost(true);
-                    return newBoxes;
+                    return;
                 }
 
-                console.log("is ready for next wordbox", isReadyForNextWordbox);
-
-                if (isReadyForNextWordbox) {
+                // Move to next word if the guess was valid
+                if (status === "pass") {
                     setCurrentLetterbox(0);
-                    setCurrentWordbox(currentWordbox + 1);
-                } else {
-                    return newBoxes;
+                    setCurrentWordbox((prev) => prev + 1);
+                    return;
                 }
-
-                return newBoxes;
-                //we should check here if words are valid , keep those words and their
-                //index somewhere , then check If in right position before
-                //colour grading them
+            } catch (error) {
+                console.error("Error processing word:", error);
             }
-            //  let _currentWordState: number[];
-            //  if (currentLetterbox == 4 && value !== "del") {
-            //      let _currentWordBox = wordBoxes[currentWordbox];
-            //      _currentWordBox.push(value);
-            //      await handleProcessGuess(_currentWordBox);
-            //      _currentWordState = await handleFetchRecentPlay();
-            //  }
-        });
+        } else {
+            setCurrentLetterbox((prev) => prev + 1);
+        }
     };
-    //get the current index to play to
-    //if the word box is filled , check for correctness
-    //if at least letter in word box returns a true(update word Array), then move to next word box
-    //keep on repeating above process , constantly check if all return true and in right position
-    //if all pass , announce win
-    //if all dont pass, end game and announce loss
+
     const checkAllValid = (currentWordState: number[]) => {
         let isAllValid = "";
         let total = 0;
@@ -173,23 +164,6 @@ const Play = () => {
 
         return isAllValid;
     };
-
-    // const checkIfValid = (letter: string) => {
-    //     let is_valid = false;
-    //     for (let i of SAMPLE_WORD) {
-    //         if (i.toLowerCase() === letter.toLowerCase()) {
-    //             is_valid = true;
-    //         }
-    //     }
-    //     return is_valid;
-    // };
-    // const checkIfInRightPosition = (index: number, userWord: string[]) => {
-    //     let isInRightPosition = false;
-    //     if (SAMPLE_WORD[index] === userWord[index]) {
-    //         isInRightPosition = true;
-    //     }
-    //     return isInRightPosition;
-    // };
 
     // To update a single value in correctOrder
     const updateCorrectOrder = (rowIndex: number, newWordState: number[]) => {
@@ -216,77 +190,28 @@ const Play = () => {
         // await handleFetchRecentPlay();
     };
 
-    // const handleFetchRecentPlay = async () => {
-    //     const game_addr =
-    //         "0x03c9952e2a146c4aa9d327527416b1a448587d7a839f343ff73997e156e2d4dd";
-    //     const gameContract = new Contract(gameAbi, game_addr, account);
-    //     setFetchingRecentPlay(true);
-    //     alert("about to start fetching");
-    //     let _updatedWordState = [];
-    //     try {
-    //         alert("fetching now ");
-    //         const returnVal = await gameContract.get_user_recent_play(
-    //             account?.address,
-    //             1
-    //         );
-    //         console.log("return VALUE is ----------", returnVal);
-    //         _updatedWordState.push(returnVal.first);
-    //         _updatedWordState.push(returnVal.second);
-    //         _updatedWordState.push(returnVal.third);
-    //         _updatedWordState.push(returnVal.fourth);
-    //         _updatedWordState.push(returnVal.fifth);
-    //         alert(_updatedWordState);
-    //         alert("successful");
-    //         setFetchingRecentPlay(false);
-    //         return _updatedWordState;
-    //     } catch (error: any) {
-    //         setFetchingRecentPlay(false);
-    //         alert("failll" + error);
-    //         return [0, 0, 0, 0, 0];
-    //     }
-    // };
-
-    // const handleProcessGuess = async (wordArray: string[]) => {
-    //     const game_addr =
-    //         "0x03c9952e2a146c4aa9d327527416b1a448587d7a839f343ff73997e156e2d4dd";
-    //     const gameContract = new Contract(gameAbi, game_addr, account);
-    //     setProcessingGuess(true);
-
-    //     try {
-    //         alert("trying now ");
-    //         alert(convertWordArrayToString(wordArray));
-    //         const returnVal = await gameContract.process_guess(1, "vivid");
-    //         console.log("return VALUE is ----------", returnVal);
-    //         alert(JSON.stringify(returnVal));
-    //         alert("successful");
-    //         setProcessingGuess(false);
-    //     } catch (error: any) {
-    //         setProcessingGuess(false);
-    //         alert("failll" + error);
-    //     }
-    // };
-
     const handleCreateNewGame = async () => {
-
         const game_addr =
             "0x06c9091b88d7e8f988f76a28468345c3bdcef0b6bb155fbe5d42e411bda2a6de";
 
-        const vrf_addr = '0x051fea4450da9d6aee758bdeba88b2f665bcbf549d2c61421aa724e9ac0ced8f';
+        const vrf_addr =
+            "0x051fea4450da9d6aee758bdeba88b2f665bcbf549d2c61421aa724e9ac0ced8f";
         const gameContract = new Contract(gameAbi, game_addr, account);
         const vrfContract = new Contract(vrfAbi, vrf_addr, account);
 
         try {
             if (!account) {
                 return;
-              }
-              await vrfContract.connect(account);
+            }
+            await vrfContract.connect(account);
             const call = await account?.execute([
                 {
-                    contractAddress: '0x051fea4450da9d6aee758bdeba88b2f665bcbf549d2c61421aa724e9ac0ced8f',
-                    entrypoint: 'request_random',
+                    contractAddress:
+                        "0x051fea4450da9d6aee758bdeba88b2f665bcbf549d2c61421aa724e9ac0ced8f",
+                    entrypoint: "request_random",
                     calldata: CallData.compile({
-                      caller: game_addr,
-                      source: {type: 0, address: account?.address},
+                        caller: game_addr,
+                        source: { type: 0, address: account?.address },
                     }),
                 },
                 // {
@@ -295,25 +220,25 @@ const Play = () => {
                 //     calldata: CallData.compile({
                 //         source: {type: 0, address: account?.address}
                 //     })
-                // }, 
+                // },
                 {
-                    contractAddress: '0x06c9091b88d7e8f988f76a28468345c3bdcef0b6bb155fbe5d42e411bda2a6de',
-                    entrypoint: 'create_new_game',
-                }
-            ])
+                    contractAddress:
+                        "0x06c9091b88d7e8f988f76a28468345c3bdcef0b6bb155fbe5d42e411bda2a6de",
+                    entrypoint: "create_new_game",
+                },
+            ]);
 
-            if(!call) {
-                return
-              }
+            if (!call) {
+                return;
+            }
 
             await account.waitForTransaction(call.transaction_hash);
 
-            alert(call.transaction_hash)
-
+            alert(call.transaction_hash);
         } catch (error) {
-            alert(error)
+            alert(error);
         }
-    }
+    };
 
     const convertWordArrayToString = (wordArray: string[]) => {
         let string = "";
@@ -335,48 +260,45 @@ const Play = () => {
         try {
             alert("word is ____" + word);
 
-            // Using fetch to make the POST request
-            const response = await fetch(
+            const response = await axios.post(
                 "https://tweetle-bot-backend.onrender.com/game",
                 {
-                    method: "POST",
+                    word: word.toLowerCase(),
+                },
+                {
                     headers: {
-                        "Content-Type": "application/json", // Set the content type to JSON
+                        "Content-Type": "application/json; charset=utf-8",
                     },
-                    body: JSON.stringify({ word: word.toLowerCase() }), // Send the word as JSON
                 }
             );
 
-            if (!response.ok) {
-                // If response is not OK (status code outside 2xx)
-                throw new Error(`Server error: ${response.status}`);
-            }
-
-            const data = await response.json(); // Parse the response JSON
             setProcessingGuess(false);
-            return data;
+            alert(response.data.message);
+            console.log("RESPONSES>DATA>>>", response.data);
+            alert(response.data.data);
+            return response.data.data;
         } catch (err: any) {
             setProcessingGuess(false);
 
-            // Handle errors and display relevant message
-            alert(`Error occurred: ${err.message}`);
-            return [0, 0, 0, 0, 0]; // Return the default value on error
+            // Log the detailed error message
+            if (err.response) {
+                // The request was made and the server responded with a status code
+                // that falls out of the range of 2xx
+                console.log("Response data:", err.response.data);
+                console.log("Response status:", err.response.status);
+                console.log("Response headers:", err.response.headers);
+                alert(`Server responded with error: ${err.response.status}`);
+            } else if (err.request) {
+                // The request was made but no response was received
+                console.log("Request:", err.request);
+                alert("No response from server. Possible network error.");
+            } else {
+                // Something happened in setting up the request that triggered an Error
+                console.log("Error message:", err.message);
+                alert(`Error: ${err.message}`);
+            }
         }
     };
-
-    //A FUNCTION THAT SEARCHES TO RETURN THE ARRRAY EQUIV STATE OF THE USER INPUT
-    // const getWordState = (word: string[]) => {
-    //     let _returnArray = [0, 0, 0, 0, 0];
-    //     for (let i in word) {
-    //         if (checkIfValid(word[i])) {
-    //             _returnArray[i] = 1;
-    //         }
-    //         if (checkIfInRightPosition(Number(i), word)) {
-    //             _returnArray[i] = 2;
-    //         }
-    //     }
-    //     return _returnArray;
-    // };
 
     const generateVibrators = (_wordState: number[]) => {
         const _vibrators = _wordState.map((state) => {
