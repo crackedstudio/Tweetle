@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import checkmark from "../../assets/svg/checkmark-badge-01.svg";
 
 const GAMES_LIST = [
     { id: 1, active: true },
@@ -41,7 +42,11 @@ const ClassicGamesList = () => {
                     className="flex mb-4 space-x-2 justify-center items-center"
                 >
                     {gamesRow.map((game) => (
-                        <GameBox id={game.id} active={game.active} />
+                        <GameBox
+                            id={game.id}
+                            active={game.active}
+                            played={game.active}
+                        />
                     ))}
                 </div>
             ))}
@@ -51,8 +56,9 @@ const ClassicGamesList = () => {
 interface GameBoxProps {
     id: number;
     active: boolean;
+    played?: boolean;
 }
-const GameBox = ({ id, active }: GameBoxProps) => {
+const GameBox = ({ id, active, played }: GameBoxProps) => {
     return (
         <Link to={active ? "/play" : "/classic"}>
             <div
@@ -63,6 +69,13 @@ const GameBox = ({ id, active }: GameBoxProps) => {
                 }
             >
                 <div className="absolute inset-0 bg-black bg-opacity-60 rounded-lg"></div>
+                {played && (
+                    <img
+                        src={checkmark}
+                        alt="check-mark"
+                        className="absolute top-0 left-[70%]"
+                    />
+                )}
                 <div className="text-center relative z-10">
                     <p className="text-xl">{id}</p>
                 </div>
