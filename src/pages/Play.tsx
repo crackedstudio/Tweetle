@@ -190,20 +190,55 @@ const Play = () => {
         // await handleFetchRecentPlay();
     };
 
+    const handleSavePlayerGuess = async () => {
+        const game_addr =
+            "0x033ccdb04e78933097705e1847779f59db1c868f4da503c87d5a776854256fca";
+        const gameContract = new Contract(gameAbi, game_addr, account);
+
+        try {
+            if (!account) {
+                return;
+            }
+            await gameContract.save_player_guess(1);
+        } catch (err) {
+            console.log(err);
+        }
+    };
+
+    const handleFetchUserGames = async () => {
+        const game_addr =
+            "0x033ccdb04e78933097705e1847779f59db1c868f4da503c87d5a776854256fca";
+        const gameContract = new Contract(gameAbi, game_addr, account);
+
+        try {
+            if (!account) {
+                return;
+            }
+            const _playerGames = await gameContract.get_player_games(
+                account.address
+            );
+            alert("player games is _______" + _playerGames);
+        } catch (err) {
+            console.log(err);
+        }
+    };
+
     const handleCreateNewGame = async () => {
         const game_addr =
-            "0x06c9091b88d7e8f988f76a28468345c3bdcef0b6bb155fbe5d42e411bda2a6de";
+            "0x033ccdb04e78933097705e1847779f59db1c868f4da503c87d5a776854256fca";
+        // 0x033ccdb04e78933097705e1847779f59db1c868f4da503c87d5a776854256fca;
 
         const vrf_addr =
             "0x051fea4450da9d6aee758bdeba88b2f665bcbf549d2c61421aa724e9ac0ced8f";
         const gameContract = new Contract(gameAbi, game_addr, account);
         const vrfContract = new Contract(vrfAbi, vrf_addr, account);
 
+        // 0x003b7234057f3cd7622d2d8203861dcfe013c475bc06413c312d5b36645845b6
         try {
             if (!account) {
                 return;
             }
-            await vrfContract.connect(account);
+            gameContract.connect(account);
             const call = await account?.execute([
                 {
                     contractAddress:
@@ -214,17 +249,12 @@ const Play = () => {
                         source: { type: 0, address: account?.address },
                     }),
                 },
-                // {
-                //     contractAddress: '0x051fea4450da9d6aee758bdeba88b2f665bcbf549d2c61421aa724e9ac0ced8f',
-                //     entrypoint: 'consume_random',
-                //     calldata: CallData.compile({
-                //         source: {type: 0, address: account?.address}
-                //     })
-                // },
                 {
-                    contractAddress:
-                        "0x06c9091b88d7e8f988f76a28468345c3bdcef0b6bb155fbe5d42e411bda2a6de",
+                    contractAddress: game_addr,
                     entrypoint: "create_new_game",
+                    calldata: CallData.compile({
+                        _player_id: account?.address,
+                    }),
                 },
             ]);
 
@@ -258,8 +288,6 @@ const Play = () => {
         }
 
         try {
-            alert("word is ____" + word);
-
             const response = await axios.post(
                 "https://tweetle-bot-backend.onrender.com/game",
                 {
@@ -275,7 +303,7 @@ const Play = () => {
             setProcessingGuess(false);
             alert(response.data.message);
             console.log("RESPONSES>DATA>>>", response.data);
-            alert(response.data.data);
+
             return response.data.data;
         } catch (err: any) {
             setProcessingGuess(false);

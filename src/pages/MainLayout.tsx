@@ -4,6 +4,8 @@ import BottomNav from "../components/BottomNav";
 import { ArgentTMA, SessionAccountInterface } from "@argent/tma-wallet";
 import { useEffect, useState } from "react";
 import LoadingFullPage from "../components/pages/LoadingFullPage";
+import { Contract } from "starknet";
+import gameAbi from "../utils/gameAbi.json";
 
 const argentTMA = ArgentTMA.init({
     environment: "sepolia", // "sepolia" | "mainnet" (not supperted yet)
@@ -14,23 +16,29 @@ const argentTMA = ArgentTMA.init({
             // List of contracts/methods allowed to be called by the session key
             {
                 contract:
-                    "0x03c9952e2a146c4aa9d327527416b1a448587d7a839f343ff73997e156e2d4dd",
-                selector: "process_guess",
-            },
-            {
-                contract:
                     "0x051fea4450da9d6aee758bdeba88b2f665bcbf549d2c61421aa724e9ac0ced8f",
                 selector: "request_random",
             },
             {
                 contract:
-                    "0x06c9091b88d7e8f988f76a28468345c3bdcef0b6bb155fbe5d42e411bda2a6de",
+                    "0x033ccdb04e78933097705e1847779f59db1c868f4da503c87d5a776854256fca",
                 selector: "create_new_game",
+            },
+            {
+                contract:
+                    "0x033ccdb04e78933097705e1847779f59db1c868f4da503c87d5a776854256fca",
+                selector: "save_player_guess",
+            },
+            {
+                contract:
+                    "0x033ccdb04e78933097705e1847779f59db1c868f4da503c87d5a776854256fca",
+                selector: "get_player_games",
             },
         ],
         validityDays: 90, // session validity (in days) - default: 90
     },
 });
+// const regex = /\/(play|classic)/;
 
 const MainLayout = () => {
     const [account, setAccount] = useState<
@@ -38,6 +46,29 @@ const MainLayout = () => {
     >();
     const [isConnected, setIsConnected] = useState<boolean>(false);
     const [isLoading, setIsLoading] = useState(true);
+    const [playerDetails, setPlayerDetails] = useState({});
+
+    const getPlayerDetails = async (account: any) => {
+        if (!account) return;
+        const game_addr =
+            "0x033ccdb04e78933097705e1847779f59db1c868f4da503c87d5a776854256fca";
+        const gameContract = new Contract(gameAbi, game_addr, account);
+
+        try {
+            if (!account) {
+                return;
+            }
+            const _playerDetails = await gameContract.get_player_details(
+                account.address
+            );
+            // alert("player details is ___" + _playerDetails.game_count);
+            console.log("player details is ___", _playerDetails);
+            return _playerDetails;
+        } catch (err) {
+            console.log(err);
+            return;
+        }
+    };
 
     useEffect(() => {
         const timer = setTimeout(() => {
@@ -80,6 +111,16 @@ const MainLayout = () => {
             .catch((err) => {
                 console.error("Failed to connect", err);
             });
+
+        const fetchPlayerDetails = async () => {
+            try {
+                const _playerDetails = await getPlayerDetails(account);
+                setPlayerDetails(_playerDetails);
+            } catch (error) {
+                console.error("Error fetching games:", error);
+            }
+        };
+        fetchPlayerDetails();
     }, [account]);
 
     const handleConnectButton = async () => {
@@ -95,7 +136,9 @@ const MainLayout = () => {
     if (isLoading) {
         return <LoadingFullPage />;
     }
-    console.log("Current window location is -- ", window.location.href);
+    // console.log("Current window location is -- ", window.location.href);
+    // const isOnPlayOrShuffle = regex.test(window.location.href);
+
     return (
         <div className="flex flex-col h-[100vh] overflow-hidden text-white relative">
             <main className="flex-grow h-full overflow-auto">
@@ -105,10 +148,12 @@ const MainLayout = () => {
                         handleClearSessionButton,
                         handleConnectButton,
                         isConnected,
+                        playerDetails,
                     }}
                 />
             </main>
-            {/* <BottomNav /> */}
+            {/* {!isOnPlayOrShuffle && <BottomNav />} */}
+            <BottomNav />
         </div>
     );
 };

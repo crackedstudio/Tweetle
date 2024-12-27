@@ -9,6 +9,7 @@ interface OutletContextType {
     account: any | null;
     handleClearSessionButton: () => void;
     isConnected: boolean;
+    playerDetails: {};
 }
 
 const GameTopNav = () => {
