@@ -3,6 +3,7 @@ import checkmark from "../../assets/svg/checkmark-badge-01.svg";
 import { Contract } from "starknet";
 import gameAbi from "../../utils/gameAbi.json";
 import { useEffect, useState } from "react";
+import useGameLogic from "../../hooks/useGameLogic";
 
 const GAMES_LIST = [
     { id: 1, active: false },
@@ -40,32 +41,13 @@ interface OutletContextType {
 }
 
 const ClassicGamesList = () => {
-    const { account, playerDetails } = useOutletContext<OutletContextType>();
+    const { playerDetails } = useOutletContext<OutletContextType>();
     const [allGames, setAllGames] = useState([]);
-
-    const fetchAllUserGames = async () => {
-        if (!account) return;
-        const game_addr =
-            "0x033ccdb04e78933097705e1847779f59db1c868f4da503c87d5a776854256fca";
-        const gameContract = new Contract(gameAbi, game_addr, account);
-
-        try {
-            if (!account) {
-                return;
-            }
-            const _playerGames = await gameContract.get_player_games(
-                account.address
-            );
-            return _playerGames;
-        } catch (err) {
-            console.log(err);
-            return [];
-        }
-    };
+    const { fetchAllUserGames } = useGameLogic();
 
     const chunkedGames = [];
 
-    for (let i = 0; i <= playerDetails.game_count + 1; i++) {
+    for (let i = 0; i <= Number(playerDetails.game_count) + 1; i++) {
         GAMES_LIST[i].active = true;
     }
     for (let i = 0; i < GAMES_LIST.length; i += 4) {
@@ -76,13 +58,15 @@ const ClassicGamesList = () => {
         const fetchGames = async () => {
             try {
                 const playerGames = await fetchAllUserGames();
+                console.log("player games -- -- - - ", playerGames);
                 setAllGames(playerGames);
-                playerGames.map((game) =>
-                    console.log(
-                        "player game secret word ____----____" +
-                            String(game.secret_word)
-                    )
-                );
+                if (!playerGames) return;
+                // playerGames.map((game) =>
+                //     console.log(
+                //         "player game secret word ____----____" +
+                //             String(game.secret_word)
+                //     )
+                // );
             } catch (error) {
                 console.error("Error fetching games:", error);
             }
