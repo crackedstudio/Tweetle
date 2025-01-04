@@ -122,7 +122,7 @@ const MainLayout = () => {
                 console.error("Error fetching games:", error);
             }
         };
-        if (!playerGameCount) fetchPlayerDetails();
+        fetchPlayerDetails();
     }, [account]);
 
     const handleConnectButton = async () => {
