@@ -21,18 +21,14 @@ const argentTMA = ArgentTMA.init({
             },
             {
                 contract:
-                    "0x033ccdb04e78933097705e1847779f59db1c868f4da503c87d5a776854256fca",
+                    "0x6726494f5ced7684652a23fac3754338f0ef3f399e7bd004d57c9a4a7ca9ba1",
                 selector: "create_new_game",
             },
+
             {
                 contract:
-                    "0x033ccdb04e78933097705e1847779f59db1c868f4da503c87d5a776854256fca",
-                selector: "save_player_guess",
-            },
-            {
-                contract:
-                    "0x033ccdb04e78933097705e1847779f59db1c868f4da503c87d5a776854256fca",
-                selector: "get_player_games",
+                    "0x6726494f5ced7684652a23fac3754338f0ef3f399e7bd004d57c9a4a7ca9ba1",
+                selector: "random_number",
             },
         ],
         validityDays: 90, // session validity (in days) - default: 90

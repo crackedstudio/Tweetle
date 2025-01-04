@@ -192,16 +192,36 @@ const Play = () => {
 
     const handleSavePlayerGuess = async () => {
         const game_addr =
-            "0x033ccdb04e78933097705e1847779f59db1c868f4da503c87d5a776854256fca";
+            "0x043eb60dc59822103668738df135b407a639d4abbeef95afe0949a3df8f7b802";
         const gameContract = new Contract(gameAbi, game_addr, account);
+
+        let calls = [
+            {
+                to:
+                    "0x051fea4450da9d6aee758bdeba88b2f665bcbf549d2c61421aa724e9ac0ced8f",
+                selector: "request_random",
+                calldata: CallData.compile({
+                    caller: game_addr,
+                    source: { type: 0, address: account?.address },
+                }),
+            },
+            {
+                to: game_addr,
+                selector: "random_number",
+                calldata: CallData.compile({
+                    _num: 0,
+                }),
+            },
+        ]
 
         try {
             if (!account) {
                 return;
             }
-            await gameContract.save_player_guess(1);
+            await gameContract.create_instant_game(calls);
         } catch (err) {
             console.log(err);
+            alert(err)
         }
     };
 
@@ -225,11 +245,11 @@ const Play = () => {
 
     const handleCreateNewGame = async () => {
         const game_addr =
-            "0x033ccdb04e78933097705e1847779f59db1c868f4da503c87d5a776854256fca";
+            '0x6726494f5ced7684652a23fac3754338f0ef3f399e7bd004d57c9a4a7ca9ba1';
         // 0x033ccdb04e78933097705e1847779f59db1c868f4da503c87d5a776854256fca;
 
         const vrf_addr =
-            "0x051fea4450da9d6aee758bdeba88b2f665bcbf549d2c61421aa724e9ac0ced8f";
+            '0x051fea4450da9d6aee758bdeba88b2f665bcbf549d2c61421aa724e9ac0ced8f';
         const gameContract = new Contract(gameAbi, game_addr, account);
         const vrfContract = new Contract(vrfAbi, vrf_addr, account);
 
@@ -242,30 +262,38 @@ const Play = () => {
             const call = await account?.execute([
                 {
                     contractAddress:
-                        "0x051fea4450da9d6aee758bdeba88b2f665bcbf549d2c61421aa724e9ac0ced8f",
-                    entrypoint: "request_random",
+                        '0x051fea4450da9d6aee758bdeba88b2f665bcbf549d2c61421aa724e9ac0ced8f',
+                    entrypoint: 'request_random',
                     calldata: CallData.compile({
                         caller: game_addr,
-                        source: { type: 0, address: account?.address },
+                        source: {type: 0, address: account?.address}
                     }),
                 },
                 {
                     contractAddress: game_addr,
-                    entrypoint: "create_new_game",
+                    entrypoint: 'create_new_game',
                     calldata: CallData.compile({
                         _player_id: account?.address,
                     }),
                 },
+                // {
+                //     contractAddress: game_addr,
+                //     entrypoint: 'random_number',
+                //     calldata: CallData.compile({
+                //         _num: cairo.uint256('500'),
+                //     }),
+                // },
             ]);
 
             if (!call) {
-                return;
+                return new Error('call not made !!');
             }
 
             await account.waitForTransaction(call.transaction_hash);
 
             alert(call.transaction_hash);
         } catch (error) {
+            console.log(error)
             alert(error);
         }
     };
