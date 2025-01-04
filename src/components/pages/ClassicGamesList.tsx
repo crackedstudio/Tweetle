@@ -6,30 +6,30 @@ import { useEffect, useState } from "react";
 import useGameLogic from "../../hooks/useGameLogic";
 
 const GAMES_LIST = [
-    { id: 1, active: false },
-    { id: 2, active: false },
-    { id: 3, active: false },
-    { id: 4, active: false },
-    { id: 5, active: false },
-    { id: 6, active: false },
-    { id: 7, active: false },
-    { id: 8, active: false },
-    { id: 9, active: false },
-    { id: 10, active: false },
-    { id: 11, active: false },
-    { id: 12, active: false },
-    { id: 13, active: false },
-    { id: 14, active: false },
-    { id: 15, active: false },
-    { id: 16, active: false },
-    { id: 17, active: false },
-    { id: 18, active: false },
-    { id: 19, active: false },
-    { id: 20, active: false },
-    { id: 21, active: false },
-    { id: 22, active: false },
-    { id: 23, active: false },
-    { id: 24, active: false },
+    { id: 1, active: false, played: false },
+    { id: 2, active: false, played: false },
+    { id: 3, active: false, played: false },
+    { id: 4, active: false, played: false },
+    { id: 5, active: false, played: false },
+    { id: 6, active: false, played: false },
+    { id: 7, active: false, played: false },
+    { id: 8, active: false, played: false },
+    { id: 9, active: false, played: false },
+    { id: 10, active: false, played: false },
+    { id: 11, active: false, played: false },
+    { id: 12, active: false, played: false },
+    { id: 13, active: false, played: false },
+    { id: 14, active: false, played: false },
+    { id: 15, active: false, played: false },
+    { id: 16, active: false, played: false },
+    { id: 17, active: false, played: false },
+    { id: 18, active: false, played: false },
+    { id: 19, active: false, played: false },
+    { id: 20, active: false, played: false },
+    { id: 21, active: false, played: false },
+    { id: 22, active: false, played: false },
+    { id: 23, active: false, played: false },
+    { id: 24, active: false, played: false },
 ];
 
 interface OutletContextType {
@@ -47,9 +47,11 @@ const ClassicGamesList = () => {
 
     const chunkedGames = [];
 
-    for (let i = 0; i <= Number(playerDetails.game_count) + 1; i++) {
+    for (let i = 0; i <= Number(playerDetails?.game_count) - 1; i++) {
         GAMES_LIST[i].active = true;
+        GAMES_LIST[i].played = true;
     }
+    GAMES_LIST[Number(playerDetails.game_count)].active = true;
     for (let i = 0; i < GAMES_LIST.length; i += 4) {
         chunkedGames.push(GAMES_LIST.slice(i, i + 4));
     }
@@ -85,7 +87,7 @@ const ClassicGamesList = () => {
                         <GameBox
                             id={game.id}
                             active={game.active}
-                            played={game.active}
+                            played={game.played}
                         />
                     ))}
                 </div>
