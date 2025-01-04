@@ -38,20 +38,21 @@ interface OutletContextType {
     handleClearSessionButton: () => void;
     isConnected: boolean;
     playerDetails: {};
+    playerGameCount: number;
 }
 
 const ClassicGamesList = () => {
-    const { playerDetails } = useOutletContext<OutletContextType>();
+    const { playerGameCount } = useOutletContext<OutletContextType>();
     const [allGames, setAllGames] = useState([]);
     const { fetchAllUserGames } = useGameLogic();
 
     const chunkedGames = [];
 
-    for (let i = 0; i <= Number(playerDetails.game_count) - 1; i++) {
+    for (let i = 0; i <= Number(playerGameCount); i++) {
         GAMES_LIST[i].active = true;
         GAMES_LIST[i].played = true;
     }
-    GAMES_LIST[Number(playerDetails.game_count)].active = true;
+    GAMES_LIST[Number(playerGameCount) || 0].active = true;
     for (let i = 0; i < GAMES_LIST.length; i += 4) {
         chunkedGames.push(GAMES_LIST.slice(i, i + 4));
     }
@@ -69,6 +70,9 @@ const ClassicGamesList = () => {
                 //             String(game.secret_word)
                 //     )
                 // );
+                console.log(
+                    "I AM STILL RUNNING>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>"
+                );
             } catch (error) {
                 console.error("Error fetching games:", error);
             }
