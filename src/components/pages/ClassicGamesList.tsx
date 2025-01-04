@@ -47,7 +47,7 @@ const ClassicGamesList = () => {
 
     const chunkedGames = [];
 
-    for (let i = 0; i <= Number(playerDetails?.game_count) - 1; i++) {
+    for (let i = 0; i <= Number(playerDetails.game_count) - 1; i++) {
         GAMES_LIST[i].active = true;
         GAMES_LIST[i].played = true;
     }
