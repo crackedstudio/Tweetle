@@ -6,6 +6,7 @@ import { useEffect, useState } from "react";
 import LoadingFullPage from "../components/pages/LoadingFullPage";
 import { Contract } from "starknet";
 import gameAbi from "../utils/gameAbi.json";
+import useGameLogic from "../hooks/useGameLogic";
 
 const argentTMA = ArgentTMA.init({
     environment: "sepolia", // "sepolia" | "mainnet" (not supperted yet)
@@ -21,17 +22,17 @@ const argentTMA = ArgentTMA.init({
             },
             {
                 contract:
-                    "0x033ccdb04e78933097705e1847779f59db1c868f4da503c87d5a776854256fca",
+                    "0x6726494f5ced7684652a23fac3754338f0ef3f399e7bd004d57c9a4a7ca9ba1",
                 selector: "create_new_game",
             },
             {
                 contract:
-                    "0x033ccdb04e78933097705e1847779f59db1c868f4da503c87d5a776854256fca",
+                    "0x6726494f5ced7684652a23fac3754338f0ef3f399e7bd004d57c9a4a7ca9ba1",
                 selector: "save_player_guess",
             },
             {
                 contract:
-                    "0x033ccdb04e78933097705e1847779f59db1c868f4da503c87d5a776854256fca",
+                    "0x6726494f5ced7684652a23fac3754338f0ef3f399e7bd004d57c9a4a7ca9ba1",
                 selector: "get_player_games",
             },
         ],
@@ -48,28 +49,6 @@ const MainLayout = () => {
     const [isLoading, setIsLoading] = useState(true);
     const [playerDetails, setPlayerDetails] = useState({});
     const [playerGameCount, setPlayerGameCount] = useState(0);
-
-    const getPlayerDetails = async (account: any) => {
-        if (!account) return;
-        const game_addr =
-            "0x033ccdb04e78933097705e1847779f59db1c868f4da503c87d5a776854256fca";
-        const gameContract = new Contract(gameAbi, game_addr, account);
-
-        try {
-            if (!account) {
-                return;
-            }
-            const _playerDetails = await gameContract.get_player_details(
-                account.address
-            );
-            // alert("player details is ___" + _playerDetails.game_count);
-            console.log("player details is ___", _playerDetails);
-            return _playerDetails;
-        } catch (err) {
-            console.log(err);
-            return;
-        }
-    };
 
     useEffect(() => {
         const timer = setTimeout(() => {
@@ -107,22 +86,11 @@ const MainLayout = () => {
                 setAccount(account);
                 setIsConnected(true);
                 // Custom data passed to the requestConnection() method is available here
-                console.log("callback data:", callbackData);
+                // console.log("callback data:", callbackData);
             })
             .catch((err) => {
                 console.error("Failed to connect", err);
             });
-
-        const fetchPlayerDetails = async () => {
-            try {
-                const _playerDetails = await getPlayerDetails(account);
-                setPlayerDetails(_playerDetails);
-                setPlayerGameCount(Number(_playerDetails?.game_count) || 0);
-            } catch (error) {
-                console.error("Error fetching games:", error);
-            }
-        };
-        fetchPlayerDetails();
     }, [account]);
 
     const handleConnectButton = async () => {

@@ -34,7 +34,26 @@ const useGameLogic = () => {
             return [];
         }
     };
-    return { fetchAllUserGames, playerGames };
+    const fetchGameDetails = async (_gameId: number) => {
+        if (!account) return;
+        const gameContract = new Contract(gameAbi, GAME_ADDRESS, account);
+
+        try {
+            if (!account) {
+                return;
+            }
+            const _playerGames = await gameContract.get_player_game(
+                account.address,
+                _gameId
+            );
+            setPlayerGames(_playerGames);
+            return _playerGames;
+        } catch (err) {
+            console.log(err);
+            return [];
+        }
+    };
+    return { fetchAllUserGames, playerGames, fetchGameDetails };
 };
 
 export default useGameLogic;

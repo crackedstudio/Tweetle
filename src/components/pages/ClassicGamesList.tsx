@@ -1,6 +1,6 @@
 import { Link, useOutletContext } from "react-router-dom";
 import checkmark from "../../assets/svg/checkmark-badge-01.svg";
-import { Contract } from "starknet";
+import { CallData, Contract } from "starknet";
 import gameAbi from "../../utils/gameAbi.json";
 import { useEffect, useState } from "react";
 import useGameLogic from "../../hooks/useGameLogic";
@@ -42,17 +42,18 @@ interface OutletContextType {
 }
 
 const ClassicGamesList = () => {
-    const { playerGameCount } = useOutletContext<OutletContextType>();
-    const [allGames, setAllGames] = useState([]);
+    const { account } = useOutletContext<OutletContextType>();
+    const [allGames, setAllGames] = useState<any>([]);
     const { fetchAllUserGames } = useGameLogic();
 
     const chunkedGames = [];
 
-    for (let i = 0; i < Number(playerGameCount); i++) {
+    for (let i = 0; i < allGames.length; i++) {
         GAMES_LIST[i].active = true;
-        GAMES_LIST[i].played = true;
+        if (allGames[i].is_completed) {
+            GAMES_LIST[i].played = true;
+        }
     }
-    GAMES_LIST[Number(playerGameCount) || 0].active = true;
     for (let i = 0; i < GAMES_LIST.length; i += 4) {
         chunkedGames.push(GAMES_LIST.slice(i, i + 4));
     }
@@ -80,8 +81,33 @@ const ClassicGamesList = () => {
         fetchGames();
     }, []);
 
+    const handleCreateNewGame = async () => {
+        const game_addr =
+            "0x6726494f5ced7684652a23fac3754338f0ef3f399e7bd004d57c9a4a7ca9ba1";
+        const gameContract = new Contract(gameAbi, game_addr, account);
+
+        try {
+            if (!account) {
+                return;
+            }
+            console.log("starting/..............");
+            const _playerGames = await gameContract.create_new_game(
+                account?.address
+            );
+            alert("player games is _______" + _playerGames);
+            console.log("player games is _______", _playerGames);
+        } catch (err) {
+            console.log(err);
+        }
+    };
     return (
         <div className="bg-black p-3">
+            <button
+                className="bg-green-500 text-white w-64"
+                onClick={handleCreateNewGame}
+            >
+                Refresh
+            </button>
             {chunkedGames.map((gamesRow, rowIndex) => (
                 <div
                     key={rowIndex}
