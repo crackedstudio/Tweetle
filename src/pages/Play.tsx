@@ -17,12 +17,12 @@ import axios from "axios";
 // import { source } from "framer-motion/client";
 // const SAMPLE_WORD = ["C", "O", "V", "I", "D"];
 
-// interface OutletContextType {
-//     account: any | null;
-//     handleConnectButton: () => void;
-//     handleClearSessionButton: () => void;
-//     isConnected: boolean;
-// }
+interface OutletContextType {
+    account: any | null;
+    handleConnectButton: () => void;
+    handleClearSessionButton: () => void;
+    isConnected: boolean;
+}
 
 const Play = () => {
     const { account } = useOutletContext<OutletContextType>();
