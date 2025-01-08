@@ -1,15 +1,6 @@
-import React from "react";
-import ConnectWalletBtn from "../ui/ConnectWalletBtn";
 import CoinPill from "../ui/CoinPill";
 import calendar from "../../assets/bi_calendar-date-fill.png";
-import { useOutletContext } from "react-router-dom";
 import right from "../../assets/right.png";
-
-interface OutletContextType {
-    account: any | null;
-    handleClearSessionButton: () => void;
-    isConnected: boolean;
-}
 
 const GameTopNav = () => {
     // const {account, isConnected, handleClearSessionButton} = useOutletContext<OutletContextType>();

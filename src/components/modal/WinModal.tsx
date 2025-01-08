@@ -1,6 +1,6 @@
 import celebrateGif from "../../assets/celebrate.gif";
 import cancel from "../../assets/cancel-circle.png";
-import { ClockLoader, PacmanLoader } from "react-spinners";
+import { PacmanLoader } from "react-spinners";
 
 interface WinModalProps {
     cancelHandler: () => void;
