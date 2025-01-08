@@ -4,7 +4,7 @@ import BottomNav from "../components/BottomNav";
 import { ArgentTMA, SessionAccountInterface } from "@argent/tma-wallet";
 import { useEffect, useState } from "react";
 import LoadingFullPage from "../components/pages/LoadingFullPage";
-import useGameLogic from "../hooks/useGameLogic";
+// import useGameLogic from "../hooks/useGameLogic";
 // import { CallData, Contract } from "starknet";
 // import gameAbi from "../utils/gameAbi.json";
 // import useGameLogic from "../hooks/useGameLogic";
