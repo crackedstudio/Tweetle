@@ -94,7 +94,7 @@ const MainLayout = () => {
     }, [account]);
 
     const handleConnectButton = async () => {
-        await argentTMA.requestConnection("custom_callback_data");
+        await argentTMA.requestConnection();
     };
 
     // useful for debugging
