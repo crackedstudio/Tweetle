@@ -4,7 +4,6 @@ import HomeHeroSection from "../dashboard/HomeHeroSection";
 import arrowRight from "../../assets/arrow-right.png";
 import PwdByStrk from "../ui/PwdByStrk";
 import calendar from "../../assets/solar_calendar-date-bold.png";
-// import HomeStats from "../dashboard/HomeStats";
 
 const Dashboard = () => {
     return (

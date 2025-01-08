@@ -28,17 +28,17 @@ const argentTMA = ArgentTMA.init({
             },
             {
                 contract:
-                    "0x6726494f5ced7684652a23fac3754338f0ef3f399e7bd004d57c9a4a7ca9ba1",
+                    "0x014348d668e199e0222d2a58d80c04821b9dddb00c5946d1282d415a448227c9",
                 selector: "create_new_game",
             },
             {
                 contract:
-                    "0x6726494f5ced7684652a23fac3754338f0ef3f399e7bd004d57c9a4a7ca9ba1",
+                    "0x014348d668e199e0222d2a58d80c04821b9dddb00c5946d1282d415a448227c9",
                 selector: "save_player_guess",
             },
             {
                 contract:
-                    "0x6726494f5ced7684652a23fac3754338f0ef3f399e7bd004d57c9a4a7ca9ba1",
+                    "0x014348d668e199e0222d2a58d80c04821b9dddb00c5946d1282d415a448227c9",
                 selector: "get_player_games",
             },
         ],
@@ -71,13 +71,15 @@ const MainLayout = () => {
             .then((res) => {
                 if (!res) {
                     // Not connected
+                    console.log("i have not connected");
+                    handleConnectButton();
                     setIsConnected(false);
                     return;
                 }
 
                 // Connected
                 const { account } = res;
-
+                console.log("i have connected");
                 if (account.getSessionStatus() !== "VALID") {
                     const { account } = res;
 
@@ -159,7 +161,7 @@ const MainLayout = () => {
     }
     // console.log("Current window location is -- ", window.location.href);
     // const isOnPlayOrShuffle = regex.test(window.location.href);
-    const { fetchPlayerDetails } = useGameLogic();
+    // const { fetchPlayerDetails } = useGameLogic();
     // useEffect(() => {
     //     if (!account) return;
     //     fetchPlayerDetails(account);
@@ -172,9 +174,6 @@ const MainLayout = () => {
                     <button onClick={handleRegisterPlayer}>Register</button>
                     <button onClick={handleOutsideExecution}>
                         execute_call
-                    </button>
-                    <button onClick={fetchPlayerDetails}>
-                        fetchPlayerDetails
                     </button>
                 </div>
                 <Outlet

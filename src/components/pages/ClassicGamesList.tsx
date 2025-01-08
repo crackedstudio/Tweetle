@@ -44,7 +44,7 @@ interface OutletContextType {
 const ClassicGamesList = () => {
     const { account } = useOutletContext<OutletContextType>();
     const [allGames, setAllGames] = useState<any>([]);
-    const { fetchUserClassicGames } = useGameLogic();
+    const { fetchUserClassicGames, fetchPlayerDetails } = useGameLogic();
 
     const chunkedGames = [];
 
@@ -96,6 +96,7 @@ const ClassicGamesList = () => {
             );
             alert("player games is _______" + _playerGames);
             console.log("player games is _______", _playerGames);
+            fetchPlayerDetails(account);
         } catch (err) {
             console.log(err);
         }
