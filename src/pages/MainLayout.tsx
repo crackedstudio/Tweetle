@@ -4,9 +4,15 @@ import BottomNav from "../components/BottomNav";
 import { ArgentTMA, SessionAccountInterface } from "@argent/tma-wallet";
 import { useEffect, useState } from "react";
 import LoadingFullPage from "../components/pages/LoadingFullPage";
+import useGameLogic from "../hooks/useGameLogic";
 // import { CallData, Contract } from "starknet";
 // import gameAbi from "../utils/gameAbi.json";
 // import useGameLogic from "../hooks/useGameLogic";
+
+interface ArgumentArgentTMA {
+    callbackData?: string | undefined;
+    approvalRequests?: string[] | undefined;
+}
 
 const argentTMA = ArgentTMA.init({
     environment: "sepolia", // "sepolia" | "mainnet" (not supperted yet)
@@ -92,10 +98,7 @@ const MainLayout = () => {
                 console.error("Failed to connect", err);
             });
     }, [account]);
-    interface ArgumentArgentTMA {
-        callbackData?: string | undefined;
-        approvalRequests?: string[] | undefined;
-    }
+
     const argumentArgentTMA: ArgumentArgentTMA = {
         callbackData: "custom_callback_data",
         approvalRequests: [],
@@ -156,6 +159,11 @@ const MainLayout = () => {
     }
     // console.log("Current window location is -- ", window.location.href);
     // const isOnPlayOrShuffle = regex.test(window.location.href);
+    const { fetchPlayerDetails } = useGameLogic();
+    useEffect(() => {
+        if (!account) return;
+        fetchPlayerDetails(account);
+    }, [account]);
 
     return (
         <div className="flex flex-col h-[100vh] overflow-hidden text-white relative">

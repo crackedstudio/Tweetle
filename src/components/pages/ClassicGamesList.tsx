@@ -44,7 +44,7 @@ interface OutletContextType {
 const ClassicGamesList = () => {
     const { account } = useOutletContext<OutletContextType>();
     const [allGames, setAllGames] = useState<any>([]);
-    const { fetchAllUserGames } = useGameLogic();
+    const { fetchUserClassicGames } = useGameLogic();
 
     const chunkedGames = [];
 
@@ -61,7 +61,7 @@ const ClassicGamesList = () => {
     useEffect(() => {
         const fetchGames = async () => {
             try {
-                const playerGames = await fetchAllUserGames();
+                const playerGames = await fetchUserClassicGames();
                 console.log("player games -- -- - - ", playerGames);
                 setAllGames(playerGames);
                 if (!playerGames) return;

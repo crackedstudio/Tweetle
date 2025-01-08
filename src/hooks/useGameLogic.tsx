@@ -9,15 +9,16 @@ interface OutletContextType {
     handleClearSessionButton: () => void;
     isConnected: boolean;
     playerDetails: {};
+    playerClassicGames: [];
 }
 const GAME_ADDRESS =
-    "0x6726494f5ced7684652a23fac3754338f0ef3f399e7bd004d57c9a4a7ca9ba1";
+    "0x014348d668e199e0222d2a58d80c04821b9dddb00c5946d1282d415a448227c9";
 const useGameLogic = () => {
     const { account } = useOutletContext<OutletContextType>();
-    const [playerGames, setPlayerGames] = useState([]);
-    // const[playerDetails, setPlayerDetails] = useState([])
+    const [playerClassicGames, setPlayerClassicGames] = useState([]);
+    const [playerDetails, setPlayerDetails] = useState([]);
 
-    const fetchAllUserGames = async () => {
+    const fetchUserClassicGames = async () => {
         if (!account) return;
         const gameContract = new Contract(gameAbi, GAME_ADDRESS, account);
 
@@ -25,30 +26,14 @@ const useGameLogic = () => {
             if (!account) {
                 return;
             }
-            const _playerGames = await gameContract.get_player_games(
-                account.address
+            const _playerClassicGames =
+                await gameContract.get_player_classic_games(account.address);
+            console.log(
+                "Players classic games are ====+++++?>>>>>",
+                _playerClassicGames
             );
-            setPlayerGames(_playerGames);
-            return _playerGames;
-        } catch (err) {
-            console.log(err);
-            return [];
-        }
-    };
-    const fetchGameDetails = async (_gameId: number) => {
-        if (!account) return;
-        const gameContract = new Contract(gameAbi, GAME_ADDRESS, account);
-
-        try {
-            if (!account) {
-                return;
-            }
-            const _playerGames = await gameContract.get_player_game(
-                account.address,
-                _gameId
-            );
-            setPlayerGames(_playerGames);
-            return _playerGames;
+            setPlayerClassicGames(_playerClassicGames);
+            return _playerClassicGames;
         } catch (err) {
             console.log(err);
             return [];
@@ -67,18 +52,39 @@ const useGameLogic = () => {
             );
             // alert("player details is ___" + _playerDetails.game_count);
             console.log("player details is ___", _playerDetails);
+            setPlayerDetails(_playerDetails);
             return _playerDetails;
         } catch (err) {
             console.log(err);
             return;
         }
     };
+    const fetchClassicGameDetails = async (_gameId: number) => {
+        if (!account) return;
+        const gameContract = new Contract(gameAbi, GAME_ADDRESS, account);
+
+        try {
+            if (!account) {
+                return;
+            }
+            const _playerClassicGameDetails =
+                await gameContract.get_player_classic_game(
+                    account.address,
+                    _gameId
+                );
+            return _playerClassicGameDetails;
+        } catch (err) {
+            console.log(err);
+            return [];
+        }
+    };
 
     return {
-        fetchAllUserGames,
-        playerGames,
-        fetchGameDetails,
+        fetchUserClassicGames,
+        fetchClassicGameDetails,
         fetchPlayerDetails,
+        playerDetails,
+        playerClassicGames,
     };
 };
 
