@@ -4,9 +4,9 @@ import BottomNav from "../components/BottomNav";
 import { ArgentTMA, SessionAccountInterface } from "@argent/tma-wallet";
 import { useEffect, useState } from "react";
 import LoadingFullPage from "../components/pages/LoadingFullPage";
-import { CallData, Contract } from "starknet";
-import gameAbi from "../utils/gameAbi.json";
-import useGameLogic from "../hooks/useGameLogic";
+// import { CallData, Contract } from "starknet";
+// import gameAbi from "../utils/gameAbi.json";
+// import useGameLogic from "../hooks/useGameLogic";
 
 const argentTMA = ArgentTMA.init({
     environment: "sepolia", // "sepolia" | "mainnet" (not supperted yet)
@@ -47,8 +47,8 @@ const MainLayout = () => {
     >();
     const [isConnected, setIsConnected] = useState<boolean>(false);
     const [isLoading, setIsLoading] = useState(true);
-    const [playerDetails, setPlayerDetails] = useState({});
-    const [playerGameCount, setPlayerGameCount] = useState(0);
+    // const [playerDetails, setPlayerDetails] = useState({});
+    // const [playerGameCount, setPlayerGameCount] = useState(0);
 
     useEffect(() => {
         const timer = setTimeout(() => {
@@ -70,7 +70,7 @@ const MainLayout = () => {
                 }
 
                 // Connected
-                const { account, callbackData } = res;
+                const { account } = res;
 
                 if (account.getSessionStatus() !== "VALID") {
                     const { account } = res;
@@ -104,40 +104,44 @@ const MainLayout = () => {
     };
 
     const handleRegisterPlayer = async () => {
-        
-        console.log(account?.getDeploymentPayload())
-    }
+        console.log(account?.getDeploymentPayload());
+    };
 
     const handleOutsideExecution = async () => {
-        let calls = [{
-            contractAddress:
-                "0x014348d668e199e0222d2a58d80c04821b9dddb00c5946d1282d415a448227c9",
-            entrypoint: "register_player",
-            // calldata: CallData.compile({
-            //     caller: '0x051fea4450da9d6aee758bdeba88b2f665bcbf549d2c61421aa724e9ac0ced8f',
-            //     source: { type: 0, address: account?.address },
-            // }),
-        }]
+        let calls = [
+            {
+                contractAddress:
+                    "0x014348d668e199e0222d2a58d80c04821b9dddb00c5946d1282d415a448227c9",
+                entrypoint: "register_player",
+                // calldata: CallData.compile({
+                //     caller: '0x051fea4450da9d6aee758bdeba88b2f665bcbf549d2c61421aa724e9ac0ced8f',
+                //     source: { type: 0, address: account?.address },
+                // }),
+            },
+        ];
 
         // console.log(account?.getOutsideExecutionPayload({calls}))
-        
-        console.log('sent')
 
-        let call = account?.getOutsideExecutionPayload({calls})
+        console.log("sent");
 
-        console.log('call')
+        let call = account?.getOutsideExecutionPayload({ calls });
 
-        const response = await fetch('http://localhost:6000/player/execute-outside', {
-            method: 'POST',
-            body: JSON.stringify(call)
-        })
+        console.log("call");
 
-        console.log('fetch')
+        const response = await fetch(
+            "http://localhost:6000/player/execute-outside",
+            {
+                method: "POST",
+                body: JSON.stringify(call),
+            }
+        );
 
-        let result = await response.json()
+        console.log("fetch");
+
+        let result = await response.json();
 
         console.log(result);
-    }
+    };
 
     if (isLoading) {
         return <LoadingFullPage />;
@@ -150,16 +154,16 @@ const MainLayout = () => {
             <main className="flex-grow h-full overflow-auto">
                 <div className="flex flex-col">
                     <button onClick={handleRegisterPlayer}>Register</button>
-                    <button onClick={handleOutsideExecution}>execute_call</button>
-                </div>          
+                    <button onClick={handleOutsideExecution}>
+                        execute_call
+                    </button>
+                </div>
                 <Outlet
                     context={{
                         account,
                         handleClearSessionButton,
                         handleConnectButton,
                         isConnected,
-                        playerDetails,
-                        playerGameCount,
                     }}
                 />
             </main>

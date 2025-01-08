@@ -1,4 +1,3 @@
-import { div } from "framer-motion/client";
 import LetterBox from "./LetterBox";
 import { ClipLoader } from "react-spinners";
 

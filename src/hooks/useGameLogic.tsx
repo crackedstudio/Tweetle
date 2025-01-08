@@ -15,6 +15,7 @@ const GAME_ADDRESS =
 const useGameLogic = () => {
     const { account } = useOutletContext<OutletContextType>();
     const [playerGames, setPlayerGames] = useState([]);
+    // const[playerDetails, setPlayerDetails] = useState([])
 
     const fetchAllUserGames = async () => {
         if (!account) return;
@@ -53,7 +54,32 @@ const useGameLogic = () => {
             return [];
         }
     };
-    return { fetchAllUserGames, playerGames, fetchGameDetails };
+    const fetchPlayerDetails = async (account: any) => {
+        if (!account) return;
+        const gameContract = new Contract(gameAbi, GAME_ADDRESS, account);
+
+        try {
+            if (!account) {
+                return;
+            }
+            const _playerDetails = await gameContract.get_player_details(
+                account.address
+            );
+            // alert("player details is ___" + _playerDetails.game_count);
+            console.log("player details is ___", _playerDetails);
+            return _playerDetails;
+        } catch (err) {
+            console.log(err);
+            return;
+        }
+    };
+
+    return {
+        fetchAllUserGames,
+        playerGames,
+        fetchGameDetails,
+        fetchPlayerDetails,
+    };
 };
 
 export default useGameLogic;

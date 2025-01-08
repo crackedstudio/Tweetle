@@ -1,6 +1,6 @@
 import { Link, useOutletContext } from "react-router-dom";
 import checkmark from "../../assets/svg/checkmark-badge-01.svg";
-import { CallData, Contract } from "starknet";
+import { Contract } from "starknet";
 import gameAbi from "../../utils/gameAbi.json";
 import { useEffect, useState } from "react";
 import useGameLogic from "../../hooks/useGameLogic";

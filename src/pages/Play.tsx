@@ -1,17 +1,11 @@
 "use client";
 import { useState } from "react";
 import GameBottomNav from "../components/gameplay/GameBottomNav";
-import {
-    Contract,
-    cairo,
-    AccountInterface,
-    CallData,
-    Provider,
-} from "starknet";
+import { Contract, CallData } from "starknet";
 import gameAbi from "../utils/gameAbi.json";
-import vrfAbi from "../utils/vrfAbi.json";
+// import vrfAbi from "../utils/vrfAbi.json";
 
-import { SessionAccountInterface } from "@argent/tma-wallet";
+// import { SessionAccountInterface } from "@argent/tma-wallet";
 
 import WordBox from "../components/gameplay/WordBox";
 import GameTopNav from "../components/gameplay/GameTopNav";
@@ -20,8 +14,8 @@ import LoseModal from "../components/modal/LoseModal";
 import Keyboard from "../components/gameplay/Keyboard";
 import { useOutletContext } from "react-router-dom";
 import axios from "axios";
-import { source } from "framer-motion/client";
-const SAMPLE_WORD = ["C", "O", "V", "I", "D"];
+// import { source } from "framer-motion/client";
+// const SAMPLE_WORD = ["C", "O", "V", "I", "D"];
 
 interface OutletContextType {
     account: any | null;
@@ -45,8 +39,8 @@ const Play = () => {
     const [currentWordState, setCurrentWordState] = useState([0, 0, 0, 0, 0]);
 
     const [processingGuess, setProcessingGuess] = useState(false);
-    const [gottenData, setGottenData] = useState(false);
-    const [isCurrentWordBoxFull, setIsCurrentWordBoxFull] = useState(false);
+    // const [gottenData, setGottenData] = useState(false);
+    // const [isCurrentWordBoxFull, setIsCurrentWordBoxFull] = useState(false);
     // const [fetchingRecentPlay, setFetchingRecentPlay] = useState(false);
 
     const initialOrder = [
@@ -110,10 +104,14 @@ const Play = () => {
             try {
                 const _currentWordState = await getWordState(wordString);
                 setCurrentWordState(_currentWordState);
+
+                console.log("curenr word state is ---", currentWordState);
                 updateCorrectOrder(currentWordbox, _currentWordState);
 
                 const _vibratorsArray = generateVibrators(_currentWordState);
                 setVibratorsArray(_vibratorsArray);
+
+                console.log("vibrators Array is ---", vibratorsArray);
 
                 const status = checkAllValid(_currentWordState);
 
@@ -190,68 +188,68 @@ const Play = () => {
         // await handleFetchRecentPlay();
     };
 
-    const handleSavePlayerGuess = async () => {
-        const game_addr =
-            "0x043eb60dc59822103668738df135b407a639d4abbeef95afe0949a3df8f7b802";
-        const gameContract = new Contract(gameAbi, game_addr, account);
+    // const handleSavePlayerGuess = async () => {
+    //     const game_addr =
+    //         "0x043eb60dc59822103668738df135b407a639d4abbeef95afe0949a3df8f7b802";
+    //     const gameContract = new Contract(gameAbi, game_addr, account);
 
-        let calls = [
-            {
-                to:
-                    "0x051fea4450da9d6aee758bdeba88b2f665bcbf549d2c61421aa724e9ac0ced8f",
-                selector: "request_random",
-                calldata: CallData.compile({
-                    caller: game_addr,
-                    source: { type: 0, address: account?.address },
-                }),
-            },
-            {
-                to: game_addr,
-                selector: "random_number",
-                calldata: CallData.compile({
-                    _num: 0,
-                }),
-            },
-        ]
+    //     let calls = [
+    //         {
+    //             to:
+    //                 "0x051fea4450da9d6aee758bdeba88b2f665bcbf549d2c61421aa724e9ac0ced8f",
+    //             selector: "request_random",
+    //             calldata: CallData.compile({
+    //                 caller: game_addr,
+    //                 source: { type: 0, address: account?.address },
+    //             }),
+    //         },
+    //         {
+    //             to: game_addr,
+    //             selector: "random_number",
+    //             calldata: CallData.compile({
+    //                 _num: 0,
+    //             }),
+    //         },
+    //     ]
 
-        try {
-            if (!account) {
-                return;
-            }
-            await gameContract.create_instant_game(calls);
-        } catch (err) {
-            console.log(err);
-            alert(err)
-        }
-    };
+    //     try {
+    //         if (!account) {
+    //             return;
+    //         }
+    //         await gameContract.create_instant_game(calls);
+    //     } catch (err) {
+    //         console.log(err);
+    //         alert(err)
+    //     }
+    // };
 
-    const handleFetchUserGames = async () => {
-        const game_addr =
-            "0x033ccdb04e78933097705e1847779f59db1c868f4da503c87d5a776854256fca";
-        const gameContract = new Contract(gameAbi, game_addr, account);
+    // const handleFetchUserGames = async () => {
+    //     const game_addr =
+    //         "0x033ccdb04e78933097705e1847779f59db1c868f4da503c87d5a776854256fca";
+    //     const gameContract = new Contract(gameAbi, game_addr, account);
 
-        try {
-            if (!account) {
-                return;
-            }
-            const _playerGames = await gameContract.get_player_games(
-                account.address
-            );
-            alert("player games is _______" + _playerGames);
-        } catch (err) {
-            console.log(err);
-        }
-    };
+    //     try {
+    //         if (!account) {
+    //             return;
+    //         }
+    //         const _playerGames = await gameContract.get_player_games(
+    //             account.address
+    //         );
+    //         alert("player games is _______" + _playerGames);
+    //     } catch (err) {
+    //         console.log(err);
+    //     }
+    // };
 
     const handleCreateNewGame = async () => {
         const game_addr =
-            '0x6726494f5ced7684652a23fac3754338f0ef3f399e7bd004d57c9a4a7ca9ba1';
+            "0x6726494f5ced7684652a23fac3754338f0ef3f399e7bd004d57c9a4a7ca9ba1";
         // 0x033ccdb04e78933097705e1847779f59db1c868f4da503c87d5a776854256fca;
 
-        const vrf_addr =
-            '0x051fea4450da9d6aee758bdeba88b2f665bcbf549d2c61421aa724e9ac0ced8f';
+        // const vrf_addr =
+        //     '0x051fea4450da9d6aee758bdeba88b2f665bcbf549d2c61421aa724e9ac0ced8f';
         const gameContract = new Contract(gameAbi, game_addr, account);
-        const vrfContract = new Contract(vrfAbi, vrf_addr, account);
+        // const vrfContract = new Contract(vrfAbi, vrf_addr, account);
 
         // 0x003b7234057f3cd7622d2d8203861dcfe013c475bc06413c312d5b36645845b6
         try {
@@ -262,16 +260,16 @@ const Play = () => {
             const call = await account?.execute([
                 {
                     contractAddress:
-                        '0x051fea4450da9d6aee758bdeba88b2f665bcbf549d2c61421aa724e9ac0ced8f',
-                    entrypoint: 'request_random',
+                        "0x051fea4450da9d6aee758bdeba88b2f665bcbf549d2c61421aa724e9ac0ced8f",
+                    entrypoint: "request_random",
                     calldata: CallData.compile({
                         caller: game_addr,
-                        source: {type: 0, address: account?.address}
+                        source: { type: 0, address: account?.address },
                     }),
                 },
                 {
                     contractAddress: game_addr,
-                    entrypoint: 'create_new_game',
+                    entrypoint: "create_new_game",
                     calldata: CallData.compile({
                         _player_id: account?.address,
                     }),
@@ -286,14 +284,14 @@ const Play = () => {
             ]);
 
             if (!call) {
-                return new Error('call not made !!');
+                return new Error("call not made !!");
             }
 
             await account.waitForTransaction(call.transaction_hash);
 
             alert(call.transaction_hash);
         } catch (error) {
-            console.log(error)
+            console.log(error);
             alert(error);
         }
     };
