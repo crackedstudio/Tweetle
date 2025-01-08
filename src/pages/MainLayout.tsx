@@ -160,10 +160,10 @@ const MainLayout = () => {
     // console.log("Current window location is -- ", window.location.href);
     // const isOnPlayOrShuffle = regex.test(window.location.href);
     const { fetchPlayerDetails } = useGameLogic();
-    useEffect(() => {
-        if (!account) return;
-        fetchPlayerDetails(account);
-    }, [account]);
+    // useEffect(() => {
+    //     if (!account) return;
+    //     fetchPlayerDetails(account);
+    // }, [account]);
 
     return (
         <div className="flex flex-col h-[100vh] overflow-hidden text-white relative">
@@ -172,6 +172,9 @@ const MainLayout = () => {
                     <button onClick={handleRegisterPlayer}>Register</button>
                     <button onClick={handleOutsideExecution}>
                         execute_call
+                    </button>
+                    <button onClick={fetchPlayerDetails}>
+                        fetchPlayerDetails
                     </button>
                 </div>
                 <Outlet
