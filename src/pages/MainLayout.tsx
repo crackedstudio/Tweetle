@@ -101,6 +101,7 @@ const MainLayout = () => {
         approvalRequests: [],
     };
     const handleConnectButton = async () => {
+        // @ts-ignore
         await argentTMA.requestConnection(argumentArgentTMA.callbackData);
     };
 
