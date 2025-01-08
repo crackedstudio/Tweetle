@@ -96,7 +96,8 @@ const ClassicGamesList = () => {
             );
             alert("player games is _______" + _playerGames);
             console.log("player games is _______", _playerGames);
-            fetchPlayerDetails(account);
+            await fetchPlayerDetails(account);
+            console.log("done");
         } catch (err) {
             console.log(err);
         }
