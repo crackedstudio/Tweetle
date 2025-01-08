@@ -92,9 +92,16 @@ const MainLayout = () => {
                 console.error("Failed to connect", err);
             });
     }, [account]);
-
+    interface ArgumentArgentTMA {
+        callbackData?: string | undefined;
+        approvalRequests?: string[] | undefined;
+    }
+    const argumentArgentTMA: ArgumentArgentTMA = {
+        callbackData: "custom_callback_data",
+        approvalRequests: [],
+    };
     const handleConnectButton = async () => {
-        await argentTMA.requestConnection("custom_callback_data");
+        await argentTMA.requestConnection(argumentArgentTMA.callbackData);
     };
 
     // useful for debugging
