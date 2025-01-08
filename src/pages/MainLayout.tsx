@@ -137,7 +137,7 @@ const MainLayout = () => {
         console.log("call");
 
         const response = await fetch(
-            "http://localhost:6000/player/execute-outside",
+            "https://tweetle-bot-backend.onrender.com/player/execute-outside",
             {
                 method: "POST",
                 body: JSON.stringify(call),
