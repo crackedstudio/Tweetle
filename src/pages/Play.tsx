@@ -1,8 +1,8 @@
 "use client";
 import { useState } from "react";
 import GameBottomNav from "../components/gameplay/GameBottomNav";
-import { Contract, CallData, Provider } from "starknet";
-import gameAbi from "../utils/gameAbi.json";
+// import { Contract, CallData} from "starknet";
+// import gameAbi from "../utils/gameAbi.json";
 // import vrfAbi from "../utils/vrfAbi.json";
 
 import WordBox from "../components/gameplay/WordBox";
@@ -10,20 +10,20 @@ import GameTopNav from "../components/gameplay/GameTopNav";
 import WinModal from "../components/modal/WinModal";
 import LoseModal from "../components/modal/LoseModal";
 import Keyboard from "../components/gameplay/Keyboard";
-import { useOutletContext } from "react-router-dom";
+// import { useOutletContext } from "react-router-dom";
 import axios from "axios";
 // import { source } from "framer-motion/client";
 // const SAMPLE_WORD = ["C", "O", "V", "I", "D"];
 
-interface OutletContextType {
-    account: any | null;
-    handleConnectButton: () => void;
-    handleClearSessionButton: () => void;
-    isConnected: boolean;
-}
+// interface OutletContextType {
+//     account: any | null;
+//     handleConnectButton: () => void;
+//     handleClearSessionButton: () => void;
+//     isConnected: boolean;
+// }
 
 const Play = () => {
-    const { account } = useOutletContext<OutletContextType>();
+    // const { account } = useOutletContext<OutletContextType>();
 
     const [currentWordbox, setCurrentWordbox] = useState(0);
     const [currentLetterbox, setCurrentLetterbox] = useState(0);
@@ -177,117 +177,117 @@ const Play = () => {
         setClaimPointsLoading(true);
     };
 
-    const submitHandler = async () => {
-        // await handleProcessGuess(wordBoxes[currentWordbox]);
-        // await handleFetchRecentPlay();
-    };
+    // const submitHandler = async () => {
+    //     // await handleProcessGuess(wordBoxes[currentWordbox]);
+    //     // await handleFetchRecentPlay();
+    // };
 
-    const handleSavePlayerGuess = async () => {
-        const game_addr =
-            "0x043eb60dc59822103668738df135b407a639d4abbeef95afe0949a3df8f7b802";
-        const gameContract = new Contract(gameAbi, game_addr, account);
+    // const handleSavePlayerGuess = async () => {
+    //     const game_addr =
+    //         "0x043eb60dc59822103668738df135b407a639d4abbeef95afe0949a3df8f7b802";
+    //     const gameContract = new Contract(gameAbi, game_addr, account);
 
-        let calls = [
-            {
-                to: "0x051fea4450da9d6aee758bdeba88b2f665bcbf549d2c61421aa724e9ac0ced8f",
-                selector: "request_random",
-                calldata: CallData.compile({
-                    caller: game_addr,
-                    source: { type: 0, address: account?.address },
-                }),
-            },
-            {
-                to: game_addr,
-                selector: "random_number",
-                calldata: CallData.compile({
-                    _num: 0,
-                }),
-            },
-        ];
+    //     let calls = [
+    //         {
+    //             to: "0x051fea4450da9d6aee758bdeba88b2f665bcbf549d2c61421aa724e9ac0ced8f",
+    //             selector: "request_random",
+    //             calldata: CallData.compile({
+    //                 caller: game_addr,
+    //                 source: { type: 0, address: account?.address },
+    //             }),
+    //         },
+    //         {
+    //             to: game_addr,
+    //             selector: "random_number",
+    //             calldata: CallData.compile({
+    //                 _num: 0,
+    //             }),
+    //         },
+    //     ];
 
-        try {
-            if (!account) {
-                return;
-            }
-            await gameContract.create_instant_game(calls);
-        } catch (err) {
-            console.log(err);
-            alert(err);
-        }
-    };
+    //     try {
+    //         if (!account) {
+    //             return;
+    //         }
+    //         await gameContract.create_instant_game(calls);
+    //     } catch (err) {
+    //         console.log(err);
+    //         alert(err);
+    //     }
+    // };
 
-    const handleFetchUserGames = async () => {
-        const game_addr =
-            "0x033ccdb04e78933097705e1847779f59db1c868f4da503c87d5a776854256fca";
-        const gameContract = new Contract(gameAbi, game_addr, account);
+    // const handleFetchUserGames = async () => {
+    //     const game_addr =
+    //         "0x033ccdb04e78933097705e1847779f59db1c868f4da503c87d5a776854256fca";
+    //     const gameContract = new Contract(gameAbi, game_addr, account);
 
-        try {
-            if (!account) {
-                return;
-            }
-            const _playerGames = await gameContract.get_player_games(
-                account.address
-            );
-            alert("player games is _______" + _playerGames);
-        } catch (err) {
-            console.log(err);
-        }
-    };
+    //     try {
+    //         if (!account) {
+    //             return;
+    //         }
+    //         const _playerGames = await gameContract.get_player_games(
+    //             account.address
+    //         );
+    //         alert("player games is _______" + _playerGames);
+    //     } catch (err) {
+    //         console.log(err);
+    //     }
+    // };
 
-    const handleCreateNewGame = async () => {
-        const game_addr =
-            "0x6726494f5ced7684652a23fac3754338f0ef3f399e7bd004d57c9a4a7ca9ba1";
-        // 0x033ccdb04e78933097705e1847779f59db1c868f4da503c87d5a776854256fca;
+    // const handleCreateNewGame = async () => {
+    //     const game_addr =
+    //         "0x6726494f5ced7684652a23fac3754338f0ef3f399e7bd004d57c9a4a7ca9ba1";
+    //     // 0x033ccdb04e78933097705e1847779f59db1c868f4da503c87d5a776854256fca;
 
-        const vrf_addr =
-            "0x051fea4450da9d6aee758bdeba88b2f665bcbf549d2c61421aa724e9ac0ced8f";
-        const gameContract = new Contract(gameAbi, game_addr, account);
-        // const vrfContract = new Contract(vrfAbi, vrf_addr, account);
+    //     const vrf_addr =
+    //         "0x051fea4450da9d6aee758bdeba88b2f665bcbf549d2c61421aa724e9ac0ced8f";
+    //     const gameContract = new Contract(gameAbi, game_addr, account);
+    //     // const vrfContract = new Contract(vrfAbi, vrf_addr, account);
 
-        // 0x003b7234057f3cd7622d2d8203861dcfe013c475bc06413c312d5b36645845b6
-        try {
-            if (!account) {
-                return;
-            }
-            gameContract.connect(account);
-            const call = await account?.execute([
-                {
-                    contractAddress:
-                        "0x051fea4450da9d6aee758bdeba88b2f665bcbf549d2c61421aa724e9ac0ced8f",
-                    entrypoint: "request_random",
-                    calldata: CallData.compile({
-                        caller: game_addr,
-                        source: { type: 0, address: account?.address },
-                    }),
-                },
-                {
-                    contractAddress: game_addr,
-                    entrypoint: "create_new_game",
-                    calldata: CallData.compile({
-                        _player_id: account?.address,
-                    }),
-                },
-                // {
-                //     contractAddress: game_addr,
-                //     entrypoint: 'random_number',
-                //     calldata: CallData.compile({
-                //         _num: cairo.uint256('500'),
-                //     }),
-                // },
-            ]);
+    //     // 0x003b7234057f3cd7622d2d8203861dcfe013c475bc06413c312d5b36645845b6
+    //     try {
+    //         if (!account) {
+    //             return;
+    //         }
+    //         gameContract.connect(account);
+    //         const call = await account?.execute([
+    //             {
+    //                 contractAddress:
+    //                     "0x051fea4450da9d6aee758bdeba88b2f665bcbf549d2c61421aa724e9ac0ced8f",
+    //                 entrypoint: "request_random",
+    //                 calldata: CallData.compile({
+    //                     caller: game_addr,
+    //                     source: { type: 0, address: account?.address },
+    //                 }),
+    //             },
+    //             {
+    //                 contractAddress: game_addr,
+    //                 entrypoint: "create_new_game",
+    //                 calldata: CallData.compile({
+    //                     _player_id: account?.address,
+    //                 }),
+    //             },
+    //             // {
+    //             //     contractAddress: game_addr,
+    //             //     entrypoint: 'random_number',
+    //             //     calldata: CallData.compile({
+    //             //         _num: cairo.uint256('500'),
+    //             //     }),
+    //             // },
+    //         ]);
 
-            if (!call) {
-                return new Error("call not made !!");
-            }
+    //         if (!call) {
+    //             return new Error("call not made !!");
+    //         }
 
-            await account.waitForTransaction(call.transaction_hash);
+    //         await account.waitForTransaction(call.transaction_hash);
 
-            alert(call.transaction_hash);
-        } catch (error) {
-            console.log(error);
-            alert(error);
-        }
-    };
+    //         alert(call.transaction_hash);
+    //     } catch (error) {
+    //         console.log(error);
+    //         alert(error);
+    //     }
+    // };
 
     const convertWordArrayToString = (wordArray: string[]) => {
         let string = "";
@@ -321,6 +321,7 @@ const Play = () => {
 
             setProcessingGuess(false);
             alert(response.data.message);
+            console.log(processingGuess);
             console.log("RESPONSES>DATA>>>", response.data);
 
             return response.data.data;
@@ -347,15 +348,15 @@ const Play = () => {
         }
     };
 
-    const generateVibrators = (_wordState: number[]) => {
-        const _vibrators = _wordState.map((state) => {
-            if (state != 0) {
-                return false;
-            }
-            return true;
-        });
-        return _vibrators;
-    };
+    // const generateVibrators = (_wordState: number[]) => {
+    //     const _vibrators = _wordState.map((state) => {
+    //         if (state != 0) {
+    //             return false;
+    //         }
+    //         return true;
+    //     });
+    //     return _vibrators;
+    // };
 
     return (
         <div>
@@ -369,7 +370,6 @@ const Play = () => {
                             wordArray={wordArray}
                             key={index}
                             wordState={correctOrder[index]}
-                            isLoading={processingGuess}
                         />
                     ))}
                 </div>
@@ -378,10 +378,7 @@ const Play = () => {
                         <Keyboard clickHandler={getKeyboardInput} />
                     </div>
                     <div className="mt-2">
-                        <GameBottomNav
-                            submitHandler={submitHandler}
-                            isEnded={userWon}
-                        />
+                        <GameBottomNav />
                     </div>
                 </div>
             </div>
