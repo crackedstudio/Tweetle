@@ -1,16 +1,18 @@
 "use client";
 import { useState } from "react";
 import GameBottomNav from "../components/gameplay/GameBottomNav";
-// import { Contract, CallData} from "starknet";
-// import gameAbi from "../utils/gameAbi.json";
+import { Contract, CallData } from "starknet";
+import gameAbi from "../utils/gameAbi.json";
 // import vrfAbi from "../utils/vrfAbi.json";
+
+// import { SessionAccountInterface } from "@argent/tma-wallet";
 
 import WordBox from "../components/gameplay/WordBox";
 import GameTopNav from "../components/gameplay/GameTopNav";
 import WinModal from "../components/modal/WinModal";
 import LoseModal from "../components/modal/LoseModal";
 import Keyboard from "../components/gameplay/Keyboard";
-// import { useOutletContext } from "react-router-dom";
+import { useOutletContext } from "react-router-dom";
 import axios from "axios";
 // import { source } from "framer-motion/client";
 // const SAMPLE_WORD = ["C", "O", "V", "I", "D"];
@@ -23,7 +25,7 @@ import axios from "axios";
 // }
 
 const Play = () => {
-    // const { account } = useOutletContext<OutletContextType>();
+    const { account } = useOutletContext<OutletContextType>();
 
     const [currentWordbox, setCurrentWordbox] = useState(0);
     const [currentLetterbox, setCurrentLetterbox] = useState(0);
@@ -32,9 +34,9 @@ const Play = () => {
     const [winModal, setWinModal] = useState(false);
     const [loseModal, setLoseModal] = useState(false);
     const [claimPointsLoading, setClaimPointsLoading] = useState(false);
-    // const [vibratorsArray, setVibratorsArray] = useState<boolean[]>([]);
+    const [vibratorsArray, setVibratorsArray] = useState<boolean[]>([]);
 
-    // const [currentWordState, setCurrentWordState] = useState([0, 0, 0, 0, 0]);
+    const [currentWordState, setCurrentWordState] = useState([0, 0, 0, 0, 0]);
 
     const [processingGuess, setProcessingGuess] = useState(false);
     // const [gottenData, setGottenData] = useState(false);
@@ -101,11 +103,15 @@ const Play = () => {
 
             try {
                 const _currentWordState = await getWordState(wordString);
-                // setCurrentWordState(_currentWordState);
+                setCurrentWordState(_currentWordState);
+
+                console.log("curenr word state is ---", currentWordState);
                 updateCorrectOrder(currentWordbox, _currentWordState);
 
-                // const _vibratorsArray = generateVibrators(_currentWordState);
-                // setVibratorsArray(_vibratorsArray);
+                const _vibratorsArray = generateVibrators(_currentWordState);
+                setVibratorsArray(_vibratorsArray);
+
+                console.log("vibrators Array is ---", vibratorsArray);
 
                 const status = checkAllValid(_currentWordState);
 
@@ -177,10 +183,10 @@ const Play = () => {
         setClaimPointsLoading(true);
     };
 
-    // const submitHandler = async () => {
-    //     // await handleProcessGuess(wordBoxes[currentWordbox]);
-    //     // await handleFetchRecentPlay();
-    // };
+    const submitHandler = async () => {
+        // await handleProcessGuess(wordBoxes[currentWordbox]);
+        // await handleFetchRecentPlay();
+    };
 
     // const handleSavePlayerGuess = async () => {
     //     const game_addr =
@@ -189,7 +195,8 @@ const Play = () => {
 
     //     let calls = [
     //         {
-    //             to: "0x051fea4450da9d6aee758bdeba88b2f665bcbf549d2c61421aa724e9ac0ced8f",
+    //             to:
+    //                 "0x051fea4450da9d6aee758bdeba88b2f665bcbf549d2c61421aa724e9ac0ced8f",
     //             selector: "request_random",
     //             calldata: CallData.compile({
     //                 caller: game_addr,
@@ -203,7 +210,7 @@ const Play = () => {
     //                 _num: 0,
     //             }),
     //         },
-    //     ];
+    //     ]
 
     //     try {
     //         if (!account) {
@@ -212,7 +219,7 @@ const Play = () => {
     //         await gameContract.create_instant_game(calls);
     //     } catch (err) {
     //         console.log(err);
-    //         alert(err);
+    //         alert(err)
     //     }
     // };
 
@@ -234,60 +241,60 @@ const Play = () => {
     //     }
     // };
 
-    // const handleCreateNewGame = async () => {
-    //     const game_addr =
-    //         "0x6726494f5ced7684652a23fac3754338f0ef3f399e7bd004d57c9a4a7ca9ba1";
-    //     // 0x033ccdb04e78933097705e1847779f59db1c868f4da503c87d5a776854256fca;
+    const handleCreateNewGame = async () => {
+        const game_addr =
+            "0x6726494f5ced7684652a23fac3754338f0ef3f399e7bd004d57c9a4a7ca9ba1";
+        // 0x033ccdb04e78933097705e1847779f59db1c868f4da503c87d5a776854256fca;
 
-    //     const vrf_addr =
-    //         "0x051fea4450da9d6aee758bdeba88b2f665bcbf549d2c61421aa724e9ac0ced8f";
-    //     const gameContract = new Contract(gameAbi, game_addr, account);
-    //     // const vrfContract = new Contract(vrfAbi, vrf_addr, account);
+        // const vrf_addr =
+        //     '0x051fea4450da9d6aee758bdeba88b2f665bcbf549d2c61421aa724e9ac0ced8f';
+        const gameContract = new Contract(gameAbi, game_addr, account);
+        // const vrfContract = new Contract(vrfAbi, vrf_addr, account);
 
-    //     // 0x003b7234057f3cd7622d2d8203861dcfe013c475bc06413c312d5b36645845b6
-    //     try {
-    //         if (!account) {
-    //             return;
-    //         }
-    //         gameContract.connect(account);
-    //         const call = await account?.execute([
-    //             {
-    //                 contractAddress:
-    //                     "0x051fea4450da9d6aee758bdeba88b2f665bcbf549d2c61421aa724e9ac0ced8f",
-    //                 entrypoint: "request_random",
-    //                 calldata: CallData.compile({
-    //                     caller: game_addr,
-    //                     source: { type: 0, address: account?.address },
-    //                 }),
-    //             },
-    //             {
-    //                 contractAddress: game_addr,
-    //                 entrypoint: "create_new_game",
-    //                 calldata: CallData.compile({
-    //                     _player_id: account?.address,
-    //                 }),
-    //             },
-    //             // {
-    //             //     contractAddress: game_addr,
-    //             //     entrypoint: 'random_number',
-    //             //     calldata: CallData.compile({
-    //             //         _num: cairo.uint256('500'),
-    //             //     }),
-    //             // },
-    //         ]);
+        // 0x003b7234057f3cd7622d2d8203861dcfe013c475bc06413c312d5b36645845b6
+        try {
+            if (!account) {
+                return;
+            }
+            gameContract.connect(account);
+            const call = await account?.execute([
+                {
+                    contractAddress:
+                        "0x051fea4450da9d6aee758bdeba88b2f665bcbf549d2c61421aa724e9ac0ced8f",
+                    entrypoint: "request_random",
+                    calldata: CallData.compile({
+                        caller: game_addr,
+                        source: { type: 0, address: account?.address },
+                    }),
+                },
+                {
+                    contractAddress: game_addr,
+                    entrypoint: "create_new_game",
+                    calldata: CallData.compile({
+                        _player_id: account?.address,
+                    }),
+                },
+                // {
+                //     contractAddress: game_addr,
+                //     entrypoint: 'random_number',
+                //     calldata: CallData.compile({
+                //         _num: cairo.uint256('500'),
+                //     }),
+                // },
+            ]);
 
-    //         if (!call) {
-    //             return new Error("call not made !!");
-    //         }
+            if (!call) {
+                return new Error("call not made !!");
+            }
 
-    //         await account.waitForTransaction(call.transaction_hash);
+            await account.waitForTransaction(call.transaction_hash);
 
-    //         alert(call.transaction_hash);
-    //     } catch (error) {
-    //         console.log(error);
-    //         alert(error);
-    //     }
-    // };
+            alert(call.transaction_hash);
+        } catch (error) {
+            console.log(error);
+            alert(error);
+        }
+    };
 
     const convertWordArrayToString = (wordArray: string[]) => {
         let string = "";
@@ -321,7 +328,6 @@ const Play = () => {
 
             setProcessingGuess(false);
             alert(response.data.message);
-            console.log(processingGuess);
             console.log("RESPONSES>DATA>>>", response.data);
 
             return response.data.data;
@@ -348,19 +354,20 @@ const Play = () => {
         }
     };
 
-    // const generateVibrators = (_wordState: number[]) => {
-    //     const _vibrators = _wordState.map((state) => {
-    //         if (state != 0) {
-    //             return false;
-    //         }
-    //         return true;
-    //     });
-    //     return _vibrators;
-    // };
+    const generateVibrators = (_wordState: number[]) => {
+        const _vibrators = _wordState.map((state) => {
+            if (state != 0) {
+                return false;
+            }
+            return true;
+        });
+        return _vibrators;
+    };
 
     return (
         <div>
             <div className="flex flex-col">
+                <button onClick={handleCreateNewGame}>click</button>
                 <div>
                     <GameTopNav />
                 </div>
@@ -370,6 +377,7 @@ const Play = () => {
                             wordArray={wordArray}
                             key={index}
                             wordState={correctOrder[index]}
+                            isLoading={processingGuess}
                         />
                     ))}
                 </div>
@@ -378,7 +386,10 @@ const Play = () => {
                         <Keyboard clickHandler={getKeyboardInput} />
                     </div>
                     <div className="mt-2">
-                        <GameBottomNav />
+                        <GameBottomNav
+                            submitHandler={submitHandler}
+                            isEnded={userWon}
+                        />
                     </div>
                 </div>
             </div>

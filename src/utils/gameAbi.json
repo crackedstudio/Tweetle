@@ -1,78 +1,453 @@
 [
     {
-      "type": "impl",
-      "name": "GameImpl",
-      "interface_name": "game_contract::game::IGame"
+        "type": "impl",
+        "name": "GameImpl",
+        "interface_name": "tweetle__contract::game_contract::IGame"
     },
     {
-      "type": "struct",
-      "name": "core::integer::u256",
-      "members": [
-        {
-          "name": "low",
-          "type": "core::integer::u128"
-        },
-        {
-          "name": "high",
-          "type": "core::integer::u128"
-        }
-      ]
-    },
-    {
-      "type": "interface",
-      "name": "game_contract::game::IGame",
-      "items": [
-        {
-          "type": "function",
-          "name": "claimPoints",
-          "inputs": [
+        "type": "enum",
+        "name": "core::bool",
+        "variants": [
             {
-              "name": "_points",
-              "type": "core::integer::u256"
+                "name": "False",
+                "type": "()"
+            },
+            {
+                "name": "True",
+                "type": "()"
             }
-          ],
-          "outputs": [],
-          "state_mutability": "external"
-        }
-      ]
+        ]
     },
     {
-      "type": "constructor",
-      "name": "constructor",
-      "inputs": [
-        {
-          "name": "_token_addr",
-          "type": "core::starknet::contract_address::ContractAddress"
-        }
-      ]
+        "type": "struct",
+        "name": "core::integer::u256",
+        "members": [
+            {
+                "name": "low",
+                "type": "core::integer::u128"
+            },
+            {
+                "name": "high",
+                "type": "core::integer::u128"
+            }
+        ]
     },
     {
-      "type": "event",
-      "name": "game_contract::game::Game::RewardCliamed",
-      "kind": "struct",
-      "members": [
-        {
-          "name": "player",
-          "type": "core::starknet::contract_address::ContractAddress",
-          "kind": "data"
-        },
-        {
-          "name": "amount",
-          "type": "core::integer::u256",
-          "kind": "data"
-        }
-      ]
+        "type": "struct",
+        "name": "tweetle__contract::game_contract::Player",
+        "members": [
+            {
+                "name": "points",
+                "type": "core::integer::u256"
+            },
+            {
+                "name": "current_game",
+                "type": "core::integer::u32"
+            },
+            {
+                "name": "daily_play_count",
+                "type": "core::integer::u8"
+            },
+            {
+                "name": "game_count",
+                "type": "core::integer::u32"
+            }
+        ]
     },
     {
-      "type": "event",
-      "name": "game_contract::game::Game::Event",
-      "kind": "enum",
-      "variants": [
-        {
-          "name": "RewardCliamed",
-          "type": "game_contract::game::Game::RewardCliamed",
-          "kind": "nested"
-        }
-      ]
+        "type": "struct",
+        "name": "core::byte_array::ByteArray",
+        "members": [
+            {
+                "name": "data",
+                "type": "core::array::Array::<core::bytes_31::bytes31>"
+            },
+            {
+                "name": "pending_word",
+                "type": "core::felt252"
+            },
+            {
+                "name": "pending_word_len",
+                "type": "core::integer::u32"
+            }
+        ]
+    },
+    {
+        "type": "struct",
+        "name": "tweetle__contract::game_contract::Game",
+        "members": [
+            {
+                "name": "game_type",
+                "type": "core::felt252"
+            },
+            {
+                "name": "secret_word",
+                "type": "core::byte_array::ByteArray"
+            },
+            {
+                "name": "players_count",
+                "type": "core::integer::u256"
+            },
+            {
+                "name": "is_completed",
+                "type": "core::bool"
+            },
+            {
+                "name": "attempts_allowed",
+                "type": "core::integer::u8"
+            }
+        ]
+    },
+    {
+        "type": "struct",
+        "name": "tweetle__contract::game_contract::Trial",
+        "members": [
+            {
+                "name": "first",
+                "type": "core::felt252"
+            },
+            {
+                "name": "second",
+                "type": "core::felt252"
+            },
+            {
+                "name": "third",
+                "type": "core::felt252"
+            },
+            {
+                "name": "fourth",
+                "type": "core::felt252"
+            },
+            {
+                "name": "fifth",
+                "type": "core::felt252"
+            }
+        ]
+    },
+    {
+        "type": "struct",
+        "name": "core::array::Span::<core::felt252>",
+        "members": [
+            {
+                "name": "snapshot",
+                "type": "@core::array::Array::<core::felt252>"
+            }
+        ]
+    },
+    {
+        "type": "struct",
+        "name": "core::starknet::account::Call",
+        "members": [
+            {
+                "name": "to",
+                "type": "core::starknet::contract_address::ContractAddress"
+            },
+            {
+                "name": "selector",
+                "type": "core::felt252"
+            },
+            {
+                "name": "calldata",
+                "type": "core::array::Span::<core::felt252>"
+            }
+        ]
+    },
+    {
+        "type": "interface",
+        "name": "tweetle__contract::game_contract::IGame",
+        "items": [
+            {
+                "type": "function",
+                "name": "set_daily_word",
+                "inputs": [],
+                "outputs": [
+                    {
+                        "type": "core::bool"
+                    }
+                ],
+                "state_mutability": "external"
+            },
+            {
+                "type": "function",
+                "name": "get_player_details",
+                "inputs": [
+                    {
+                        "name": "player_address",
+                        "type": "core::starknet::contract_address::ContractAddress"
+                    }
+                ],
+                "outputs": [
+                    {
+                        "type": "tweetle__contract::game_contract::Player"
+                    }
+                ],
+                "state_mutability": "view"
+            },
+            {
+                "type": "function",
+                "name": "get_daily_word",
+                "inputs": [
+                    {
+                        "name": "word",
+                        "type": "core::byte_array::ByteArray"
+                    }
+                ],
+                "outputs": [
+                    {
+                        "type": "(core::array::Array::<core::felt252>, core::array::Array::<core::felt252>)"
+                    }
+                ],
+                "state_mutability": "view"
+            },
+            {
+                "type": "function",
+                "name": "create_new_game",
+                "inputs": [
+                    {
+                        "name": "_player_id",
+                        "type": "core::starknet::contract_address::ContractAddress"
+                    }
+                ],
+                "outputs": [
+                    {
+                        "type": "core::bool"
+                    }
+                ],
+                "state_mutability": "external"
+            },
+            {
+                "type": "function",
+                "name": "get_word_of_the_day",
+                "inputs": [],
+                "outputs": [
+                    {
+                        "type": "core::felt252"
+                    }
+                ],
+                "state_mutability": "view"
+            },
+            {
+                "type": "function",
+                "name": "get_player_games",
+                "inputs": [
+                    {
+                        "name": "_player",
+                        "type": "core::starknet::contract_address::ContractAddress"
+                    }
+                ],
+                "outputs": [
+                    {
+                        "type": "core::array::Array::<tweetle__contract::game_contract::Game>"
+                    }
+                ],
+                "state_mutability": "view"
+            },
+            {
+                "type": "function",
+                "name": "get_player_game",
+                "inputs": [
+                    {
+                        "name": "_player",
+                        "type": "core::starknet::contract_address::ContractAddress"
+                    },
+                    {
+                        "name": "_game_id",
+                        "type": "core::integer::u32"
+                    }
+                ],
+                "outputs": [
+                    {
+                        "type": "tweetle__contract::game_contract::Game"
+                    }
+                ],
+                "state_mutability": "view"
+            },
+            {
+                "type": "function",
+                "name": "save_Player_guess",
+                "inputs": [
+                    {
+                        "name": "_game_id",
+                        "type": "core::integer::u32"
+                    },
+                    {
+                        "name": "_first",
+                        "type": "core::felt252"
+                    },
+                    {
+                        "name": "_second",
+                        "type": "core::felt252"
+                    },
+                    {
+                        "name": "_third",
+                        "type": "core::felt252"
+                    },
+                    {
+                        "name": "_fourth",
+                        "type": "core::felt252"
+                    },
+                    {
+                        "name": "_fifth",
+                        "type": "core::felt252"
+                    }
+                ],
+                "outputs": [
+                    {
+                        "type": "core::bool"
+                    }
+                ],
+                "state_mutability": "external"
+            },
+            {
+                "type": "function",
+                "name": "get_player_game_attempts",
+                "inputs": [
+                    {
+                        "name": "_player",
+                        "type": "core::starknet::contract_address::ContractAddress"
+                    },
+                    {
+                        "name": "_game_id",
+                        "type": "core::integer::u32"
+                    }
+                ],
+                "outputs": [
+                    {
+                        "type": "core::array::Array::<tweetle__contract::game_contract::Trial>"
+                    }
+                ],
+                "state_mutability": "view"
+            },
+            {
+                "type": "function",
+                "name": "create_instant_game",
+                "inputs": [
+                    {
+                        "name": "calls",
+                        "type": "core::array::Array::<core::starknet::account::Call>"
+                    }
+                ],
+                "outputs": [
+                    {
+                        "type": "core::array::Array::<core::array::Span::<core::felt252>>"
+                    }
+                ],
+                "state_mutability": "external"
+            },
+            {
+                "type": "function",
+                "name": "random_number",
+                "inputs": [
+                    {
+                        "name": "_num",
+                        "type": "core::integer::u256"
+                    }
+                ],
+                "outputs": [],
+                "state_mutability": "external"
+            }
+        ]
+    },
+    {
+        "type": "constructor",
+        "name": "constructor",
+        "inputs": [
+            {
+                "name": "_token_address",
+                "type": "core::starknet::contract_address::ContractAddress"
+            },
+            {
+                "name": "_vrf_provider",
+                "type": "core::starknet::contract_address::ContractAddress"
+            }
+        ]
+    },
+    {
+        "type": "event",
+        "name": "tweetle__contract::game_contract::GameContract::GuessProcessed",
+        "kind": "struct",
+        "members": [
+            {
+                "name": "player",
+                "type": "core::starknet::contract_address::ContractAddress",
+                "kind": "data"
+            },
+            {
+                "name": "first",
+                "type": "core::felt252",
+                "kind": "data"
+            },
+            {
+                "name": "second",
+                "type": "core::felt252",
+                "kind": "data"
+            },
+            {
+                "name": "third",
+                "type": "core::felt252",
+                "kind": "data"
+            },
+            {
+                "name": "fourth",
+                "type": "core::felt252",
+                "kind": "data"
+            },
+            {
+                "name": "fifth",
+                "type": "core::felt252",
+                "kind": "data"
+            }
+        ]
+    },
+    {
+        "type": "event",
+        "name": "tweetle__contract::game_contract::GameContract::GeneratedRandomWord",
+        "kind": "struct",
+        "members": [
+            {
+                "name": "index",
+                "type": "core::felt252",
+                "kind": "data"
+            },
+            {
+                "name": "word",
+                "type": "core::byte_array::ByteArray",
+                "kind": "data"
+            }
+        ]
+    },
+    {
+        "type": "event",
+        "name": "tweetle__contract::game_contract::GameContract::RandomEvent",
+        "kind": "struct",
+        "members": [
+            {
+                "name": "word",
+                "type": "core::felt252",
+                "kind": "data"
+            }
+        ]
+    },
+    {
+        "type": "event",
+        "name": "tweetle__contract::game_contract::GameContract::Event",
+        "kind": "enum",
+        "variants": [
+            {
+                "name": "GuessProcessed",
+                "type": "tweetle__contract::game_contract::GameContract::GuessProcessed",
+                "kind": "nested"
+            },
+            {
+                "name": "GeneratedRandomWord",
+                "type": "tweetle__contract::game_contract::GameContract::GeneratedRandomWord",
+                "kind": "nested"
+            },
+            {
+                "name": "RandomEvent",
+                "type": "tweetle__contract::game_contract::GameContract::RandomEvent",
+                "kind": "nested"
+            }
+        ]
     }
-  ]
+]
