@@ -1,7 +1,7 @@
 import { Link, useOutletContext } from "react-router-dom";
 import checkmark from "../../assets/svg/checkmark-badge-01.svg";
-import { Contract } from "starknet";
-import gameAbi from "../../utils/gameAbi.json";
+// import { Contract } from "starknet";
+// import gameAbi from "../../utils/gameAbi.json";
 import { useEffect, useState } from "react";
 import useGameLogic from "../../hooks/useGameLogic";
 
@@ -82,9 +82,9 @@ const ClassicGamesList = () => {
     }, []);
 
     const handleCreateNewGame = async () => {
-        const game_addr =
-            "0x6726494f5ced7684652a23fac3754338f0ef3f399e7bd004d57c9a4a7ca9ba1";
-        const gameContract = new Contract(gameAbi, game_addr, account);
+        // const game_addr =
+        //     "0x6726494f5ced7684652a23fac3754338f0ef3f399e7bd004d57c9a4a7ca9ba1";
+        // const gameContract = new Contract(gameAbi, game_addr, account);
 
         try {
             if (!account) {
