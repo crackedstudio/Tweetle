@@ -39,7 +39,7 @@ const useGameLogic = () => {
             return [];
         }
     };
-    const fetchPlayerDetails = async (account: any) => {
+    const fetchPlayerDetails = async (address: string) => {
         if (!account) return;
         const gameContract = new Contract(gameAbi, GAME_ADDRESS, account);
 
@@ -48,7 +48,7 @@ const useGameLogic = () => {
                 return;
             }
             const _playerDetails = await gameContract.get_player_details(
-                account.address
+                address
             );
             // alert("player details is ___" + _playerDetails.game_count);
             console.log("player details is ___", _playerDetails);
