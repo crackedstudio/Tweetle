@@ -91,13 +91,14 @@ const ClassicGamesList = () => {
                 return;
             }
             console.log("starting/..............");
-            const _playerGames = await gameContract.create_new_game(
-                account?.address
-            );
-            alert("player games is _______" + _playerGames);
-            console.log("player games is _______", _playerGames);
-            await fetchPlayerDetails(account);
-            console.log("done");
+            // const _playerGames = await gameContract.create_new_game(
+            //     account?.address
+            // );
+            // // alert("player games is _______" + _playerGames);
+            // console.log("player games is _______", _playerGames);
+            console.log("starting fetching player details");
+            const deets = await fetchPlayerDetails(account);
+            console.log("done===>>>", deets);
         } catch (err) {
             console.log(err);
         }
