@@ -22,20 +22,20 @@ const useGameLogic = () => {
     const [playerClassicGames, setPlayerClassicGames] = useState([]);
     const [playerDetails, setPlayerDetails] = useState([]);
 
-    const createNewClassicGame = async () => {
-        const gameContract = new Contract(gameAbi, GAME_ADDRESS, account);
+    // const createNewClassicGame = async () => {
+    //     const gameContract = new Contract(gameAbi, GAME_ADDRESS, account);
 
-        try {
-            if (!account) {
-                return;
-            }
-            console.log("starting/..............");
-            const _gameCreated = await gameContract.create_new_classic_game();
-            console.log("GAME CREATED_______---------", _gameCreated);
-        } catch (err) {
-            console.log(err);
-        }
-    };
+    //     try {
+    //         if (!account) {
+    //             return;
+    //         }
+    //         console.log("starting/..............");
+    //         const _gameCreated = await gameContract.create_new_classic_game();
+    //         console.log("GAME CREATED_______---------", _gameCreated);
+    //     } catch (err) {
+    //         console.log(err);
+    //     }
+    // };
 
     const fetchUserClassicGames = async () => {
         if (!account) return;
@@ -91,6 +91,10 @@ const useGameLogic = () => {
                     account.address,
                     _gameId
                 );
+            console.log(
+                "CLASSIC GAME DETAIL IS ==============>>>>>",
+                _playerClassicGameDetails
+            );
             return _playerClassicGameDetails;
         } catch (err) {
             console.log(err);
@@ -98,7 +102,7 @@ const useGameLogic = () => {
         }
     };
 
-    const createNewClassicGameStarkGas = async () => {
+    const createNewClassicGame = async () => {
         if (!account) return;
         const gameContract = new Contract(gameAbi, GAME_ADDRESS, account);
         try {
@@ -136,13 +140,12 @@ const useGameLogic = () => {
     };
 
     return {
-        createNewClassicGame,
         fetchUserClassicGames,
         fetchClassicGameDetails,
         fetchPlayerDetails,
         playerDetails,
         playerClassicGames,
-        createNewClassicGameStarkGas,
+        createNewClassicGame,
     };
 };
 

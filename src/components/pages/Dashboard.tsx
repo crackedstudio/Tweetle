@@ -22,11 +22,8 @@ const Dashboard = () => {
         updatePlayerClassicGameCount,
         updatePlayerClassicGames,
     } = useOutletContext<OutletContextType>();
-    const {
-        fetchPlayerDetails,
-        fetchUserClassicGames,
-        createNewClassicGameStarkGas,
-    } = useGameLogic();
+    const { fetchPlayerDetails, fetchUserClassicGames, createNewClassicGame } =
+        useGameLogic();
 
     useEffect(() => {
         const performAllUpdates = async () => {
@@ -46,9 +43,7 @@ const Dashboard = () => {
         <>
             <div className="h-full overflow-auto text-white">
                 <HomeHeroSection />
-                <button onClick={createNewClassicGameStarkGas}>
-                    Create new game
-                </button>
+                <button onClick={createNewClassicGame}>Create new game</button>
                 <div className="bg-black p-2 flex flex-col text-white space-y-4">
                     {/* <HomeStats /> */}
                     <GlassCard>

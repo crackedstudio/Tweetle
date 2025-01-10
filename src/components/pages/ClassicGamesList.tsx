@@ -52,7 +52,11 @@ const ClassicGamesList = () => {
         updatePlayerClassicGames,
         updatePlayerClassicGameCount,
     } = useOutletContext<OutletContextType>();
-    const { fetchUserClassicGames, createNewClassicGame } = useGameLogic();
+    const {
+        fetchUserClassicGames,
+        createNewClassicGame,
+        fetchClassicGameDetails,
+    } = useGameLogic();
 
     const chunkedGames = [];
 
@@ -108,6 +112,7 @@ const ClassicGamesList = () => {
                             id={game.id}
                             active={game.active}
                             played={game.played}
+                            action={() => fetchClassicGameDetails(game.id)}
                         />
                     ))}
                 </div>
@@ -119,30 +124,32 @@ interface GameBoxProps {
     id: number;
     active: boolean;
     played?: boolean;
+    action: () => {};
 }
-const GameBox = ({ id, active, played }: GameBoxProps) => {
+const GameBox = ({ id, active, played, action }: GameBoxProps) => {
     return (
-        <Link to={active ? "/play" : "/classic"}>
-            <div
-                className={
-                    active
-                        ? "border border-1 bg-button-image bg-cover bg-center flex justify-center items-center w-[80px] h-[80px] rounded-lg relative"
-                        : "border border-1 bg-button-image bg-cover bg-center flex justify-center items-center w-[80px] h-[80px] rounded-lg relative blur-[2px]"
-                }
-            >
-                <div className="absolute inset-0 bg-black bg-opacity-60 rounded-lg"></div>
-                {played && (
-                    <img
-                        src={checkmark}
-                        alt="check-mark"
-                        className="absolute top-0 left-[70%]"
-                    />
-                )}
-                <div className="text-center relative z-10">
-                    <p className="text-xl">{id}</p>
-                </div>
+        // <Link to={active ? "/play" : "/classic"}>
+        <div
+            className={
+                active
+                    ? "border border-1 bg-button-image bg-cover bg-center flex justify-center items-center w-[80px] h-[80px] rounded-lg relative"
+                    : "border border-1 bg-button-image bg-cover bg-center flex justify-center items-center w-[80px] h-[80px] rounded-lg relative blur-[2px]"
+            }
+            onClick={action}
+        >
+            <div className="absolute inset-0 bg-black bg-opacity-60 rounded-lg"></div>
+            {played && (
+                <img
+                    src={checkmark}
+                    alt="check-mark"
+                    className="absolute top-0 left-[70%]"
+                />
+            )}
+            <div className="text-center relative z-10">
+                <p className="text-xl">{id}</p>
             </div>
-        </Link>
+        </div>
+        // </Link>
     );
 };
 
