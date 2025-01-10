@@ -4,6 +4,7 @@ import checkmark from "../../assets/svg/checkmark-badge-01.svg";
 // import gameAbi from "../../utils/gameAbi.json";
 import { useEffect } from "react";
 import useGameLogic from "../../hooks/useGameLogic";
+import { useNavigate } from "react-router-dom";
 
 const GAMES_LIST = [
     { id: 1, active: false, played: false },
@@ -42,15 +43,19 @@ interface OutletContextType {
     playerClassicGames: any;
     updatePlayerClassicGames: ([]) => void;
     updatePlayerClassicGameCount: (a: number) => void;
+    updateCurrentGameIndex: (a: number) => void;
 }
 
 const ClassicGamesList = () => {
+    const navigate = useNavigate();
+
     const {
         account,
         playerClassicGames,
         playerClassicGameCount,
         updatePlayerClassicGames,
         updatePlayerClassicGameCount,
+        updateCurrentGameIndex,
     } = useOutletContext<OutletContextType>();
     const {
         fetchUserClassicGames,
@@ -100,6 +105,23 @@ const ClassicGamesList = () => {
             console.log(err);
         }
     };
+    //han
+    const handleGameStart = async (_id: number) => {
+        try {
+            if (!account) {
+                return;
+            }
+            console.log("starting/..............");
+            const _gameDetails = await fetchClassicGameDetails(_id);
+            const _gameIndex = _gameDetails.word_index;
+            console.log("gameIndex is ___========>>>>>>>>>>>>", _gameIndex);
+            updateCurrentGameIndex(Number(_gameIndex));
+            navigate("/play");
+        } catch (err) {
+            console.log(err);
+        }
+    };
+
     return (
         <div className="bg-black p-3">
             {chunkedGames.map((gamesRow, rowIndex) => (
@@ -112,7 +134,7 @@ const ClassicGamesList = () => {
                             id={game.id}
                             active={game.active}
                             played={game.played}
-                            action={() => fetchClassicGameDetails(game.id)}
+                            action={() => handleGameStart(game.id)}
                         />
                     ))}
                 </div>

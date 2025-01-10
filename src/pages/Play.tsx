@@ -22,10 +22,11 @@ interface OutletContextType {
     handleConnectButton: () => void;
     handleClearSessionButton: () => void;
     isConnected: boolean;
+    currentGameIndex: number;
 }
 
 const Play = () => {
-    const { account } = useOutletContext<OutletContextType>();
+    const { account, currentGameIndex } = useOutletContext<OutletContextType>();
 
     const [currentWordbox, setCurrentWordbox] = useState(0);
     const [currentLetterbox, setCurrentLetterbox] = useState(0);
@@ -318,6 +319,7 @@ const Play = () => {
                 "https://tweetle-bot-backend.onrender.com/game",
                 {
                     word: word.toLowerCase(),
+                    i: currentGameIndex,
                 },
                 {
                     headers: {
