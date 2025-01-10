@@ -1,5 +1,5 @@
 import { useOutletContext } from "react-router-dom";
-import { Contract } from "starknet";
+import { Contract, num, RPC, RpcProvider } from "starknet";
 import gameAbi from "../utils/gameAbi.json";
 import { useState } from "react";
 
@@ -13,6 +13,10 @@ interface OutletContextType {
 }
 const GAME_ADDRESS =
     "0x014348d668e199e0222d2a58d80c04821b9dddb00c5946d1282d415a448227c9";
+const PROVIDER = new RpcProvider({
+    nodeUrl:
+        "https://starknet-sepolia.g.alchemy.com/starknet/version/rpc/v0_7/xZih3RhtucH0P0PvbFte29FfJzMmJ5E6",
+});
 const useGameLogic = () => {
     const { account } = useOutletContext<OutletContextType>();
     const [playerClassicGames, setPlayerClassicGames] = useState([]);
@@ -26,9 +30,8 @@ const useGameLogic = () => {
                 return;
             }
             console.log("starting/..............");
-            const _playerGames = await gameContract.create_new_classic_game();
-            // alert("player games is _______" + _playerGames);
-            console.log("GAME CREATED_______---------", _playerGames);
+            const _gameCreated = await gameContract.create_new_classic_game();
+            console.log("GAME CREATED_______---------", _gameCreated);
         } catch (err) {
             console.log(err);
         }
@@ -95,6 +98,43 @@ const useGameLogic = () => {
         }
     };
 
+    const createNewClassicGameStarkGas = async () => {
+        if (!account) return;
+        const gameContract = new Contract(gameAbi, GAME_ADDRESS, account);
+        try {
+            const myCall = gameContract.populate("create_new_classic_game", []);
+
+            const estimatedFee1 = await account.estimateInvokeFee([myCall], {
+                version: 3,
+            });
+            const resourceBounds = {
+                ...estimatedFee1.resourceBounds,
+                l1_gas: {
+                    ...estimatedFee1.resourceBounds.l1_gas,
+                    max_amount: num.toHex(
+                        BigInt(
+                            parseInt(
+                                estimatedFee1.resourceBounds.l1_gas.max_amount,
+                                16
+                            ) * 2
+                        ) // Double the estimated amount
+                    ),
+                },
+            };
+            const { transaction_hash } = await account.execute(myCall, {
+                version: 3,
+                maxFee: estimatedFee1.suggestedMaxFee,
+                feeDataAvailabilityMode: RPC.EDataAvailabilityMode.L1,
+                resourceBounds: resourceBounds,
+            });
+
+            console.log("transaction_hash", transaction_hash);
+            let receipt = await PROVIDER.waitForTransaction(transaction_hash);
+            console.log("receipt", receipt);
+            return true;
+        } catch (error) {}
+    };
+
     return {
         createNewClassicGame,
         fetchUserClassicGames,
@@ -102,6 +142,7 @@ const useGameLogic = () => {
         fetchPlayerDetails,
         playerDetails,
         playerClassicGames,
+        createNewClassicGameStarkGas,
     };
 };
 
