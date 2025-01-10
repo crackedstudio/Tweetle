@@ -1,4 +1,4 @@
-import { Link, useOutletContext } from "react-router-dom";
+import { useOutletContext } from "react-router-dom";
 import checkmark from "../../assets/svg/checkmark-badge-01.svg";
 // import { Contract } from "starknet";
 // import gameAbi from "../../utils/gameAbi.json";
