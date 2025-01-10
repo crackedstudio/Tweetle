@@ -4,6 +4,7 @@ import BottomNav from "../components/BottomNav";
 import { ArgentTMA, SessionAccountInterface } from "@argent/tma-wallet";
 import { useEffect, useState } from "react";
 import LoadingFullPage from "../components/pages/LoadingFullPage";
+import { CallData } from "starknet";
 // import useGameLogic from "../hooks/useGameLogic";
 // import { CallData, Contract } from "starknet";
 // import gameAbi from "../utils/gameAbi.json";
@@ -16,8 +17,8 @@ interface ArgumentArgentTMA {
 
 const argentTMA = ArgentTMA.init({
     environment: "sepolia", // "sepolia" | "mainnet" (not supperted yet)
-    appName: "token_wordle", // Your Telegram app name
-    appTelegramUrl: "https://t.me/Wordle_bot/Token_wordle", // Your Telegram app URL
+    appName: "burnout", // Your Telegram app name
+    appTelegramUrl: "https://t.me/crankyBot/burnout", // Your Telegram app URL
     sessionParams: {
         allowedMethods: [
             // List of contracts/methods allowed to be called by the session key
@@ -29,7 +30,7 @@ const argentTMA = ArgentTMA.init({
             {
                 contract:
                     "0x014348d668e199e0222d2a58d80c04821b9dddb00c5946d1282d415a448227c9",
-                selector: "create_new_game",
+                selector: "create_new_classic_game",
             },
             {
                 contract:
@@ -39,7 +40,7 @@ const argentTMA = ArgentTMA.init({
             {
                 contract:
                     "0x014348d668e199e0222d2a58d80c04821b9dddb00c5946d1282d415a448227c9",
-                selector: "get_player_games",
+                selector: "register_player",
             },
         ],
         validityDays: 90, // session validity (in days) - default: 90
@@ -53,8 +54,19 @@ const MainLayout = () => {
     >();
     const [isConnected, setIsConnected] = useState<boolean>(false);
     const [isLoading, setIsLoading] = useState(true);
-    // const [playerDetails, setPlayerDetails] = useState({});
-    // const [playerGameCount, setPlayerGameCount] = useState(0);
+    const [playerDetails, setPlayerDetails] = useState({});
+    const [playerClassicGames, setPlayerClassicGames] = useState<any>([]);
+    const [playerClassicGameCount, setPlayerClassicGameCount] = useState(0);
+
+    const updatePlayerDetails = (item: {}) => {
+        setPlayerDetails(item);
+    };
+    const updatePlayerClassicGames = (item: []) => {
+        setPlayerClassicGames(item);
+    };
+    const updatePlayerClassicGameCount = (count: number) => {
+        setPlayerClassicGameCount(count);
+    };
 
     useEffect(() => {
         const timer = setTimeout(() => {
@@ -71,18 +83,14 @@ const MainLayout = () => {
             .then((res) => {
                 if (!res) {
                     // Not connected
-                    console.log("i have not connected");
-                    handleConnectButton();
                     setIsConnected(false);
                     return;
                 }
 
                 // Connected
                 const { account } = res;
-                console.log("i have connected");
                 if (account.getSessionStatus() !== "VALID") {
                     const { account } = res;
-
                     setAccount(account);
                     setIsConnected(false);
                     return;
@@ -126,24 +134,25 @@ const MainLayout = () => {
                 contractAddress:
                     "0x014348d668e199e0222d2a58d80c04821b9dddb00c5946d1282d415a448227c9",
                 entrypoint: "register_player",
-                // calldata: CallData.compile({
-                //     caller: '0x051fea4450da9d6aee758bdeba88b2f665bcbf549d2c61421aa724e9ac0ced8f',
-                //     source: { type: 0, address: account?.address },
-                // }),
+                calldata: CallData.compile({
+                    _tg_id: "123567",
+                }),
             },
         ];
 
-        // console.log(account?.getOutsideExecutionPayload({calls}))
-
         console.log("sent");
 
-        let call = account?.getOutsideExecutionPayload({ calls });
+        let call = await account?.getOutsideExecutionPayload({ calls });
 
-        console.log("call");
+        console.log(call);
 
         const response = await fetch(
             "https://tweetle-bot-backend.onrender.com/player/execute-outside",
             {
+                headers: {
+                    Accept: "application/json",
+                    "Content-Type": "application/json",
+                },
                 method: "POST",
                 body: JSON.stringify(call),
             }
@@ -173,7 +182,7 @@ const MainLayout = () => {
                 <div className="flex flex-col">
                     <button onClick={handleRegisterPlayer}>Register</button>
                     <button onClick={handleOutsideExecution}>
-                        execute_call
+                        execute_calls
                     </button>
                 </div>
                 <Outlet
@@ -181,7 +190,13 @@ const MainLayout = () => {
                         account,
                         handleClearSessionButton,
                         handleConnectButton,
+                        updatePlayerDetails,
+                        updatePlayerClassicGames,
+                        updatePlayerClassicGameCount,
                         isConnected,
+                        playerDetails,
+                        playerClassicGames,
+                        playerClassicGameCount,
                     }}
                 />
             </main>

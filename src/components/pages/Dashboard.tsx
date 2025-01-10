@@ -4,8 +4,40 @@ import HomeHeroSection from "../dashboard/HomeHeroSection";
 import arrowRight from "../../assets/arrow-right.png";
 import PwdByStrk from "../ui/PwdByStrk";
 import calendar from "../../assets/solar_calendar-date-bold.png";
+import useGameLogic from "../../hooks/useGameLogic";
+import { useOutletContext } from "react-router-dom";
+import { useEffect } from "react";
+
+interface OutletContextType {
+    account: any | null;
+    updatePlayerDetails: ({}) => void;
+    updatePlayerClassicGames: ([]) => void;
+    updatePlayerClassicGameCount: (a: number) => void;
+}
 
 const Dashboard = () => {
+    const {
+        account,
+        updatePlayerDetails,
+        updatePlayerClassicGameCount,
+        updatePlayerClassicGames,
+    } = useOutletContext<OutletContextType>();
+    const { fetchPlayerDetails, fetchUserClassicGames } = useGameLogic();
+
+    useEffect(() => {
+        const performAllUpdates = async () => {
+            const _playerDetails = await fetchPlayerDetails(account?.address);
+            const _playerClassicGames = await fetchUserClassicGames();
+            updatePlayerDetails(_playerDetails);
+            updatePlayerClassicGames(_playerClassicGames);
+            updatePlayerClassicGameCount(
+                Number(_playerDetails?.classic_game_count)
+            );
+        };
+        if (account) {
+            performAllUpdates();
+        }
+    }, []);
     return (
         <>
             <div className="h-full overflow-auto text-white">

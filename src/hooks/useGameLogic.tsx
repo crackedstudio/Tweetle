@@ -18,6 +18,22 @@ const useGameLogic = () => {
     const [playerClassicGames, setPlayerClassicGames] = useState([]);
     const [playerDetails, setPlayerDetails] = useState([]);
 
+    const createNewClassicGame = async () => {
+        const gameContract = new Contract(gameAbi, GAME_ADDRESS, account);
+
+        try {
+            if (!account) {
+                return;
+            }
+            console.log("starting/..............");
+            const _playerGames = await gameContract.create_new_classic_game();
+            // alert("player games is _______" + _playerGames);
+            console.log("GAME CREATED_______---------", _playerGames);
+        } catch (err) {
+            console.log(err);
+        }
+    };
+
     const fetchUserClassicGames = async () => {
         if (!account) return;
         const gameContract = new Contract(gameAbi, GAME_ADDRESS, account);
@@ -80,6 +96,7 @@ const useGameLogic = () => {
     };
 
     return {
+        createNewClassicGame,
         fetchUserClassicGames,
         fetchClassicGameDetails,
         fetchPlayerDetails,

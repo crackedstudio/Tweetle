@@ -2,7 +2,7 @@ import { Link, useOutletContext } from "react-router-dom";
 import checkmark from "../../assets/svg/checkmark-badge-01.svg";
 // import { Contract } from "starknet";
 // import gameAbi from "../../utils/gameAbi.json";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import useGameLogic from "../../hooks/useGameLogic";
 
 const GAMES_LIST = [
@@ -38,19 +38,27 @@ interface OutletContextType {
     handleClearSessionButton: () => void;
     isConnected: boolean;
     playerDetails: {};
-    playerGameCount: number;
+    playerClassicGameCount: number;
+    playerClassicGames: any;
+    updatePlayerClassicGames: ([]) => void;
+    updatePlayerClassicGameCount: (a: number) => void;
 }
 
 const ClassicGamesList = () => {
-    const { account } = useOutletContext<OutletContextType>();
-    const [allGames, setAllGames] = useState<any>([]);
-    const { fetchUserClassicGames, fetchPlayerDetails } = useGameLogic();
+    const {
+        account,
+        playerClassicGames,
+        playerClassicGameCount,
+        updatePlayerClassicGames,
+        updatePlayerClassicGameCount,
+    } = useOutletContext<OutletContextType>();
+    const { fetchUserClassicGames, createNewClassicGame } = useGameLogic();
 
     const chunkedGames = [];
 
-    for (let i = 0; i < allGames.length; i++) {
+    for (let i = 0; i < playerClassicGames.length; i++) {
         GAMES_LIST[i].active = true;
-        if (allGames[i].is_completed) {
+        if (playerClassicGames[i].is_completed) {
             GAMES_LIST[i].played = true;
         }
     }
@@ -59,58 +67,37 @@ const ClassicGamesList = () => {
     }
 
     useEffect(() => {
-        const fetchGames = async () => {
-            try {
-                const playerGames = await fetchUserClassicGames();
-                console.log("player games -- -- - - ", playerGames);
-                setAllGames(playerGames);
-                if (!playerGames) return;
-                // playerGames.map((game) =>
-                //     console.log(
-                //         "player game secret word ____----____" +
-                //             String(game.secret_word)
-                //     )
-                // );
-                console.log(
-                    "I AM STILL RUNNING>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>"
-                );
-            } catch (error) {
-                console.error("Error fetching games:", error);
+        const updateGameState = async () => {
+            if (playerClassicGameCount === 0) {
+                try {
+                    handleCreateNewGame();
+                    const _playerClassicGames = await fetchUserClassicGames();
+                    updatePlayerClassicGames(_playerClassicGames);
+                    updatePlayerClassicGameCount(
+                        Number(_playerClassicGames.length)
+                    );
+                } catch (error) {
+                    console.error("Error fetching games:", error);
+                }
             }
         };
-        fetchGames();
+        updateGameState();
     }, []);
 
     const handleCreateNewGame = async () => {
-        // const game_addr =
-        //     "0x6726494f5ced7684652a23fac3754338f0ef3f399e7bd004d57c9a4a7ca9ba1";
-        // const gameContract = new Contract(gameAbi, game_addr, account);
-
         try {
             if (!account) {
                 return;
             }
             console.log("starting/..............");
-            // const _playerGames = await gameContract.create_new_game(
-            //     account?.address
-            // );
-            // // alert("player games is _______" + _playerGames);
-            // console.log("player games is _______", _playerGames);
-            console.log("starting fetching player details");
-            const deets = await fetchPlayerDetails(account?.address);
-            console.log("done===>>>", deets);
+            const txn = await createNewClassicGame();
+            console.log("created new classic game with hash======", txn);
         } catch (err) {
             console.log(err);
         }
     };
     return (
         <div className="bg-black p-3">
-            <button
-                className="bg-green-500 text-white w-64"
-                onClick={handleCreateNewGame}
-            >
-                Refresh
-            </button>
             {chunkedGames.map((gamesRow, rowIndex) => (
                 <div
                     key={rowIndex}
