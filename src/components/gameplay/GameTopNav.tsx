@@ -2,9 +2,12 @@ import CoinPill from "../ui/CoinPill";
 import calendar from "../../assets/bi_calendar-date-fill.png";
 import right from "../../assets/right.png";
 import { useOutletContext } from "react-router-dom";
-
+interface GameData {
+    points: number;
+    // add other properties that might exist
+}
 interface OutletContextType {
-    playerDetails: {};
+    playerDetails: GameData;
 }
 
 const GameTopNav = () => {
