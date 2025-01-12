@@ -8,7 +8,7 @@ import LoseModal from "../components/modal/LoseModal";
 import Keyboard from "../components/gameplay/Keyboard";
 import { useOutletContext } from "react-router-dom";
 import axios from "axios";
-// import { CallData } from "starknet";
+import { CallData } from "starknet";
 
 interface OutletContextType {
     account: any | null;
@@ -16,10 +16,12 @@ interface OutletContextType {
     handleClearSessionButton: () => void;
     isConnected: boolean;
     currentGameIndex: number;
+    currentGameId: number;
 }
 
 const Play = () => {
-    const { currentGameIndex } = useOutletContext<OutletContextType>();
+    const { currentGameIndex, currentGameId, account } =
+        useOutletContext<OutletContextType>();
 
     const [currentWordbox, setCurrentWordbox] = useState(0);
     const [currentLetterbox, setCurrentLetterbox] = useState(0);
@@ -97,6 +99,7 @@ const Play = () => {
 
             try {
                 const _currentWordState = await getWordState(wordString);
+
                 setCurrentWordState(_currentWordState);
 
                 console.log("curenr word state is ---", currentWordState);
@@ -108,6 +111,7 @@ const Play = () => {
                 console.log("vibrators Array is ---", vibratorsArray);
 
                 const status = checkAllValid(_currentWordState);
+                await saveUserClassicAttempt(wordString);
 
                 if (status === "won") {
                     setUserWon(true);
@@ -244,42 +248,43 @@ const Play = () => {
         }
     };
 
-    // const handleOutsideExecution = async () => {
-    //     let calls = [
-    //         {
-    //             contractAddress:
-    //                 "0x014348d668e199e0222d2a58d80c04821b9dddb00c5946d1282d415a448227c9",
-    //             entrypoint: "register_player",
-    //             calldata: CallData.compile({
-    //                 _tg_id: "123567",
-    //             }),
-    //         },
-    //     ];
+    const saveUserClassicAttempt = async (word: string) => {
+        let calls = [
+            {
+                contractAddress:
+                    "0x974d27dbf588cd1a581722921906d03b552d64107264d599e06c97b28e848e",
+                entrypoint: "save_Player_classic_attempt",
+                calldata: CallData.compile({
+                    _game_id: currentGameId,
+                    _word: word,
+                }),
+            },
+        ];
 
-    //     console.log("sent");
+        console.log("sent");
 
-    //     let call = await account?.getOutsideExecutionPayload({ calls });
+        let call = await account?.getOutsideExecutionPayload({ calls });
 
-    //     console.log(call);
+        console.log(call);
 
-    //     const response = await fetch(
-    //         "https://tweetle-bot-backend.onrender.com/player/execute-outside",
-    //         {
-    //             headers: {
-    //                 Accept: "application/json",
-    //                 "Content-Type": "application/json",
-    //             },
-    //             method: "POST",
-    //             body: JSON.stringify(call),
-    //         }
-    //     );
+        const response = await fetch(
+            "https://tweetle-bot-backend.onrender.com/player/execute-outside",
+            {
+                headers: {
+                    Accept: "application/json",
+                    "Content-Type": "application/json",
+                },
+                method: "POST",
+                body: JSON.stringify(call),
+            }
+        );
 
-    //     console.log("fetch");
+        console.log("fetch");
 
-    //     let result = await response.json();
+        let result = await response.json();
 
-    //     console.log(result);
-    // };
+        console.log(result);
+    };
 
     const generateVibrators = (_wordState: number[]) => {
         const _vibrators = _wordState.map((state) => {
