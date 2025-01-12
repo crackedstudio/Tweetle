@@ -17,6 +17,7 @@ interface OutletContextType {
     isConnected: boolean;
     currentGameIndex: number;
     currentGameId: number;
+    updateClassicGameAttempts: (a: string, b: number[]) => void;
 }
 
 const Play = () => {

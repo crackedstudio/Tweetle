@@ -52,7 +52,9 @@ const argentTMA = ArgentTMA.init({
     },
 });
 // const regex = /\/(play|classic)/;
-
+// interface ClassicGameAttempts {
+//     word: string;
+// }
 const MainLayout = () => {
     const [account, setAccount] = useState<
         SessionAccountInterface | undefined
@@ -64,6 +66,7 @@ const MainLayout = () => {
     const [playerClassicGameCount, setPlayerClassicGameCount] = useState(0);
     const [currentGameIndex, setCurrentGameIndex] = useState<number>();
     const [currentGameId, setCurrentGameId] = useState<number>();
+    const [classicGameAttempts, setClassicGameAttempts] = useState<string[]>();
 
     const updatePlayerDetails = (item: {}) => {
         setPlayerDetails(item);
@@ -79,6 +82,11 @@ const MainLayout = () => {
     };
     const updateCurrentGameId = (id: number) => {
         setCurrentGameId(id);
+    };
+    const updateClassicGameAttempts = (word: string) => {
+        const _attempts = classicGameAttempts;
+        _attempts?.push(word);
+        setClassicGameAttempts(_attempts);
     };
 
     useEffect(() => {
@@ -208,12 +216,14 @@ const MainLayout = () => {
                         updatePlayerClassicGameCount,
                         updateCurrentGameIndex,
                         updateCurrentGameId,
+                        updateClassicGameAttempts,
                         isConnected,
                         playerDetails,
                         playerClassicGames,
                         playerClassicGameCount,
                         currentGameIndex,
                         currentGameId,
+                        classicGameAttempts,
                     }}
                 />
             </main>

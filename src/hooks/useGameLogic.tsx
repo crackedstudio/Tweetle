@@ -102,6 +102,30 @@ const useGameLogic = () => {
         }
     };
 
+    const fetchClassicGameAttempts = async (_gameId: number) => {
+        if (!account) return;
+        const gameContract = new Contract(gameAbi, GAME_ADDRESS, account);
+
+        try {
+            if (!account) {
+                return;
+            }
+            const _playerClassicGameAttempts =
+                await gameContract.get_player_classic_game_attempts(
+                    account?.address,
+                    _gameId
+                );
+            console.log(
+                "PLAYER CLASSIC GAME ATTEMPTS IS ---- ==============>>>>>",
+                _playerClassicGameAttempts
+            );
+            return _playerClassicGameAttempts;
+        } catch (err) {
+            console.log(err);
+            return [];
+        }
+    };
+
     const createNewClassicGame = async () => {
         if (!account) return;
         const gameContract = new Contract(gameAbi, GAME_ADDRESS, account);
@@ -143,6 +167,7 @@ const useGameLogic = () => {
         fetchUserClassicGames,
         fetchClassicGameDetails,
         fetchPlayerDetails,
+        fetchClassicGameAttempts,
         playerDetails,
         playerClassicGames,
         createNewClassicGame,
