@@ -68,6 +68,26 @@ const MainLayout = () => {
     const [currentGameId, setCurrentGameId] = useState<number>();
     const [classicGameAttempts, setClassicGameAttempts] = useState<string[]>();
 
+    const initialOrder = [
+        [0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0],
+    ];
+
+    const [attemptOrder, setAttemptOrder] = useState<number[][]>(initialOrder);
+
+    const updateAttemptOrder = (rowIndex: number, newWordState: number[]) => {
+        setAttemptOrder((prevOrder) => {
+            const newOrder = [...prevOrder];
+            newOrder[rowIndex] = [...newWordState];
+
+            return newOrder;
+        });
+    };
+
     const updatePlayerDetails = (item: {}) => {
         setPlayerDetails(item);
     };
@@ -217,6 +237,7 @@ const MainLayout = () => {
                         updateCurrentGameIndex,
                         updateCurrentGameId,
                         updateClassicGameAttempts,
+                        updateAttemptOrder,
                         isConnected,
                         playerDetails,
                         playerClassicGames,
@@ -224,6 +245,7 @@ const MainLayout = () => {
                         currentGameIndex,
                         currentGameId,
                         classicGameAttempts,
+                        attemptOrder,
                     }}
                 />
             </main>

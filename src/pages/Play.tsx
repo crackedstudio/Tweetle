@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import GameBottomNav from "../components/gameplay/GameBottomNav";
 import WordBox from "../components/gameplay/WordBox";
 import GameTopNav from "../components/gameplay/GameTopNav";
@@ -18,10 +18,11 @@ interface OutletContextType {
     currentGameIndex: number;
     currentGameId: number;
     updateClassicGameAttempts: (a: string, b: number[]) => void;
+    classicGameAttempts: string[];
 }
 
 const Play = () => {
-    const { currentGameIndex, currentGameId, account } =
+    const { currentGameIndex, currentGameId, account, classicGameAttempts } =
         useOutletContext<OutletContextType>();
 
     const [currentWordbox, setCurrentWordbox] = useState(0);
@@ -205,49 +206,9 @@ const Play = () => {
             return [0, 0, 0, 0, 0];
         }
 
-        try {
-            const response = await axios.post(
-                "https://tweetle-bot-backend.onrender.com/game",
-                {
-                    word: word.toLowerCase(),
-                    i: currentGameIndex,
-                },
-                {
-                    headers: {
-                        "Content-Type": "application/json; charset=utf-8",
-                    },
-                }
-            );
-
-            setProcessingGuess(false);
-            alert(response.data.message);
-            console.log("RESPONSES>DATA>>>", response.data);
-
-            return response.data.data;
-        } catch (err: any) {
-            setProcessingGuess(false);
-
-            // Log the detailed error message
-            if (err.response) {
-                // The request was made and the server responded with a status code
-                // that falls out of the range of 2xx
-                console.log("Response data:", err.response.data);
-                console.log("Response status:", err.response.status);
-                console.log("Response headers:", err.response.headers);
-                alert(`Server responded with error: ${err.response.status}`);
-                return [0, 0, 0, 0, 0];
-            } else if (err.request) {
-                // The request was made but no response was received
-                console.log("Request:", err.request);
-                alert("No response from server. Possible network error.");
-                return [0, 0, 0, 0, 0];
-            } else {
-                // Something happened in setting up the request that triggered an Error
-                console.log("Error message:", err.message);
-                alert(`Error: ${err.message}`);
-                return [0, 0, 0, 0, 0];
-            }
-        }
+        const _wordState = await getColorForArray(word);
+        setProcessingGuess(false);
+        return _wordState;
     };
 
     const saveUserClassicAttempt = async (word: string) => {
@@ -288,6 +249,52 @@ const Play = () => {
         console.log(result);
     };
 
+    const getColorForArray = async (word: string) => {
+        try {
+            const response = await axios.post(
+                "https://tweetle-bot-backend.onrender.com/game",
+                {
+                    word: word.toLowerCase(),
+                    i: currentGameIndex,
+                },
+                {
+                    headers: {
+                        "Content-Type": "application/json; charset=utf-8",
+                    },
+                }
+            );
+
+            //  setProcessingGuess(false);
+            alert(response.data.message);
+            console.log("RESPONSES>DATA>>>", response.data);
+
+            return response.data.data;
+        } catch (err: any) {
+            setProcessingGuess(false);
+
+            // Log the detailed error message
+            if (err.response) {
+                // The request was made and the server responded with a status code
+                // that falls out of the range of 2xx
+                console.log("Response data:", err.response.data);
+                console.log("Response status:", err.response.status);
+                console.log("Response headers:", err.response.headers);
+                alert(`Server responded with error: ${err.response.status}`);
+                return [0, 0, 0, 0, 0];
+            } else if (err.request) {
+                // The request was made but no response was received
+                console.log("Request:", err.request);
+                alert("No response from server. Possible network error.");
+                return [0, 0, 0, 0, 0];
+            } else {
+                // Something happened in setting up the request that triggered an Error
+                console.log("Error message:", err.message);
+                alert(`Error: ${err.message}`);
+                return [0, 0, 0, 0, 0];
+            }
+        }
+    };
+
     const generateVibrators = (_wordState: number[]) => {
         const _vibrators = _wordState.map((state) => {
             if (state != 0) {
@@ -297,6 +304,29 @@ const Play = () => {
         });
         return _vibrators;
     };
+
+    useEffect(() => {
+        const updatePreviousGameState = async () => {
+            if (classicGameAttempts.length === 0) return;
+            for (let i = 0; i < classicGameAttempts.length; i++) {
+                //get color code
+                const _arrayColorCode = await getColorForArray(
+                    classicGameAttempts[i]
+                );
+                // update color code to current GameBox
+                updateCorrectOrder(i, _arrayColorCode);
+                //update WordBox
+                setWordBoxes((prevBoxes) => {
+                    const newBoxes = [...prevBoxes];
+                    newBoxes[currentWordbox] = classicGameAttempts[i].split("");
+                    return newBoxes;
+                });
+                //move to next wordBox
+                setCurrentWordbox(currentWordbox + 1);
+            }
+        };
+        updatePreviousGameState();
+    }, []);
 
     return (
         <div>
