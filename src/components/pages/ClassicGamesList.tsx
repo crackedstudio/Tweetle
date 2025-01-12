@@ -44,6 +44,7 @@ interface OutletContextType {
     updatePlayerClassicGames: ([]) => void;
     updatePlayerClassicGameCount: (a: number) => void;
     updateCurrentGameIndex: (a: number) => void;
+    updateCurrentGameId: (a: number) => void;
 }
 
 const ClassicGamesList = () => {
@@ -56,6 +57,7 @@ const ClassicGamesList = () => {
         updatePlayerClassicGames,
         updatePlayerClassicGameCount,
         updateCurrentGameIndex,
+        updateCurrentGameId,
     } = useOutletContext<OutletContextType>();
     const {
         fetchUserClassicGames,
@@ -114,8 +116,11 @@ const ClassicGamesList = () => {
             console.log("starting/..............");
             const _gameDetails = await fetchClassicGameDetails(_id);
             const _gameIndex = _gameDetails.word_index;
+            const _gameId = _gameDetails.id;
             console.log("gameIndex is ___========>>>>>>>>>>>>", _gameIndex);
+            console.log("gameId is ___========>>>>>>>>>>>>", _gameId);
             updateCurrentGameIndex(Number(_gameIndex));
+            updateCurrentGameId(Number(_gameId));
             navigate("/play");
         } catch (err) {
             console.log(err);

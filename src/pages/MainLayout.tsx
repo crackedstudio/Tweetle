@@ -58,6 +58,7 @@ const MainLayout = () => {
     const [playerClassicGames, setPlayerClassicGames] = useState<any>([]);
     const [playerClassicGameCount, setPlayerClassicGameCount] = useState(0);
     const [currentGameIndex, setCurrentGameIndex] = useState<number>();
+    const [currentGameId, setCurrentGameId] = useState<number>();
 
     const updatePlayerDetails = (item: {}) => {
         setPlayerDetails(item);
@@ -70,6 +71,9 @@ const MainLayout = () => {
     };
     const updateCurrentGameIndex = (index: number) => {
         setCurrentGameIndex(index);
+    };
+    const updateCurrentGameId = (id: number) => {
+        setCurrentGameId(id);
     };
 
     useEffect(() => {
@@ -198,11 +202,13 @@ const MainLayout = () => {
                         updatePlayerClassicGames,
                         updatePlayerClassicGameCount,
                         updateCurrentGameIndex,
+                        updateCurrentGameId,
                         isConnected,
                         playerDetails,
                         playerClassicGames,
                         playerClassicGameCount,
                         currentGameIndex,
+                        currentGameId,
                     }}
                 />
             </main>
