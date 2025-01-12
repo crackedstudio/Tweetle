@@ -130,7 +130,11 @@ const ClassicGamesList = () => {
             for (let i of _gameAttempts) {
                 updateUserClassicAttempt(i.pending_word);
             }
-            navigate("/play");
+            navigate("/play", {
+                state: {
+                    gameAttempts: _gameAttempts,
+                },
+            });
         } catch (err) {
             console.log(err);
         }

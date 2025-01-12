@@ -9,6 +9,7 @@ import Keyboard from "../components/gameplay/Keyboard";
 import { useOutletContext } from "react-router-dom";
 import axios from "axios";
 import { byteArray, CallData } from "starknet";
+import { useLocation } from "react-router-dom";
 
 interface OutletContextType {
     account: any | null;
@@ -18,11 +19,14 @@ interface OutletContextType {
     currentGameIndex: number;
     currentGameId: number;
     updateClassicGameAttempts: (a: string, b: number[]) => void;
-    classicGameAttempts: string[];
 }
 
 const Play = () => {
-    const { currentGameIndex, currentGameId, account, classicGameAttempts } =
+    const location = useLocation();
+    const { gameAttempts } = location.state || {};
+    // console.log(gameAttempts);
+
+    const { currentGameIndex, currentGameId, account } =
         useOutletContext<OutletContextType>();
 
     const [currentWordbox, setCurrentWordbox] = useState(0);
@@ -265,7 +269,7 @@ const Play = () => {
             );
 
             //  setProcessingGuess(false);
-            alert(response.data.message);
+            // alert(response.data.message);
             console.log("RESPONSES>DATA>>>", response.data);
 
             return response.data.data;
@@ -307,22 +311,22 @@ const Play = () => {
 
     useEffect(() => {
         const updatePreviousGameState = async () => {
-            if (classicGameAttempts.length === 0) return;
-            for (let i = 0; i < classicGameAttempts.length; i++) {
+            console.log("starting update");
+            if (gameAttempts.length === 0) return;
+            console.log("classic Game Attempts +==>>>>>>>", gameAttempts);
+            for (let i = 0; i < gameAttempts.length; i++) {
                 //get color code
-                const _arrayColorCode = await getColorForArray(
-                    classicGameAttempts[i]
-                );
+                const _arrayColorCode = await getColorForArray(gameAttempts[i]);
                 // update color code to current GameBox
                 updateCorrectOrder(i, _arrayColorCode);
                 //update WordBox
                 setWordBoxes((prevBoxes) => {
                     const newBoxes = [...prevBoxes];
-                    newBoxes[currentWordbox] = classicGameAttempts[i].split("");
+                    newBoxes[i] = gameAttempts[i].split("");
                     return newBoxes;
                 });
                 //move to next wordBox
-                setCurrentWordbox(currentWordbox + 1);
+                setCurrentWordbox(i + 1);
             }
         };
         updatePreviousGameState();
