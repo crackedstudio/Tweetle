@@ -251,10 +251,6 @@
                     {
                         "name": "_word",
                         "type": "core::byte_array::ByteArray"
-                    },
-                    {
-                        "name": "_points",
-                        "type": "core::integer::u256"
                     }
                 ],
                 "outputs": [
