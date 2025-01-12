@@ -103,6 +103,10 @@
             {
                 "name": "attempts_allowed",
                 "type": "core::integer::u8"
+            },
+            {
+                "name": "id",
+                "type": "core::integer::u32"
             }
         ]
     },

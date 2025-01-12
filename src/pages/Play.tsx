@@ -8,6 +8,7 @@ import LoseModal from "../components/modal/LoseModal";
 import Keyboard from "../components/gameplay/Keyboard";
 import { useOutletContext } from "react-router-dom";
 import axios from "axios";
+// import { CallData } from "starknet";
 
 interface OutletContextType {
     account: any | null;
@@ -242,6 +243,43 @@ const Play = () => {
             }
         }
     };
+
+    // const handleOutsideExecution = async () => {
+    //     let calls = [
+    //         {
+    //             contractAddress:
+    //                 "0x014348d668e199e0222d2a58d80c04821b9dddb00c5946d1282d415a448227c9",
+    //             entrypoint: "register_player",
+    //             calldata: CallData.compile({
+    //                 _tg_id: "123567",
+    //             }),
+    //         },
+    //     ];
+
+    //     console.log("sent");
+
+    //     let call = await account?.getOutsideExecutionPayload({ calls });
+
+    //     console.log(call);
+
+    //     const response = await fetch(
+    //         "https://tweetle-bot-backend.onrender.com/player/execute-outside",
+    //         {
+    //             headers: {
+    //                 Accept: "application/json",
+    //                 "Content-Type": "application/json",
+    //             },
+    //             method: "POST",
+    //             body: JSON.stringify(call),
+    //         }
+    //     );
+
+    //     console.log("fetch");
+
+    //     let result = await response.json();
+
+    //     console.log(result);
+    // };
 
     const generateVibrators = (_wordState: number[]) => {
         const _vibrators = _wordState.map((state) => {

@@ -29,17 +29,17 @@ const argentTMA = ArgentTMA.init({
             },
             {
                 contract:
-                    "0x014348d668e199e0222d2a58d80c04821b9dddb00c5946d1282d415a448227c9",
+                    "0x974d27dbf588cd1a581722921906d03b552d64107264d599e06c97b28e848e",
                 selector: "create_new_classic_game",
             },
             {
                 contract:
-                    "0x014348d668e199e0222d2a58d80c04821b9dddb00c5946d1282d415a448227c9",
+                    "0x974d27dbf588cd1a581722921906d03b552d64107264d599e06c97b28e848e",
                 selector: "save_player_guess",
             },
             {
                 contract:
-                    "0x014348d668e199e0222d2a58d80c04821b9dddb00c5946d1282d415a448227c9",
+                    "0x974d27dbf588cd1a581722921906d03b552d64107264d599e06c97b28e848e",
                 selector: "register_player",
             },
         ],
@@ -136,7 +136,7 @@ const MainLayout = () => {
         let calls = [
             {
                 contractAddress:
-                    "0x014348d668e199e0222d2a58d80c04821b9dddb00c5946d1282d415a448227c9",
+                    "0x974d27dbf588cd1a581722921906d03b552d64107264d599e06c97b28e848e",
                 entrypoint: "register_player",
                 calldata: CallData.compile({
                     _tg_id: "123567",

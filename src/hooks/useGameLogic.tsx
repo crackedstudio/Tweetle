@@ -12,7 +12,7 @@ interface OutletContextType {
     playerClassicGames: [];
 }
 const GAME_ADDRESS =
-    "0x014348d668e199e0222d2a58d80c04821b9dddb00c5946d1282d415a448227c9";
+    "0x974d27dbf588cd1a581722921906d03b552d64107264d599e06c97b28e848e";
 const PROVIDER = new RpcProvider({
     nodeUrl:
         "https://starknet-sepolia.g.alchemy.com/starknet/version/rpc/v0_7/xZih3RhtucH0P0PvbFte29FfJzMmJ5E6",
