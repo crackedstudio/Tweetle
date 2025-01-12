@@ -8,7 +8,7 @@ import LoseModal from "../components/modal/LoseModal";
 import Keyboard from "../components/gameplay/Keyboard";
 import { useOutletContext } from "react-router-dom";
 import axios from "axios";
-import { CallData } from "starknet";
+import { byteArray, CallData } from "starknet";
 
 interface OutletContextType {
     account: any | null;
@@ -111,6 +111,7 @@ const Play = () => {
                 console.log("vibrators Array is ---", vibratorsArray);
 
                 const status = checkAllValid(_currentWordState);
+
                 await saveUserClassicAttempt(wordString);
 
                 if (status === "won") {
@@ -256,7 +257,7 @@ const Play = () => {
                 entrypoint: "save_Player_classic_attempt",
                 calldata: CallData.compile({
                     _game_id: currentGameId,
-                    _word: word,
+                    _word: byteArray.byteArrayFromString(word),
                 }),
             },
         ];
