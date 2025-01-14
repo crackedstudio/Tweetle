@@ -43,9 +43,6 @@ interface OutletContextType {
     playerClassicGames: any;
     updatePlayerClassicGames: ([]) => void;
     updatePlayerClassicGameCount: (a: number) => void;
-    updateCurrentGameIndex: (a: number) => void;
-    updateCurrentGameId: (a: number) => void;
-    updateClassicGameAttempts: (a: string) => void;
 }
 
 const ClassicGamesList = () => {
@@ -57,9 +54,6 @@ const ClassicGamesList = () => {
         playerClassicGameCount,
         updatePlayerClassicGames,
         updatePlayerClassicGameCount,
-        updateCurrentGameIndex,
-        updateCurrentGameId,
-        updateClassicGameAttempts,
     } = useOutletContext<OutletContextType>();
     const {
         fetchUserClassicGames,
@@ -122,26 +116,22 @@ const ClassicGamesList = () => {
             const _gameId = _gameDetails.id;
             console.log("gameIndex is ___========>>>>>>>>>>>>", _gameIndex);
             console.log("gameId is ___========>>>>>>>>>>>>", _gameId);
-            updateCurrentGameIndex(Number(_gameIndex));
-            updateCurrentGameId(Number(_gameId));
+
             const _gameAttempts = await fetchClassicGameAttempts(
                 Number(_gameId)
             );
-            for (let i of _gameAttempts) {
-                updateUserClassicAttempt(i.pending_word);
-            }
             navigate("/play", {
                 state: {
                     gameAttempts: _gameAttempts,
+                    gameIndex: _gameIndex,
+                    gameId: _gameId,
                 },
             });
         } catch (err) {
             console.log(err);
         }
     };
-    const updateUserClassicAttempt = async (word: string) => {
-        updateClassicGameAttempts(word);
-    };
+
     return (
         <div className="bg-black p-3">
             {chunkedGames.map((gamesRow, rowIndex) => (

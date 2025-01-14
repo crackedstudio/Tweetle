@@ -17,18 +17,15 @@ interface OutletContextType {
     handleConnectButton: () => void;
     handleClearSessionButton: () => void;
     isConnected: boolean;
-    currentGameIndex: number;
-    currentGameId: number;
     updateClassicGameAttempts: (a: string, b: number[]) => void;
 }
 
 const Play = () => {
     const location = useLocation();
-    const { gameAttempts } = location.state || {};
+    const { gameAttempts, gameIndex, gameId } = location.state || {};
     // console.log(gameAttempts);
 
-    const { currentGameIndex, currentGameId, account } =
-        useOutletContext<OutletContextType>();
+    const { account } = useOutletContext<OutletContextType>();
 
     const [currentWordbox, setCurrentWordbox] = useState(0);
     const [currentLetterbox, setCurrentLetterbox] = useState(0);
@@ -224,7 +221,7 @@ const Play = () => {
                     "0x974d27dbf588cd1a581722921906d03b552d64107264d599e06c97b28e848e",
                 entrypoint: "save_Player_classic_attempt",
                 calldata: CallData.compile({
-                    _game_id: currentGameId,
+                    _game_id: Number(gameId),
                     _word: byteArray.byteArrayFromString(word),
                 }),
             },
@@ -262,7 +259,7 @@ const Play = () => {
                 "https://tweetle-bot-backend.onrender.com/game",
                 {
                     word: word.toLowerCase(),
-                    i: currentGameIndex,
+                    i: Number(gameIndex),
                 },
                 {
                     headers: {

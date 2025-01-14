@@ -64,29 +64,6 @@ const MainLayout = () => {
     const [playerDetails, setPlayerDetails] = useState({});
     const [playerClassicGames, setPlayerClassicGames] = useState<any>([]);
     const [playerClassicGameCount, setPlayerClassicGameCount] = useState(0);
-    const [currentGameIndex, setCurrentGameIndex] = useState<number>();
-    const [currentGameId, setCurrentGameId] = useState<number>();
-    const [classicGameAttempts, setClassicGameAttempts] = useState<string[]>();
-
-    const initialOrder = [
-        [0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0],
-    ];
-
-    const [attemptOrder, setAttemptOrder] = useState<number[][]>(initialOrder);
-
-    const updateAttemptOrder = (rowIndex: number, newWordState: number[]) => {
-        setAttemptOrder((prevOrder) => {
-            const newOrder = [...prevOrder];
-            newOrder[rowIndex] = [...newWordState];
-
-            return newOrder;
-        });
-    };
 
     const updatePlayerDetails = (item: {}) => {
         setPlayerDetails(item);
@@ -96,17 +73,6 @@ const MainLayout = () => {
     };
     const updatePlayerClassicGameCount = (count: number) => {
         setPlayerClassicGameCount(count);
-    };
-    const updateCurrentGameIndex = (index: number) => {
-        setCurrentGameIndex(index);
-    };
-    const updateCurrentGameId = (id: number) => {
-        setCurrentGameId(id);
-    };
-    const updateClassicGameAttempts = (word: string) => {
-        const _attempts = classicGameAttempts;
-        _attempts?.push(word);
-        setClassicGameAttempts(_attempts);
     };
 
     useEffect(() => {
@@ -234,18 +200,10 @@ const MainLayout = () => {
                         updatePlayerDetails,
                         updatePlayerClassicGames,
                         updatePlayerClassicGameCount,
-                        updateCurrentGameIndex,
-                        updateCurrentGameId,
-                        updateClassicGameAttempts,
-                        updateAttemptOrder,
                         isConnected,
                         playerDetails,
                         playerClassicGames,
                         playerClassicGameCount,
-                        currentGameIndex,
-                        currentGameId,
-                        classicGameAttempts,
-                        attemptOrder,
                     }}
                 />
             </main>
