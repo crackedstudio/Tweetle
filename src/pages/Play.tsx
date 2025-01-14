@@ -10,6 +10,7 @@ import { useOutletContext } from "react-router-dom";
 import axios from "axios";
 import { byteArray, CallData } from "starknet";
 import { useLocation } from "react-router-dom";
+import GenModal from "../components/modal/GenModal";
 
 interface OutletContextType {
     account: any | null;
@@ -35,6 +36,7 @@ const Play = () => {
     const [userLost, setUserLost] = useState(false);
     const [winModal, setWinModal] = useState(false);
     const [loseModal, setLoseModal] = useState(false);
+    const [genModal, setGenModal] = useState(false);
     const [claimPointsLoading, setClaimPointsLoading] = useState(false);
     const [vibratorsArray, setVibratorsArray] = useState<boolean[]>([]);
 
@@ -254,6 +256,7 @@ const Play = () => {
     };
 
     const getColorForArray = async (word: string) => {
+        setGenModal(true);
         try {
             const response = await axios.post(
                 "https://tweetle-bot-backend.onrender.com/game",
@@ -271,10 +274,10 @@ const Play = () => {
             //  setProcessingGuess(false);
             // alert(response.data.message);
             console.log("RESPONSES>DATA>>>", response.data);
-
+            setGenModal(false);
             return response.data.data;
         } catch (err: any) {
-            setProcessingGuess(false);
+            setGenModal(false);
 
             // Log the detailed error message
             if (err.response) {
@@ -374,6 +377,7 @@ const Play = () => {
                     loadingState={claimPointsLoading}
                 />
             )}
+            {genModal && <GenModal />}
         </div>
     );
 };
