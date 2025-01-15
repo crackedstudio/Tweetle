@@ -47,6 +47,11 @@ const argentTMA = ArgentTMA.init({
                     "0x974d27dbf588cd1a581722921906d03b552d64107264d599e06c97b28e848e",
                 selector: "save_Player_classic_attempt",
             },
+            {
+                contract:
+                    "0x974d27dbf588cd1a581722921906d03b552d64107264d599e06c97b28e848e",
+                selector: "save_player_daily_attempt",
+            },
         ],
         validityDays: 90, // session validity (in days) - default: 90
     },

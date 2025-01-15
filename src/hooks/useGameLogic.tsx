@@ -58,6 +58,41 @@ const useGameLogic = () => {
             return [];
         }
     };
+    const fetchUserDailyGame = async () => {
+        if (!account) return;
+        const gameContract = new Contract(gameAbi, GAME_ADDRESS, account);
+
+        try {
+            if (!account) {
+                return;
+            }
+            const _playerDailyGame = await gameContract.get_daily_game();
+            console.log(
+                "Players daily game is ====+++++?>>>>>",
+                _playerDailyGame
+            );
+            return _playerDailyGame;
+        } catch (err) {
+            console.log(err);
+            return [];
+        }
+    };
+    const fetchDailyGameId = async () => {
+        if (!account) return;
+        const gameContract = new Contract(gameAbi, GAME_ADDRESS, account);
+
+        try {
+            if (!account) {
+                return;
+            }
+            const _dailyGameId = await gameContract.get_daily_game_id();
+            console.log("daily game id is ====+++++?>>>>>", _dailyGameId);
+            return _dailyGameId;
+        } catch (err) {
+            console.log(err);
+            return [];
+        }
+    };
     const fetchPlayerDetails = async (address: string) => {
         if (!account) return;
         const gameContract = new Contract(gameAbi, GAME_ADDRESS, account);
@@ -126,6 +161,30 @@ const useGameLogic = () => {
         }
     };
 
+    const fetchDailyGameAttempts = async (_gameId: number) => {
+        if (!account) return;
+        const gameContract = new Contract(gameAbi, GAME_ADDRESS, account);
+
+        try {
+            if (!account) {
+                return;
+            }
+            const _playerDailyGameAttempts =
+                await gameContract.get_player_daily_game_attempts(
+                    account?.address,
+                    _gameId
+                );
+            console.log(
+                "PLAYER DAILY GAME ATTEMPTS IS ---- ==============>>>>>",
+                _playerDailyGameAttempts
+            );
+            return _playerDailyGameAttempts;
+        } catch (err) {
+            console.log(err);
+            return [];
+        }
+    };
+
     const createNewClassicGame = async () => {
         if (!account) return;
         const gameContract = new Contract(gameAbi, GAME_ADDRESS, account);
@@ -168,9 +227,12 @@ const useGameLogic = () => {
         fetchClassicGameDetails,
         fetchPlayerDetails,
         fetchClassicGameAttempts,
+        fetchUserDailyGame,
+        fetchDailyGameAttempts,
         playerDetails,
         playerClassicGames,
         createNewClassicGame,
+        fetchDailyGameId,
     };
 };
 

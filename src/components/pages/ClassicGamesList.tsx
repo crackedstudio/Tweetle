@@ -122,9 +122,9 @@ const ClassicGamesList = () => {
             );
             navigate("/play", {
                 state: {
-                    gameAttempts: _gameAttempts,
-                    gameIndex: _gameIndex,
-                    gameId: _gameId,
+                    classicGameAttempts: _gameAttempts,
+                    classicGameIndex: Number(_gameIndex),
+                    classicGameId: Number(_gameId),
                 },
             });
         } catch (err) {
