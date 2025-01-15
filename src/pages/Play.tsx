@@ -1,12 +1,6 @@
 "use client";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import GameBottomNav from "../components/gameplay/GameBottomNav";
-import { Contract, CallData } from "starknet";
-import gameAbi from "../utils/gameAbi.json";
-// import vrfAbi from "../utils/vrfAbi.json";
-
-// import { SessionAccountInterface } from "@argent/tma-wallet";
-
 import WordBox from "../components/gameplay/WordBox";
 import GameTopNav from "../components/gameplay/GameTopNav";
 import WinModal from "../components/modal/WinModal";
@@ -14,17 +8,28 @@ import LoseModal from "../components/modal/LoseModal";
 import Keyboard from "../components/gameplay/Keyboard";
 import { useOutletContext } from "react-router-dom";
 import axios from "axios";
-// import { source } from "framer-motion/client";
-// const SAMPLE_WORD = ["C", "O", "V", "I", "D"];
+import { byteArray, cairo, CallData } from "starknet";
+import { useLocation } from "react-router-dom";
+import GenModal from "../components/modal/GenModal";
+import useGameLogic from "../hooks/useGameLogic";
 
 interface OutletContextType {
     account: any | null;
     handleConnectButton: () => void;
     handleClearSessionButton: () => void;
     isConnected: boolean;
+    updateClassicGameAttempts: (a: string, b: number[]) => void;
 }
 
 const Play = () => {
+    const location = useLocation();
+    const { classicGameAttempts, classicGameIndex, classicGameId } =
+        location.state || {};
+
+    const { fetchUserDailyGame, fetchDailyGameId, fetchDailyGameAttempts } =
+        useGameLogic();
+    // console.log(gameAttempts);
+
     const { account } = useOutletContext<OutletContextType>();
 
     const [currentWordbox, setCurrentWordbox] = useState(0);
@@ -33,8 +38,10 @@ const Play = () => {
     const [userLost, setUserLost] = useState(false);
     const [winModal, setWinModal] = useState(false);
     const [loseModal, setLoseModal] = useState(false);
+    const [genModal, setGenModal] = useState(false);
     const [claimPointsLoading, setClaimPointsLoading] = useState(false);
     const [vibratorsArray, setVibratorsArray] = useState<boolean[]>([]);
+    const [isGameDaily, setIsGameDaily] = useState(false);
 
     const [currentWordState, setCurrentWordState] = useState([0, 0, 0, 0, 0]);
 
@@ -42,6 +49,9 @@ const Play = () => {
     // const [gottenData, setGottenData] = useState(false);
     // const [isCurrentWordBoxFull, setIsCurrentWordBoxFull] = useState(false);
     // const [fetchingRecentPlay, setFetchingRecentPlay] = useState(false);
+    const [dailyGameIndex, setDailyGameIndex] = useState(0);
+    const [dailyGameId, setDailyGameId] = useState(0);
+    const [dailyGameAttempts, setDailyGameAttempts] = useState([]);
 
     const initialOrder = [
         [0, 0, 0, 0, 0],
@@ -103,6 +113,7 @@ const Play = () => {
 
             try {
                 const _currentWordState = await getWordState(wordString);
+
                 setCurrentWordState(_currentWordState);
 
                 console.log("curenr word state is ---", currentWordState);
@@ -114,6 +125,9 @@ const Play = () => {
                 console.log("vibrators Array is ---", vibratorsArray);
 
                 const status = checkAllValid(_currentWordState);
+
+                if (!isGameDaily) await saveUserClassicAttempt(wordString);
+                if (isGameDaily) await saveUserDailyAttempt(wordString);
 
                 if (status === "won") {
                     setUserWon(true);
@@ -188,114 +202,6 @@ const Play = () => {
         // await handleFetchRecentPlay();
     };
 
-    // const handleSavePlayerGuess = async () => {
-    //     const game_addr =
-    //         "0x043eb60dc59822103668738df135b407a639d4abbeef95afe0949a3df8f7b802";
-    //     const gameContract = new Contract(gameAbi, game_addr, account);
-
-    //     let calls = [
-    //         {
-    //             to:
-    //                 "0x051fea4450da9d6aee758bdeba88b2f665bcbf549d2c61421aa724e9ac0ced8f",
-    //             selector: "request_random",
-    //             calldata: CallData.compile({
-    //                 caller: game_addr,
-    //                 source: { type: 0, address: account?.address },
-    //             }),
-    //         },
-    //         {
-    //             to: game_addr,
-    //             selector: "random_number",
-    //             calldata: CallData.compile({
-    //                 _num: 0,
-    //             }),
-    //         },
-    //     ]
-
-    //     try {
-    //         if (!account) {
-    //             return;
-    //         }
-    //         await gameContract.create_instant_game(calls);
-    //     } catch (err) {
-    //         console.log(err);
-    //         alert(err)
-    //     }
-    // };
-
-    // const handleFetchUserGames = async () => {
-    //     const game_addr =
-    //         "0x033ccdb04e78933097705e1847779f59db1c868f4da503c87d5a776854256fca";
-    //     const gameContract = new Contract(gameAbi, game_addr, account);
-
-    //     try {
-    //         if (!account) {
-    //             return;
-    //         }
-    //         const _playerGames = await gameContract.get_player_games(
-    //             account.address
-    //         );
-    //         alert("player games is _______" + _playerGames);
-    //     } catch (err) {
-    //         console.log(err);
-    //     }
-    // };
-
-    const handleCreateNewGame = async () => {
-        const game_addr =
-            "0x6726494f5ced7684652a23fac3754338f0ef3f399e7bd004d57c9a4a7ca9ba1";
-        // 0x033ccdb04e78933097705e1847779f59db1c868f4da503c87d5a776854256fca;
-
-        // const vrf_addr =
-        //     '0x051fea4450da9d6aee758bdeba88b2f665bcbf549d2c61421aa724e9ac0ced8f';
-        const gameContract = new Contract(gameAbi, game_addr, account);
-        // const vrfContract = new Contract(vrfAbi, vrf_addr, account);
-
-        // 0x003b7234057f3cd7622d2d8203861dcfe013c475bc06413c312d5b36645845b6
-        try {
-            if (!account) {
-                return;
-            }
-            gameContract.connect(account);
-            const call = await account?.execute([
-                {
-                    contractAddress:
-                        "0x051fea4450da9d6aee758bdeba88b2f665bcbf549d2c61421aa724e9ac0ced8f",
-                    entrypoint: "request_random",
-                    calldata: CallData.compile({
-                        caller: game_addr,
-                        source: { type: 0, address: account?.address },
-                    }),
-                },
-                {
-                    contractAddress: game_addr,
-                    entrypoint: "create_new_game",
-                    calldata: CallData.compile({
-                        _player_id: account?.address,
-                    }),
-                },
-                // {
-                //     contractAddress: game_addr,
-                //     entrypoint: 'random_number',
-                //     calldata: CallData.compile({
-                //         _num: cairo.uint256('500'),
-                //     }),
-                // },
-            ]);
-
-            if (!call) {
-                return new Error("call not made !!");
-            }
-
-            await account.waitForTransaction(call.transaction_hash);
-
-            alert(call.transaction_hash);
-        } catch (error) {
-            console.log(error);
-            alert(error);
-        }
-    };
-
     const convertWordArrayToString = (wordArray: string[]) => {
         let string = "";
         for (let letter of wordArray) {
@@ -313,11 +219,97 @@ const Play = () => {
             return [0, 0, 0, 0, 0];
         }
 
+        const _wordState = await getColorForArray(word);
+        setProcessingGuess(false);
+        return _wordState;
+    };
+
+    const saveUserClassicAttempt = async (word: string) => {
+        let calls = [
+            {
+                contractAddress:
+                    "0x974d27dbf588cd1a581722921906d03b552d64107264d599e06c97b28e848e",
+                entrypoint: "save_Player_classic_attempt",
+                calldata: CallData.compile({
+                    _game_id: Number(classicGameId),
+                    _word: byteArray.byteArrayFromString(word),
+                }),
+            },
+        ];
+
+        console.log("sent");
+
+        let call = await account?.getOutsideExecutionPayload({ calls });
+
+        console.log(call);
+
+        const response = await fetch(
+            "https://tweetle-bot-backend.onrender.com/player/execute-outside",
+            {
+                headers: {
+                    Accept: "application/json",
+                    "Content-Type": "application/json",
+                },
+                method: "POST",
+                body: JSON.stringify(call),
+            }
+        );
+
+        console.log("fetch");
+
+        let result = await response.json();
+
+        console.log(result);
+    };
+    const saveUserDailyAttempt = async (word: string) => {
+        let calls = [
+            {
+                contractAddress:
+                    "0x974d27dbf588cd1a581722921906d03b552d64107264d599e06c97b28e848e",
+                entrypoint: "save_player_daily_attempt",
+                calldata: CallData.compile({
+                    _word: byteArray.byteArrayFromString(word),
+                    _points: cairo.uint256(1),
+                }),
+            },
+        ];
+
+        console.log("sent");
+
+        let call = await account?.getOutsideExecutionPayload({ calls });
+
+        console.log(call);
+
+        const response = await fetch(
+            "https://tweetle-bot-backend.onrender.com/player/execute-outside",
+            {
+                headers: {
+                    Accept: "application/json",
+                    "Content-Type": "application/json",
+                },
+                method: "POST",
+                body: JSON.stringify(call),
+            }
+        );
+
+        console.log("fetch");
+
+        let result = await response.json();
+
+        console.log(result);
+    };
+
+    const getColorForArray = async (word: string) => {
+        let gameIndex: number = 0;
+        if (isGameDaily) gameIndex = dailyGameIndex;
+        if (!isGameDaily) gameIndex = classicGameIndex;
         try {
+            console.log("The Game Index is ____", gameIndex);
             const response = await axios.post(
                 "https://tweetle-bot-backend.onrender.com/game",
                 {
                     word: word.toLowerCase(),
+                    i: Number(gameIndex),
                 },
                 {
                     headers: {
@@ -326,14 +318,12 @@ const Play = () => {
                 }
             );
 
-            setProcessingGuess(false);
-            alert(response.data.message);
+            //  setProcessingGuess(false);
+            // alert(response.data.message);
             console.log("RESPONSES>DATA>>>", response.data);
 
             return response.data.data;
         } catch (err: any) {
-            setProcessingGuess(false);
-
             // Log the detailed error message
             if (err.response) {
                 // The request was made and the server responded with a status code
@@ -342,14 +332,17 @@ const Play = () => {
                 console.log("Response status:", err.response.status);
                 console.log("Response headers:", err.response.headers);
                 alert(`Server responded with error: ${err.response.status}`);
+                return [0, 0, 0, 0, 0];
             } else if (err.request) {
                 // The request was made but no response was received
                 console.log("Request:", err.request);
                 alert("No response from server. Possible network error.");
+                return [0, 0, 0, 0, 0];
             } else {
                 // Something happened in setting up the request that triggered an Error
                 console.log("Error message:", err.message);
                 alert(`Error: ${err.message}`);
+                return [0, 0, 0, 0, 0];
             }
         }
     };
@@ -364,10 +357,80 @@ const Play = () => {
         return _vibrators;
     };
 
+    useEffect(() => {
+        let isMounted = true;
+
+        const initializeGame = async () => {
+            try {
+                setGenModal(true);
+
+                // Check if location.state has values - if not, it's a daily game
+                if (
+                    !classicGameAttempts &&
+                    !classicGameIndex &&
+                    !classicGameId
+                ) {
+                    // This is a daily game - fetch daily game data
+                    const _userDailyGame = await fetchUserDailyGame();
+                    const _dailyGameId = await fetchDailyGameId();
+                    const _dailyGameAttempts = await fetchDailyGameAttempts(
+                        Number(_dailyGameId)
+                    );
+
+                    if (isMounted) {
+                        setIsGameDaily(true);
+                        setDailyGameIndex(Number(_userDailyGame.word_index));
+                        setDailyGameId(Number(_dailyGameId));
+                        console.log(
+                            "daily game id -========>>>>>",
+                            dailyGameId
+                        );
+                        setDailyGameAttempts(_dailyGameAttempts);
+                    }
+                }
+                let GAME_ATTEMPTS: string[] = [];
+                if (isGameDaily) GAME_ATTEMPTS = dailyGameAttempts;
+                if (!isGameDaily) GAME_ATTEMPTS = classicGameAttempts;
+                // Now process attempts regardless of game type
+                if (GAME_ATTEMPTS?.length > 0) {
+                    console.log("POPULATING.............................");
+                    for (let i = 0; i < GAME_ATTEMPTS.length; i++) {
+                        if (!isMounted) return;
+
+                        const _arrayColorCode = await getColorForArray(
+                            GAME_ATTEMPTS[i]
+                        );
+
+                        if (isMounted) {
+                            updateCorrectOrder(i, _arrayColorCode);
+                            setWordBoxes((prevBoxes) => {
+                                const newBoxes = [...prevBoxes];
+                                newBoxes[i] = GAME_ATTEMPTS[i].split("");
+                                return newBoxes;
+                            });
+                            setCurrentWordbox(i + 1);
+                        }
+                    }
+                }
+            } catch (error) {
+                console.error("Game initialization error:", error);
+            } finally {
+                if (isMounted) {
+                    setGenModal(false);
+                }
+            }
+        };
+
+        initializeGame();
+
+        return () => {
+            isMounted = false;
+        };
+    }, []); // Empty dependency array since we only want this to run once on mount
+
     return (
         <div>
             <div className="flex flex-col">
-                <button onClick={handleCreateNewGame}>click</button>
                 <div>
                     <GameTopNav />
                 </div>
@@ -407,6 +470,7 @@ const Play = () => {
                     loadingState={claimPointsLoading}
                 />
             )}
+            {genModal && <GenModal />}
         </div>
     );
 };

@@ -1,9 +1,17 @@
 import CoinPill from "../ui/CoinPill";
 import calendar from "../../assets/bi_calendar-date-fill.png";
 import right from "../../assets/right.png";
+import { useOutletContext } from "react-router-dom";
+interface GameData {
+    points: number;
+    // add other properties that might exist
+}
+interface OutletContextType {
+    playerDetails: GameData;
+}
 
 const GameTopNav = () => {
-    // const {account, isConnected, handleClearSessionButton} = useOutletContext<OutletContextType>();
+    const { playerDetails } = useOutletContext<OutletContextType>();
 
     return (
         <div className="flex justify-between px-3 items-center py-5">
@@ -25,7 +33,7 @@ const GameTopNav = () => {
                 <img src={calendar} alt="" />
             </div>
             <div>
-                <CoinPill text="78900" />
+                <CoinPill text={String(playerDetails?.points)} />
             </div>
         </div>
     );
