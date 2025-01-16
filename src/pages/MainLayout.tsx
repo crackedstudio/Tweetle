@@ -5,6 +5,7 @@ import { ArgentTMA, SessionAccountInterface } from "@argent/tma-wallet";
 import { useEffect, useState } from "react";
 import LoadingFullPage from "../components/pages/LoadingFullPage";
 import { CallData } from "starknet";
+import FullPageConnect from "../components/pages/FullPageConnect";
 // import useGameLogic from "../hooks/useGameLogic";
 // import { CallData, Contract } from "starknet";
 // import gameAbi from "../utils/gameAbi.json";
@@ -136,9 +137,9 @@ const MainLayout = () => {
         setAccount(undefined);
     };
 
-    const handleRegisterPlayer = async () => {
-        console.log(account?.getDeploymentPayload());
-    };
+    // const handleRegisterPlayer = async () => {
+    //     console.log(account?.getDeploymentPayload());
+    // };
 
     const handleOutsideExecution = async () => {
         let calls = [
@@ -187,12 +188,13 @@ const MainLayout = () => {
     //     if (!account) return;
     //     fetchPlayerDetails(account);
     // }, [account]);
-
+    if (!isConnected) {
+        return <FullPageConnect handler={handleConnectButton} />;
+    }
     return (
         <div className="flex flex-col h-[100vh] overflow-hidden text-white relative">
             <main className="flex-grow h-full overflow-auto">
                 <div className="flex flex-col">
-                    <button onClick={handleRegisterPlayer}>Register</button>
                     <button onClick={handleOutsideExecution}>
                         execute_calls
                     </button>

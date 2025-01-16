@@ -42,9 +42,7 @@ const Dashboard = () => {
         <>
             <div className="h-full overflow-auto text-white">
                 <HomeHeroSection />
-                {/* <button onClick={createNewClassicGame}>Create new game</button> */}
                 <div className="bg-black p-2 flex flex-col text-white space-y-4">
-                    {/* <HomeStats /> */}
                     <GlassCard>
                         <>
                             <div className="flex items-center">
