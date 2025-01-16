@@ -116,11 +116,27 @@ const MainLayout = () => {
                 setIsConnected(true);
                 // Custom data passed to the requestConnection() method is available here
                 // console.log("callback data:", callbackData);
+
+                // if user is connected , check if account is deployed , if it isnt deploy account for user
+                const deployAccountAction = async () => {
+                    if (!isConnected) return;
+                    const _isAccountDeployed = await account?.isDeployed();
+                    if (_isAccountDeployed) return;
+                    console.log("is Account deployed????", _isAccountDeployed);
+                    const _deployedSuccessfully =
+                        await handleAccountDeployment();
+                    console.log(
+                        "has account been deployed ? ===>>",
+                        _deployedSuccessfully
+                    );
+                };
+
+                deployAccountAction();
             })
             .catch((err) => {
                 console.error("Failed to connect", err);
             });
-    }, [account]);
+    }, []);
 
     const argumentArgentTMA: ArgumentArgentTMA = {
         callbackData: "custom_callback_data",
@@ -137,9 +153,41 @@ const MainLayout = () => {
         setAccount(undefined);
     };
 
-    // const handleRegisterPlayer = async () => {
-    //     console.log(account?.getDeploymentPayload());
-    // };
+    const handleRegisterPlayer = async () => {
+        console.log(
+            "is account deployed====>>>>>>",
+            await account?.isDeployed()
+        );
+        console.log(await account?.getDeploymentPayload());
+    };
+
+    const handleAccountDeployment = async () => {
+        try {
+            const _deploymentPayload = await account?.getDeploymentPayload();
+
+            const response = await fetch(
+                "https://tweetle-bot-backend.onrender.com/player/deploy-account",
+                {
+                    headers: {
+                        Accept: "application/json",
+                        "Content-Type": "application/json",
+                    },
+                    method: "POST",
+                    body: JSON.stringify(_deploymentPayload),
+                }
+            );
+
+            console.log("fetch");
+
+            let result = await response.json();
+
+            console.log(result);
+            return true;
+        } catch (err) {
+            console.log("error deploying account ===>>>>", err);
+            return false;
+        }
+    };
 
     const handleOutsideExecution = async () => {
         let calls = [
@@ -198,6 +246,7 @@ const MainLayout = () => {
                     <button onClick={handleOutsideExecution}>
                         execute_calls
                     </button>
+                    <button onClick={handleRegisterPlayer}>check</button>
                 </div>
                 <Outlet
                     context={{
@@ -211,6 +260,7 @@ const MainLayout = () => {
                         playerDetails,
                         playerClassicGames,
                         playerClassicGameCount,
+                        handleOutsideExecution,
                     }}
                 />
             </main>

@@ -13,6 +13,7 @@ interface OutletContextType {
     updatePlayerDetails: ({}) => void;
     updatePlayerClassicGames: ([]) => void;
     updatePlayerClassicGameCount: (a: number) => void;
+    handleOutsideExecution: () => boolean;
 }
 
 const Dashboard = () => {
@@ -21,10 +22,25 @@ const Dashboard = () => {
         updatePlayerDetails,
         updatePlayerClassicGameCount,
         updatePlayerClassicGames,
+        handleOutsideExecution,
     } = useOutletContext<OutletContextType>();
     const { fetchPlayerDetails, fetchUserClassicGames } = useGameLogic();
 
     useEffect(() => {
+        const registerUser = async () => {
+            if (!account) return;
+            const _isAccountDeployed = await account?.isDeployed();
+            if (_isAccountDeployed) return;
+            const _playerDetails = await fetchPlayerDetails(account?.address);
+            const _isPlayerRegistered = _playerDetails?.is_registered;
+            if (_isPlayerRegistered) return;
+            const _registeredSuccessfully = await handleOutsideExecution();
+            console.log(
+                "DID USER REGISTER SUCCESSFULLY",
+                _registeredSuccessfully
+            );
+        };
+
         const performAllUpdates = async () => {
             const _playerDetails = await fetchPlayerDetails(account?.address);
             const _playerClassicGames = await fetchUserClassicGames();
@@ -36,6 +52,7 @@ const Dashboard = () => {
         };
         if (account) {
             performAllUpdates();
+            registerUser();
         }
     }, []);
     return (
