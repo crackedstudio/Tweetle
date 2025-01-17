@@ -61,7 +61,8 @@ const ClassicGamesList = () => {
         fetchUserClassicGames,
         createNewClassicGame,
         fetchClassicGameDetails,
-        fetchClassicGameAttempts,
+        // fetchClassicGameAttempts,
+        getAttempts,
     } = useGameLogic();
 
     const chunkedGames = [];
@@ -138,14 +139,19 @@ const ClassicGamesList = () => {
             console.log("gameIndex is ___========>>>>>>>>>>>>", _gameIndex);
             console.log("gameId is ___========>>>>>>>>>>>>", _gameId);
 
-            const _gameAttempts = await fetchClassicGameAttempts(
-                Number(_gameId)
-            );
+            // const _gameAttempts = await fetchClassicGameAttempts(
+            //     Number(_gameId)
+            // );
+
+            const _attempts = await getAttempts(false, String(_gameId));
+            const _gameAttempts = _attempts.map((item) => item.attempt);
+            const _gameState = _attempts.map((item) => item.state);
             navigate("/play", {
                 state: {
                     classicGameAttempts: _gameAttempts,
                     classicGameIndex: Number(_gameIndex),
                     classicGameId: Number(_gameId),
+                    classicGameState: _gameState,
                 },
             });
         } catch (err) {

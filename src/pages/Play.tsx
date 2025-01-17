@@ -7,7 +7,7 @@ import WinModal from "../components/modal/WinModal";
 import LoseModal from "../components/modal/LoseModal";
 import Keyboard from "../components/gameplay/Keyboard";
 import { useOutletContext } from "react-router-dom";
-import axios from "axios";
+// import axios from "axios";
 import { byteArray, cairo, CallData } from "starknet";
 import { useLocation } from "react-router-dom";
 import GenModal from "../components/modal/GenModal";
@@ -42,17 +42,23 @@ interface DailyGameData {
     index: number;
     id: number;
     attempts: string[];
+    state: number[][];
 }
 
 const Play = () => {
     const location = useLocation();
-    const { classicGameAttempts, classicGameIndex, classicGameId } =
-        location.state || {};
+    const {
+        classicGameAttempts,
+        classicGameIndex,
+        classicGameId,
+        classicGameState,
+    } = location.state || {};
     const {
         fetchUserDailyGame,
         fetchDailyGameId,
-        fetchDailyGameAttempts,
+        // fetchDailyGameAttempts,
         claimPoints,
+        getAttempts,
     } = useGameLogic();
     const { account } = useOutletContext<OutletContextType>();
 
@@ -80,6 +86,7 @@ const Play = () => {
         index: 0,
         id: 0,
         attempts: [],
+        state: [],
     });
 
     const [currentWordState, setCurrentWordState] = useState([0, 0, 0, 0, 0]);
@@ -243,26 +250,57 @@ const Play = () => {
             ? dailyGameData.index
             : classicGameIndex;
 
+        const gameType = gameState.isGameDaily ? "daily" : "classic";
+        const gameId = gameState.isGameDaily ? dailyGameData.id : classicGameId;
+        console.log(
+            "POST DATA IS ----------->>>>>",
+            gameIndex,
+            gameId,
+            gameType
+        );
+        const body = {
+            word: word.toLowerCase(),
+            i: Number(gameIndex),
+            tg_id: "2200639342",
+            game_type: gameType,
+            game_id: Number(gameId),
+        };
         try {
-            const response = await axios.post(
+            // const response = await axios.post(
+            //     "https://tweetle-bot-backend.onrender.com/game",
+            //     {
+            //         word: word.toLowerCase(),
+            //         i: Number(gameIndex),
+            //         tg_id: "2200639342",
+            //         game_type: Number(gameType),
+            //         game_id: Number(gameId),
+            //     },
+            //     {
+            //         headers: {
+            //             "Content-Type": "application/json; charset=utf-8",
+            //         },
+            //     }
+            // );
+
+            const _response = await fetch(
                 "https://tweetle-bot-backend.onrender.com/game",
                 {
-                    word: word.toLowerCase(),
-                    i: Number(gameIndex),
-                    tg_id: "2200639342",
-                },
-                {
                     headers: {
+                        Accept: "application/json",
                         "Content-Type": "application/json; charset=utf-8",
                     },
+                    method: "POST",
+                    body: JSON.stringify(body),
                 }
             );
-            console.log("RESPONSE IS ==========>>>", response.data);
+
+            let response = await _response.json();
+            console.log("RESPONSE IS ==========>>>", response);
             setGameState((prev) => ({
                 ...prev,
-                currentPoints: response.data.points,
+                currentPoints: response.points,
             }));
-            return response.data.data;
+            return response.data;
         } catch (error: any) {
             console.error("Error getting word state:", error);
             return [0, 0, 0, 0, 0];
@@ -341,11 +379,15 @@ const Play = () => {
         }
     };
 
-    const processExistingAttempts = async (attempts: string[]) => {
+    const processExistingAttempts = async (
+        attempts: string[],
+        states: number[][]
+    ) => {
         for (let i = 0; i < attempts.length; i++) {
             if (attempts[i].length > 5) continue;
 
-            const arrayColorCode = await getWordState(attempts[i]);
+            // const arrayColorCode = await getWordState(attempts[i]);
+            const arrayColorCode = states[i];
             updateCorrectOrder(i, arrayColorCode);
 
             setWordBoxes((prevBoxes) => {
@@ -376,7 +418,20 @@ const Play = () => {
             claimPointsLoading: true,
         }));
 
-        await claimPoints(gameState.currentPoints);
+        const _final = await claimPoints(gameState.currentPoints);
+        if (_final != null) {
+            alert("claimed");
+            setModalState((prev) => ({
+                ...prev,
+                claimPointsLoading: false,
+            }));
+        } else {
+            alert("not claimed");
+            setModalState((prev) => ({
+                ...prev,
+                claimPointsLoading: false,
+            }));
+        }
     };
 
     useEffect(() => {
@@ -394,8 +449,18 @@ const Play = () => {
                 ) {
                     const dailyGame = await fetchUserDailyGame();
                     const dailyId = await fetchDailyGameId();
-                    const dailyAttempts = await fetchDailyGameAttempts(
-                        Number(dailyId)
+                    // const dailyAttempts = await fetchDailyGameAttempts(
+                    //     Number(dailyId)
+                    // );
+                    const _attemptsObject = await getAttempts(
+                        true,
+                        String(dailyId)
+                    );
+                    const dailyAttempts = _attemptsObject.map(
+                        (item) => item.attempt
+                    );
+                    const dailyState = _attemptsObject.map(
+                        (item) => item.state
                     );
 
                     if (isMounted) {
@@ -407,6 +472,7 @@ const Play = () => {
                             index: Number(dailyGame.word_index),
                             id: Number(dailyId),
                             attempts: dailyAttempts,
+                            state: dailyState,
                         });
                     }
                 }
@@ -415,8 +481,11 @@ const Play = () => {
                 const attempts = gameState.isGameDaily
                     ? dailyGameData.attempts
                     : classicGameAttempts;
+                const state = gameState.isGameDaily
+                    ? dailyGameData.state
+                    : classicGameState;
                 if (attempts?.length > 0) {
-                    await processExistingAttempts(attempts);
+                    await processExistingAttempts(attempts, state);
                 }
             } catch (error) {
                 console.error("Game initialization error:", error);
