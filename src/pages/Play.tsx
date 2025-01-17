@@ -21,211 +21,258 @@ interface OutletContextType {
     updateClassicGameAttempts: (a: string, b: number[]) => void;
 }
 
+interface GameState {
+    currentWordbox: number;
+    currentLetterbox: number;
+    userWon: boolean;
+    userLost: boolean;
+    processingGuess: boolean;
+    isGameDaily: boolean;
+    currentPoints: number;
+}
+
+interface ModalState {
+    winModal: boolean;
+    loseModal: boolean;
+    genModal: boolean;
+    claimPointsLoading: boolean;
+}
+
+interface DailyGameData {
+    index: number;
+    id: number;
+    attempts: string[];
+}
+
 const Play = () => {
     const location = useLocation();
     const { classicGameAttempts, classicGameIndex, classicGameId } =
         location.state || {};
-
-    const { fetchUserDailyGame, fetchDailyGameId, fetchDailyGameAttempts } =
-        useGameLogic();
-    // console.log(gameAttempts);
-
+    const {
+        fetchUserDailyGame,
+        fetchDailyGameId,
+        fetchDailyGameAttempts,
+        claimPoints,
+    } = useGameLogic();
     const { account } = useOutletContext<OutletContextType>();
 
-    const [currentWordbox, setCurrentWordbox] = useState(0);
-    const [currentLetterbox, setCurrentLetterbox] = useState(0);
-    const [userWon, setUserWon] = useState(false);
-    const [userLost, setUserLost] = useState(false);
-    const [winModal, setWinModal] = useState(false);
-    const [loseModal, setLoseModal] = useState(false);
-    const [genModal, setGenModal] = useState(false);
-    const [claimPointsLoading, setClaimPointsLoading] = useState(false);
-    const [vibratorsArray, setVibratorsArray] = useState<boolean[]>([]);
-    const [isGameDaily, setIsGameDaily] = useState(false);
+    // Game state
+    const [gameState, setGameState] = useState<GameState>({
+        currentWordbox: 0,
+        currentLetterbox: 0,
+        userWon: false,
+        userLost: false,
+        processingGuess: false,
+        isGameDaily: false,
+        currentPoints: 0,
+    });
+
+    // Modal states
+    const [modalState, setModalState] = useState<ModalState>({
+        winModal: false,
+        loseModal: false,
+        genModal: false,
+        claimPointsLoading: false,
+    });
+
+    // Game data states
+    const [dailyGameData, setDailyGameData] = useState<DailyGameData>({
+        index: 0,
+        id: 0,
+        attempts: [],
+    });
 
     const [currentWordState, setCurrentWordState] = useState([0, 0, 0, 0, 0]);
-
-    const [processingGuess, setProcessingGuess] = useState(false);
-    // const [gottenData, setGottenData] = useState(false);
-    // const [isCurrentWordBoxFull, setIsCurrentWordBoxFull] = useState(false);
-    // const [fetchingRecentPlay, setFetchingRecentPlay] = useState(false);
-    const [dailyGameIndex, setDailyGameIndex] = useState(0);
-    const [dailyGameId, setDailyGameId] = useState(0);
-    const [dailyGameAttempts, setDailyGameAttempts] = useState([]);
-
-    const initialOrder = [
-        [0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0],
-    ];
-
-    const [correctOrder, setCorrectOrder] = useState<number[][]>(initialOrder);
-
-    const getKeyboardInput = (key: string) => {
-        console.log(key);
-        updateBox(key);
-    };
-
+    const [vibratorsArray, setVibratorsArray] = useState<boolean[]>([]);
     const [wordBoxes, setWordBoxes] = useState<string[][]>(
         Array(6)
             .fill(null)
             .map(() => Array(5).fill(""))
     );
+    const [correctOrder, setCorrectOrder] = useState<number[][]>(
+        Array(6)
+            .fill(null)
+            .map(() => Array(5).fill(0))
+    );
+
+    const getKeyboardInput = (key: string) => {
+        updateBox(key);
+    };
 
     const updateBox = async (value: string) => {
-        if (userWon || userLost) {
+        if (
+            gameState.userWon ||
+            gameState.userLost ||
+            gameState.processingGuess
+        ) {
             return;
         }
 
         if (value.toLowerCase() === "del") {
-            if (currentLetterbox === 0) {
-                return;
-            }
-            setWordBoxes((prevBoxes) => {
-                const newBoxes = [...prevBoxes];
-                newBoxes[currentWordbox] = [...newBoxes[currentWordbox]];
-                newBoxes[currentWordbox][currentLetterbox - 1] = "";
-                return newBoxes;
-            });
-            setCurrentLetterbox((prev) => prev - 1);
+            handleDelete();
             return;
         }
 
-        // Don't process more input if we're already at max letters
-        if (currentLetterbox > 4) {
+        if (gameState.currentLetterbox > 4) {
             return;
         }
 
+        // Update the current word box with the new letter
         setWordBoxes((prevBoxes) => {
             const newBoxes = [...prevBoxes];
-            newBoxes[currentWordbox] = [...newBoxes[currentWordbox]];
-            newBoxes[currentWordbox][currentLetterbox] = value;
+            newBoxes[gameState.currentWordbox] = [
+                ...newBoxes[gameState.currentWordbox],
+            ];
+            newBoxes[gameState.currentWordbox][gameState.currentLetterbox] =
+                value;
             return newBoxes;
         });
 
-        // If this input completes the word
-        if (currentLetterbox === 4) {
-            const updatedWord = [...wordBoxes[currentWordbox], value];
-            const wordString = convertWordArrayToString(updatedWord);
-
-            try {
-                const _currentWordState = await getWordState(wordString);
-
-                setCurrentWordState(_currentWordState);
-
-                console.log("curenr word state is ---", currentWordState);
-                updateCorrectOrder(currentWordbox, _currentWordState);
-
-                const _vibratorsArray = generateVibrators(_currentWordState);
-                setVibratorsArray(_vibratorsArray);
-
-                console.log("vibrators Array is ---", vibratorsArray);
-
-                const status = checkAllValid(_currentWordState);
-
-                if (!isGameDaily) await saveUserClassicAttempt(wordString);
-                if (isGameDaily) await saveUserDailyAttempt(wordString);
-
-                if (status === "won") {
-                    setUserWon(true);
-                    setWinModal(true);
-                    return;
-                }
-
-                if (status === "fail") {
-                    return;
-                }
-
-                if (status === "pass" && currentWordbox === 5) {
-                    setLoseModal(true);
-                    setUserLost(true);
-                    return;
-                }
-
-                // Move to next word if the guess was valid
-                if (status === "pass") {
-                    setCurrentLetterbox(0);
-                    setCurrentWordbox((prev) => prev + 1);
-                    return;
-                }
-            } catch (error) {
-                console.error("Error processing word:", error);
-            }
+        // If this completes the word
+        if (gameState.currentLetterbox === 4) {
+            await handleCompleteWord(value);
         } else {
-            setCurrentLetterbox((prev) => prev + 1);
+            setGameState((prev) => ({
+                ...prev,
+                currentLetterbox: prev.currentLetterbox + 1,
+            }));
         }
+    };
+
+    const handleDelete = () => {
+        if (gameState.currentLetterbox === 0) return;
+
+        setWordBoxes((prevBoxes) => {
+            const newBoxes = [...prevBoxes];
+            newBoxes[gameState.currentWordbox] = [
+                ...newBoxes[gameState.currentWordbox],
+            ];
+            newBoxes[gameState.currentWordbox][gameState.currentLetterbox - 1] =
+                "";
+            return newBoxes;
+        });
+
+        setGameState((prev) => ({
+            ...prev,
+            currentLetterbox: prev.currentLetterbox - 1,
+        }));
+    };
+
+    const handleCompleteWord = async (lastLetter: string) => {
+        setGameState((prev) => ({ ...prev, processingGuess: true }));
+
+        const currentWord = [
+            ...wordBoxes[gameState.currentWordbox],
+            lastLetter,
+        ];
+        const wordString = currentWord.join("");
+
+        try {
+            const newWordState = await getWordState(wordString);
+            setCurrentWordState(newWordState);
+            console.log(currentWordState);
+            updateCorrectOrder(gameState.currentWordbox, newWordState);
+
+            const newVibrators = generateVibrators(newWordState);
+            setVibratorsArray(newVibrators);
+            console.log(vibratorsArray);
+
+            const status = checkAllValid(newWordState);
+
+            // Save attempt based on game type
+            if (gameState.isGameDaily) {
+                await saveUserDailyAttempt(wordString);
+            } else {
+                await saveUserClassicAttempt(wordString);
+            }
+
+            handleWordStatus(status);
+        } catch (error) {
+            console.error("Error processing word:", error);
+        } finally {
+            setGameState((prev) => ({ ...prev, processingGuess: false }));
+        }
+    };
+
+    const handleWordStatus = (status: string) => {
+        if (status === "won") {
+            setGameState((prev) => ({ ...prev, userWon: true }));
+            setModalState((prev) => ({ ...prev, winModal: true }));
+            return;
+        }
+
+        if (status !== "won" && gameState.currentWordbox === 5) {
+            setGameState((prev) => ({ ...prev, userLost: true }));
+            setModalState((prev) => ({ ...prev, loseModal: true }));
+            return;
+        }
+
+        // Move to next word if not won
+        setGameState((prev) => ({
+            ...prev,
+            currentWordbox: prev.currentWordbox + 1,
+            currentLetterbox: 0,
+        }));
     };
 
     const checkAllValid = (currentWordState: number[]) => {
-        let isAllValid = "";
-        let total = 0;
-
-        for (let i of currentWordState) {
-            total += i;
-        }
-        if (total === 0) {
-            isAllValid = "fail";
-        } else if (total === 10) {
-            isAllValid = "won";
-        } else {
-            isAllValid = "pass";
-        }
-
-        return isAllValid;
+        const total = currentWordState.reduce((sum, val) => sum + val, 0);
+        if (total === 0) return "fail";
+        if (total === 10) return "won";
+        return "pass";
     };
 
-    // To update a single value in correctOrder
     const updateCorrectOrder = (rowIndex: number, newWordState: number[]) => {
         setCorrectOrder((prevOrder) => {
             const newOrder = [...prevOrder];
             newOrder[rowIndex] = [...newWordState];
-
             return newOrder;
         });
     };
 
-    // MODAL FUNCTIONS
-    const closeModal = () => {
-        setWinModal(false);
-        setLoseModal(false);
+    const generateVibrators = (wordState: number[]) => {
+        return wordState.map((state) => state === 0);
     };
-
-    const claimHandler = () => {
-        setClaimPointsLoading(true);
-    };
-
-    const submitHandler = async () => {
-        // await handleProcessGuess(wordBoxes[currentWordbox]);
-        // await handleFetchRecentPlay();
-    };
-
-    const convertWordArrayToString = (wordArray: string[]) => {
-        let string = "";
-        for (let letter of wordArray) {
-            string += letter;
-        }
-        return string;
-    };
-    // A function that collects user input to return the array equivalent
 
     const getWordState = async (word: string) => {
-        setProcessingGuess(true);
-
         if (word.length !== 5) {
-            setProcessingGuess(false);
             return [0, 0, 0, 0, 0];
         }
 
-        const _wordState = await getColorForArray(word);
-        setProcessingGuess(false);
-        return _wordState;
+        const gameIndex = gameState.isGameDaily
+            ? dailyGameData.index
+            : classicGameIndex;
+
+        try {
+            const response = await axios.post(
+                "https://tweetle-bot-backend.onrender.com/game",
+                {
+                    word: word.toLowerCase(),
+                    i: Number(gameIndex),
+                    tg_id: "2200639342",
+                },
+                {
+                    headers: {
+                        "Content-Type": "application/json; charset=utf-8",
+                    },
+                }
+            );
+            console.log("RESPONSE IS ==========>>>", response.data);
+            setGameState((prev) => ({
+                ...prev,
+                currentPoints: response.data.points,
+            }));
+            return response.data.data;
+        } catch (error: any) {
+            console.error("Error getting word state:", error);
+            return [0, 0, 0, 0, 0];
+        }
     };
 
     const saveUserClassicAttempt = async (word: string) => {
-        let calls = [
+        if (word.length > 5) return;
+
+        const calls = [
             {
                 contractAddress:
                     "0x974d27dbf588cd1a581722921906d03b552d64107264d599e06c97b28e848e",
@@ -237,32 +284,31 @@ const Play = () => {
             },
         ];
 
-        console.log("sent");
+        try {
+            const call = await account?.getOutsideExecutionPayload({ calls });
 
-        let call = await account?.getOutsideExecutionPayload({ calls });
+            const response = await fetch(
+                "https://tweetle-bot-backend.onrender.com/player/execute-outside",
+                {
+                    headers: {
+                        Accept: "application/json",
+                        "Content-Type": "application/json",
+                    },
+                    method: "POST",
+                    body: JSON.stringify(call),
+                }
+            );
 
-        console.log(call);
-
-        const response = await fetch(
-            "https://tweetle-bot-backend.onrender.com/player/execute-outside",
-            {
-                headers: {
-                    Accept: "application/json",
-                    "Content-Type": "application/json",
-                },
-                method: "POST",
-                body: JSON.stringify(call),
-            }
-        );
-
-        console.log("fetch");
-
-        let result = await response.json();
-
-        console.log(result);
+            return await response.json();
+        } catch (error) {
+            console.error("Error saving classic attempt:", error);
+        }
     };
+
     const saveUserDailyAttempt = async (word: string) => {
-        let calls = [
+        if (word.length > 5) return;
+
+        const calls = [
             {
                 contractAddress:
                     "0x974d27dbf588cd1a581722921906d03b552d64107264d599e06c97b28e848e",
@@ -274,87 +320,63 @@ const Play = () => {
             },
         ];
 
-        console.log("sent");
-
-        let call = await account?.getOutsideExecutionPayload({ calls });
-
-        console.log(call);
-
-        const response = await fetch(
-            "https://tweetle-bot-backend.onrender.com/player/execute-outside",
-            {
-                headers: {
-                    Accept: "application/json",
-                    "Content-Type": "application/json",
-                },
-                method: "POST",
-                body: JSON.stringify(call),
-            }
-        );
-
-        console.log("fetch");
-
-        let result = await response.json();
-
-        console.log(result);
-    };
-
-    const getColorForArray = async (word: string) => {
-        let gameIndex: number = 0;
-        if (isGameDaily) gameIndex = dailyGameIndex;
-        if (!isGameDaily) gameIndex = classicGameIndex;
         try {
-            console.log("The Game Index is ____", gameIndex);
-            const response = await axios.post(
-                "https://tweetle-bot-backend.onrender.com/game",
-                {
-                    word: word.toLowerCase(),
-                    i: Number(gameIndex),
-                },
+            const call = await account?.getOutsideExecutionPayload({ calls });
+
+            const response = await fetch(
+                "https://tweetle-bot-backend.onrender.com/player/execute-outside",
                 {
                     headers: {
-                        "Content-Type": "application/json; charset=utf-8",
+                        Accept: "application/json",
+                        "Content-Type": "application/json",
                     },
+                    method: "POST",
+                    body: JSON.stringify(call),
                 }
             );
 
-            //  setProcessingGuess(false);
-            // alert(response.data.message);
-            console.log("RESPONSES>DATA>>>", response.data);
-
-            return response.data.data;
-        } catch (err: any) {
-            // Log the detailed error message
-            if (err.response) {
-                // The request was made and the server responded with a status code
-                // that falls out of the range of 2xx
-                console.log("Response data:", err.response.data);
-                console.log("Response status:", err.response.status);
-                console.log("Response headers:", err.response.headers);
-                alert(`Server responded with error: ${err.response.status}`);
-                return [0, 0, 0, 0, 0];
-            } else if (err.request) {
-                // The request was made but no response was received
-                console.log("Request:", err.request);
-                alert("No response from server. Possible network error.");
-                return [0, 0, 0, 0, 0];
-            } else {
-                // Something happened in setting up the request that triggered an Error
-                console.log("Error message:", err.message);
-                alert(`Error: ${err.message}`);
-                return [0, 0, 0, 0, 0];
-            }
+            return await response.json();
+        } catch (error) {
+            console.error("Error saving daily attempt:", error);
         }
     };
 
-    const generateVibrators = (_wordState: number[]) => {
-        const _vibrators = _wordState.map((state) => {
-            if (state != 0) {
-                return false;
-            }
-            return true;
-        });
-        return _vibrators;
+    const processExistingAttempts = async (attempts: string[]) => {
+        for (let i = 0; i < attempts.length; i++) {
+            if (attempts[i].length > 5) continue;
+
+            const arrayColorCode = await getWordState(attempts[i]);
+            updateCorrectOrder(i, arrayColorCode);
+
+            setWordBoxes((prevBoxes) => {
+                const newBoxes = [...prevBoxes];
+                newBoxes[i] = attempts[i].split("");
+                return newBoxes;
+            });
+
+            setGameState((prev) => ({
+                ...prev,
+                currentWordbox: i + 1,
+            }));
+        }
+    };
+
+    // Modal handlers
+    const closeModal = () => {
+        setModalState((prev) => ({
+            ...prev,
+            winModal: false,
+            loseModal: false,
+        }));
+    };
+
+    const claimHandler = async () => {
+        setModalState((prev) => ({
+            ...prev,
+            claimPointsLoading: true,
+        }));
+
+        await claimPoints(gameState.currentPoints);
     };
 
     useEffect(() => {
@@ -362,71 +384,54 @@ const Play = () => {
 
         const initializeGame = async () => {
             try {
-                setGenModal(true);
+                setModalState((prev) => ({ ...prev, genModal: true }));
 
-                // Check if location.state has values - if not, it's a daily game
+                // Initialize game type and data
                 if (
                     !classicGameAttempts &&
                     !classicGameIndex &&
                     !classicGameId
                 ) {
-                    // This is a daily game - fetch daily game data
-                    const _userDailyGame = await fetchUserDailyGame();
-                    const _dailyGameId = await fetchDailyGameId();
-                    const _dailyGameAttempts = await fetchDailyGameAttempts(
-                        Number(_dailyGameId)
+                    const dailyGame = await fetchUserDailyGame();
+                    const dailyId = await fetchDailyGameId();
+                    const dailyAttempts = await fetchDailyGameAttempts(
+                        Number(dailyId)
                     );
 
                     if (isMounted) {
-                        setIsGameDaily(true);
-                        setDailyGameIndex(Number(_userDailyGame.word_index));
-                        setDailyGameId(Number(_dailyGameId));
-                        console.log(
-                            "daily game id -========>>>>>",
-                            dailyGameId
-                        );
-                        setDailyGameAttempts(_dailyGameAttempts);
+                        setGameState((prev) => ({
+                            ...prev,
+                            isGameDaily: true,
+                        }));
+                        setDailyGameData({
+                            index: Number(dailyGame.word_index),
+                            id: Number(dailyId),
+                            attempts: dailyAttempts,
+                        });
                     }
                 }
-                let GAME_ATTEMPTS: string[] = [];
-                if (isGameDaily) GAME_ATTEMPTS = dailyGameAttempts;
-                if (!isGameDaily) GAME_ATTEMPTS = classicGameAttempts;
-                // Now process attempts regardless of game type
-                if (GAME_ATTEMPTS?.length > 0) {
-                    console.log("POPULATING.............................");
-                    for (let i = 0; i < GAME_ATTEMPTS.length; i++) {
-                        if (!isMounted) return;
 
-                        const _arrayColorCode = await getColorForArray(
-                            GAME_ATTEMPTS[i]
-                        );
-
-                        if (isMounted) {
-                            updateCorrectOrder(i, _arrayColorCode);
-                            setWordBoxes((prevBoxes) => {
-                                const newBoxes = [...prevBoxes];
-                                newBoxes[i] = GAME_ATTEMPTS[i].split("");
-                                return newBoxes;
-                            });
-                            setCurrentWordbox(i + 1);
-                        }
-                    }
+                // Process existing attempts
+                const attempts = gameState.isGameDaily
+                    ? dailyGameData.attempts
+                    : classicGameAttempts;
+                if (attempts?.length > 0) {
+                    await processExistingAttempts(attempts);
                 }
             } catch (error) {
                 console.error("Game initialization error:", error);
             } finally {
                 if (isMounted) {
-                    setGenModal(false);
+                    setModalState((prev) => ({ ...prev, genModal: false }));
                 }
             }
         };
 
         initializeGame();
-
         return () => {
             isMounted = false;
         };
-    }, []); // Empty dependency array since we only want this to run once on mount
+    }, []);
 
     return (
         <div>
@@ -440,7 +445,7 @@ const Play = () => {
                             wordArray={wordArray}
                             key={index}
                             wordState={correctOrder[index]}
-                            isLoading={processingGuess}
+                            isLoading={gameState.processingGuess}
                         />
                     ))}
                 </div>
@@ -450,27 +455,27 @@ const Play = () => {
                     </div>
                     <div className="mt-2">
                         <GameBottomNav
-                            submitHandler={submitHandler}
-                            isEnded={userWon}
+                            submitHandler={() => {}}
+                            isEnded={gameState.userWon}
                         />
                     </div>
                 </div>
             </div>
-            {winModal && (
+            {modalState.winModal && (
                 <WinModal
                     cancelHandler={closeModal}
                     claimHandler={claimHandler}
-                    loadingState={claimPointsLoading}
+                    loadingState={modalState.claimPointsLoading}
                 />
             )}
-            {loseModal && (
+            {modalState.loseModal && (
                 <LoseModal
                     cancelHandler={closeModal}
                     claimHandler={claimHandler}
-                    loadingState={claimPointsLoading}
+                    loadingState={modalState.claimPointsLoading}
                 />
             )}
-            {genModal && <GenModal />}
+            {modalState.genModal && <GenModal />}
         </div>
     );
 };

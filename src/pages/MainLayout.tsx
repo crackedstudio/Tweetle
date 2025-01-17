@@ -5,6 +5,7 @@ import { ArgentTMA, SessionAccountInterface } from "@argent/tma-wallet";
 import { useEffect, useState } from "react";
 import LoadingFullPage from "../components/pages/LoadingFullPage";
 import { CallData } from "starknet";
+import FullPageConnect from "../components/pages/FullPageConnect";
 // import useGameLogic from "../hooks/useGameLogic";
 // import { CallData, Contract } from "starknet";
 // import gameAbi from "../utils/gameAbi.json";
@@ -52,6 +53,11 @@ const argentTMA = ArgentTMA.init({
                     "0x974d27dbf588cd1a581722921906d03b552d64107264d599e06c97b28e848e",
                 selector: "save_player_daily_attempt",
             },
+            {
+                contract:
+                    "0x974d27dbf588cd1a581722921906d03b552d64107264d599e06c97b28e848e",
+                selector: "claim_points",
+            },
         ],
         validityDays: 90, // session validity (in days) - default: 90
     },
@@ -69,6 +75,7 @@ const MainLayout = () => {
     const [playerDetails, setPlayerDetails] = useState({});
     const [playerClassicGames, setPlayerClassicGames] = useState<any>([]);
     const [playerClassicGameCount, setPlayerClassicGameCount] = useState(0);
+    const [isAccountDeployed, setIsAccountDeployed] = useState(false);
 
     const updatePlayerDetails = (item: {}) => {
         setPlayerDetails(item);
@@ -107,19 +114,34 @@ const MainLayout = () => {
                     setIsConnected(false);
                     return;
                 }
-
                 // Connected
                 // const { account, callbackData } = res;git
                 // The session account is returned and can be used to submit transactions
                 setAccount(account);
                 setIsConnected(true);
+                // console.log("Step2.5");
+                // deployAccountAction();
                 // Custom data passed to the requestConnection() method is available here
                 // console.log("callback data:", callbackData);
+
+                // if user is connected , check if account is deployed , if it isnt deploy account for user
             })
             .catch((err) => {
                 console.error("Failed to connect", err);
             });
-    }, [account]);
+    }, []);
+
+    const deployAccountAction = async () => {
+        console.log("Step 1");
+        if (!isConnected) return;
+        const _isAccountDeployed = await account?.isDeployed();
+        setIsAccountDeployed(true);
+        console.log("is Account deployed????", _isAccountDeployed);
+        if (_isAccountDeployed) return;
+        console.log("is Account deployed????", _isAccountDeployed);
+        const _deployedSuccessfully = await handleAccountDeployment();
+        console.log("has account been deployed ? ===>>", _deployedSuccessfully);
+    };
 
     const argumentArgentTMA: ArgumentArgentTMA = {
         callbackData: "custom_callback_data",
@@ -137,7 +159,44 @@ const MainLayout = () => {
     };
 
     const handleRegisterPlayer = async () => {
-        console.log(account?.getDeploymentPayload());
+        console.log(
+            "is account deployed====>>>>>>",
+            await account?.isDeployed()
+        );
+        console.log(await account?.getDeploymentPayload());
+    };
+
+    const handleAccountDeployment = async () => {
+        try {
+            const _deploymentPayload = await account?.getDeploymentPayload();
+
+            const response = await fetch(
+                "https://tweetle-bot-backend.onrender.com/player/deploy-account",
+                {
+                    headers: {
+                        Accept: "application/json",
+                        "Content-Type": "application/json",
+                    },
+                    method: "POST",
+                    body: JSON.stringify(_deploymentPayload),
+                }
+            );
+
+            console.log("fetch");
+            let result = await response.json();
+
+            console.log(result);
+
+            const _deployCall = await account?.deployAccount(
+                _deploymentPayload
+            );
+            console.log("deploy call returned ===>>>>>>>>", _deployCall);
+
+            return await account?.isDeployed();
+        } catch (err) {
+            console.log("error deploying account ===>>>>", err);
+            return await account?.isDeployed();
+        }
     };
 
     const handleOutsideExecution = async () => {
@@ -187,15 +246,18 @@ const MainLayout = () => {
     //     if (!account) return;
     //     fetchPlayerDetails(account);
     // }, [account]);
+    if (!isConnected) {
+        return <FullPageConnect handler={handleConnectButton} />;
+    }
 
     return (
         <div className="flex flex-col h-[100vh] overflow-hidden text-white relative">
             <main className="flex-grow h-full overflow-auto">
                 <div className="flex flex-col">
-                    <button onClick={handleRegisterPlayer}>Register</button>
-                    <button onClick={handleOutsideExecution}>
+                    <button onClick={handleRegisterPlayer}>
                         execute_calls
                     </button>
+                    <button onClick={deployAccountAction}>check</button>
                 </div>
                 <Outlet
                     context={{
@@ -206,9 +268,11 @@ const MainLayout = () => {
                         updatePlayerClassicGames,
                         updatePlayerClassicGameCount,
                         isConnected,
+                        isAccountDeployed,
                         playerDetails,
                         playerClassicGames,
                         playerClassicGameCount,
+                        handleOutsideExecution,
                     }}
                 />
             </main>
