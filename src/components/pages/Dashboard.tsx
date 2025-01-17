@@ -14,6 +14,7 @@ interface OutletContextType {
     updatePlayerClassicGames: ([]) => void;
     updatePlayerClassicGameCount: (a: number) => void;
     handleOutsideExecution: () => boolean;
+    isAccountDeployed: boolean;
 }
 
 const Dashboard = () => {
@@ -23,6 +24,7 @@ const Dashboard = () => {
         updatePlayerClassicGameCount,
         updatePlayerClassicGames,
         handleOutsideExecution,
+        isAccountDeployed,
     } = useOutletContext<OutletContextType>();
     const { fetchPlayerDetails, fetchUserClassicGames } = useGameLogic();
 
@@ -52,7 +54,9 @@ const Dashboard = () => {
         };
         if (account) {
             performAllUpdates();
-            registerUser();
+            if (isAccountDeployed) {
+                registerUser();
+            }
         }
     }, []);
     return (

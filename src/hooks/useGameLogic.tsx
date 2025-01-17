@@ -1,5 +1,5 @@
 import { useOutletContext } from "react-router-dom";
-import { Contract, num, RPC, RpcProvider } from "starknet";
+import { cairo, CallData, Contract, num, RPC, RpcProvider } from "starknet";
 import gameAbi from "../utils/gameAbi.json";
 import { useState } from "react";
 
@@ -222,6 +222,50 @@ const useGameLogic = () => {
         } catch (error) {}
     };
 
+    const claimPoints = async (points: number) => {
+        try {
+            let calls = [
+                {
+                    contractAddress:
+                        "0x974d27dbf588cd1a581722921906d03b552d64107264d599e06c97b28e848e",
+                    entrypoint: "claim_points",
+                    calldata: CallData.compile({
+                        points: cairo.uint256(points),
+                    }),
+                },
+            ];
+
+            console.log("sent");
+
+            let call = await account?.getOutsideExecutionPayload({ calls });
+
+            console.log(call);
+
+            const response = await fetch(
+                "https://tweetle-bot-backend.onrender.com/player/claim-points/2200639342",
+                {
+                    headers: {
+                        Accept: "application/json",
+                        "Content-Type": "application/json",
+                    },
+                    method: "POST",
+                    body: JSON.stringify(call),
+                }
+            );
+
+            console.log("fetch");
+
+            let result = await response.json();
+
+            console.log("RESPONSE IS ==========>>>", result);
+
+            return result;
+        } catch (error: any) {
+            console.error("Error getting word state:", error);
+            return null;
+        }
+    };
+
     return {
         fetchUserClassicGames,
         fetchClassicGameDetails,
@@ -233,6 +277,7 @@ const useGameLogic = () => {
         playerClassicGames,
         createNewClassicGame,
         fetchDailyGameId,
+        claimPoints,
     };
 };
 

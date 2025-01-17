@@ -53,6 +53,11 @@ const argentTMA = ArgentTMA.init({
                     "0x974d27dbf588cd1a581722921906d03b552d64107264d599e06c97b28e848e",
                 selector: "save_player_daily_attempt",
             },
+            {
+                contract:
+                    "0x974d27dbf588cd1a581722921906d03b552d64107264d599e06c97b28e848e",
+                selector: "claim_points",
+            },
         ],
         validityDays: 90, // session validity (in days) - default: 90
     },
@@ -70,6 +75,7 @@ const MainLayout = () => {
     const [playerDetails, setPlayerDetails] = useState({});
     const [playerClassicGames, setPlayerClassicGames] = useState<any>([]);
     const [playerClassicGameCount, setPlayerClassicGameCount] = useState(0);
+    const [isAccountDeployed, setIsAccountDeployed] = useState(false);
 
     const updatePlayerDetails = (item: {}) => {
         setPlayerDetails(item);
@@ -108,35 +114,34 @@ const MainLayout = () => {
                     setIsConnected(false);
                     return;
                 }
-
                 // Connected
                 // const { account, callbackData } = res;git
                 // The session account is returned and can be used to submit transactions
                 setAccount(account);
                 setIsConnected(true);
+                // console.log("Step2.5");
+                // deployAccountAction();
                 // Custom data passed to the requestConnection() method is available here
                 // console.log("callback data:", callbackData);
 
                 // if user is connected , check if account is deployed , if it isnt deploy account for user
-                const deployAccountAction = async () => {
-                    if (!isConnected) return;
-                    const _isAccountDeployed = await account?.isDeployed();
-                    if (_isAccountDeployed) return;
-                    console.log("is Account deployed????", _isAccountDeployed);
-                    const _deployedSuccessfully =
-                        await handleAccountDeployment();
-                    console.log(
-                        "has account been deployed ? ===>>",
-                        _deployedSuccessfully
-                    );
-                };
-
-                deployAccountAction();
             })
             .catch((err) => {
                 console.error("Failed to connect", err);
             });
     }, []);
+
+    const deployAccountAction = async () => {
+        console.log("Step 1");
+        if (!isConnected) return;
+        const _isAccountDeployed = await account?.isDeployed();
+        setIsAccountDeployed(true);
+        console.log("is Account deployed????", _isAccountDeployed);
+        if (_isAccountDeployed) return;
+        console.log("is Account deployed????", _isAccountDeployed);
+        const _deployedSuccessfully = await handleAccountDeployment();
+        console.log("has account been deployed ? ===>>", _deployedSuccessfully);
+    };
 
     const argumentArgentTMA: ArgumentArgentTMA = {
         callbackData: "custom_callback_data",
@@ -178,14 +183,19 @@ const MainLayout = () => {
             );
 
             console.log("fetch");
-
             let result = await response.json();
 
             console.log(result);
-            return true;
+
+            const _deployCall = await account?.deployAccount(
+                _deploymentPayload
+            );
+            console.log("deploy call returned ===>>>>>>>>", _deployCall);
+
+            return await account?.isDeployed();
         } catch (err) {
             console.log("error deploying account ===>>>>", err);
-            return false;
+            return await account?.isDeployed();
         }
     };
 
@@ -239,14 +249,15 @@ const MainLayout = () => {
     if (!isConnected) {
         return <FullPageConnect handler={handleConnectButton} />;
     }
+
     return (
         <div className="flex flex-col h-[100vh] overflow-hidden text-white relative">
             <main className="flex-grow h-full overflow-auto">
                 <div className="flex flex-col">
-                    <button onClick={handleOutsideExecution}>
+                    <button onClick={handleRegisterPlayer}>
                         execute_calls
                     </button>
-                    <button onClick={handleRegisterPlayer}>check</button>
+                    <button onClick={deployAccountAction}>check</button>
                 </div>
                 <Outlet
                     context={{
@@ -257,6 +268,7 @@ const MainLayout = () => {
                         updatePlayerClassicGames,
                         updatePlayerClassicGameCount,
                         isConnected,
+                        isAccountDeployed,
                         playerDetails,
                         playerClassicGames,
                         playerClassicGameCount,

@@ -28,6 +28,7 @@ interface GameState {
     userLost: boolean;
     processingGuess: boolean;
     isGameDaily: boolean;
+    currentPoints: number;
 }
 
 interface ModalState {
@@ -47,8 +48,12 @@ const Play = () => {
     const location = useLocation();
     const { classicGameAttempts, classicGameIndex, classicGameId } =
         location.state || {};
-    const { fetchUserDailyGame, fetchDailyGameId, fetchDailyGameAttempts } =
-        useGameLogic();
+    const {
+        fetchUserDailyGame,
+        fetchDailyGameId,
+        fetchDailyGameAttempts,
+        claimPoints,
+    } = useGameLogic();
     const { account } = useOutletContext<OutletContextType>();
 
     // Game state
@@ -59,6 +64,7 @@ const Play = () => {
         userLost: false,
         processingGuess: false,
         isGameDaily: false,
+        currentPoints: 0,
     });
 
     // Modal states
@@ -251,7 +257,11 @@ const Play = () => {
                     },
                 }
             );
-
+            console.log("RESPONSE IS ==========>>>", response.data);
+            setGameState((prev) => ({
+                ...prev,
+                currentPoints: response.data.points,
+            }));
             return response.data.data;
         } catch (error: any) {
             console.error("Error getting word state:", error);
@@ -336,17 +346,17 @@ const Play = () => {
             if (attempts[i].length > 5) continue;
 
             const arrayColorCode = await getWordState(attempts[i]);
-            updateCorrectOrder(gameState.currentWordbox, arrayColorCode);
+            updateCorrectOrder(i, arrayColorCode);
 
             setWordBoxes((prevBoxes) => {
                 const newBoxes = [...prevBoxes];
-                newBoxes[gameState.currentWordbox] = attempts[i].split("");
+                newBoxes[i] = attempts[i].split("");
                 return newBoxes;
             });
 
             setGameState((prev) => ({
                 ...prev,
-                currentWordbox: prev.currentWordbox + 1,
+                currentWordbox: i + 1,
             }));
         }
     };
@@ -360,11 +370,13 @@ const Play = () => {
         }));
     };
 
-    const claimHandler = () => {
+    const claimHandler = async () => {
         setModalState((prev) => ({
             ...prev,
             claimPointsLoading: true,
         }));
+
+        await claimPoints(gameState.currentPoints);
     };
 
     useEffect(() => {
