@@ -1,6 +1,5 @@
 import cancel from "../../assets/cancel-circle.png";
-import Adblock from "../../assets/ad-block.png";
-import claimAnimation from "../../assets/claimingPoints.mp4";
+import Adblock from "../../assets/svg/ad-block.svg";
 
 interface LoseModalProps {
     cancelHandler: () => void;
@@ -60,7 +59,9 @@ const LoseModal = ({
                 {loadingState && (
                     <div className="">
                         <video
-                            src={claimAnimation}
+                            src={
+                                "https://res.cloudinary.com/dzlhavqtd/video/upload/v1737145163/n3y1xo3zehavtp2ozpqp.mp4"
+                            }
                             loop
                             autoPlay
                             className="w-full mt-[30%]"

@@ -174,6 +174,7 @@ const ClassicGamesList = () => {
                             action={() => handleGameStart(game.id)}
                             nextAction={handleCreateNewGame}
                             next={game.isNext}
+                            key={game.id}
                         />
                     ))}
                 </div>

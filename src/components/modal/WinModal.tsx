@@ -1,6 +1,5 @@
 import celebrateGif from "../../assets/celebrate.gif";
 import cancel from "../../assets/cancel-circle.png";
-import claimAnimation from "../../assets/claimingPoints.mp4";
 
 interface WinModalProps {
     cancelHandler: () => void;
@@ -59,7 +58,9 @@ const WinModal = ({
                 {loadingState && (
                     <div className="">
                         <video
-                            src={claimAnimation}
+                            src={
+                                "https://res.cloudinary.com/dzlhavqtd/video/upload/v1737145163/n3y1xo3zehavtp2ozpqp.mp4"
+                            }
                             loop
                             autoPlay
                             className="w-full mt-[30%]"
