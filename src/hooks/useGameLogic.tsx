@@ -266,6 +266,43 @@ const useGameLogic = () => {
         }
     };
 
+    const getAttempts = async (_isGameDaily: boolean, _gameId: string) => {
+        const _gameType = _isGameDaily ? "daily" : "classic";
+
+        const params = new URLSearchParams({
+            tg_id: "2200639342",
+            gameId: _gameId,
+            gameType: _gameType,
+        });
+
+        try {
+            const _response = await fetch(
+                `https://tweetle-bot-backend.onrender.com/game/get-attempts?${params}`,
+                {
+                    method: "GET",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                }
+            );
+
+            let response = await _response.json();
+            console.log("RESPONSE IS ==========>>>", response.data);
+            const _responseForm = [];
+            for (let respObj of response.data) {
+                const _innerObj = {
+                    attempt: respObj.guess,
+                    state: respObj.outcome,
+                };
+                _responseForm.push(_innerObj);
+            }
+            return _responseForm;
+        } catch (error: any) {
+            console.error("Error getting word state:", error);
+            return [];
+        }
+    };
+
     return {
         fetchUserClassicGames,
         fetchClassicGameDetails,
@@ -278,6 +315,7 @@ const useGameLogic = () => {
         createNewClassicGame,
         fetchDailyGameId,
         claimPoints,
+        getAttempts,
     };
 };
 

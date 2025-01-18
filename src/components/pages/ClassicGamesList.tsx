@@ -6,6 +6,7 @@ import { useEffect, useState } from "react";
 import useGameLogic from "../../hooks/useGameLogic";
 import { useNavigate } from "react-router-dom";
 import GenModal from "../modal/GenModal";
+import { Bounce, toast } from "react-toastify";
 
 const GAMES_LIST = [
     { id: 1, active: false, played: false, isNext: false },
@@ -61,7 +62,8 @@ const ClassicGamesList = () => {
         fetchUserClassicGames,
         createNewClassicGame,
         fetchClassicGameDetails,
-        fetchClassicGameAttempts,
+        // fetchClassicGameAttempts,
+        getAttempts,
     } = useGameLogic();
 
     const chunkedGames = [];
@@ -110,15 +112,30 @@ const ClassicGamesList = () => {
         GAMES_LIST[playerClassicGames.length - 1].isNext = false;
     }, [GAMES_LIST]);
 
+    const callToast = (msg: string) => {
+        return toast(msg, {
+            position: "top-right",
+            autoClose: 5000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            theme: "dark",
+            transition: Bounce,
+        });
+    };
+
     const handleCreateNewGame = async () => {
         setGenModal(true);
         try {
             if (!account) {
                 return;
             }
-            console.log("starting/..............");
+            callToast("Creating new game 🦉");
             const txn = await createNewClassicGame();
             console.log("created new classic game with hash======", txn);
+            callToast("Successfully created new game 🐣");
             setGenModal(false);
         } catch (err) {
             console.log(err);
@@ -131,6 +148,7 @@ const ClassicGamesList = () => {
             if (!account) {
                 return;
             }
+            setGenModal(true);
             console.log("starting/..............");
             const _gameDetails = await fetchClassicGameDetails(_id);
             const _gameIndex = _gameDetails.word_index;
@@ -138,14 +156,20 @@ const ClassicGamesList = () => {
             console.log("gameIndex is ___========>>>>>>>>>>>>", _gameIndex);
             console.log("gameId is ___========>>>>>>>>>>>>", _gameId);
 
-            const _gameAttempts = await fetchClassicGameAttempts(
-                Number(_gameId)
-            );
+            // const _gameAttempts = await fetchClassicGameAttempts(
+            //     Number(_gameId)
+            // );
+
+            const _attempts = await getAttempts(false, String(_gameId));
+            const _gameAttempts = _attempts.map((item) => item.attempt);
+            const _gameState = _attempts.map((item) => item.state);
+            setGenModal(false);
             navigate("/play", {
                 state: {
                     classicGameAttempts: _gameAttempts,
                     classicGameIndex: Number(_gameIndex),
                     classicGameId: Number(_gameId),
+                    classicGameState: _gameState,
                 },
             });
         } catch (err) {
@@ -168,6 +192,8 @@ const ClassicGamesList = () => {
                             action={() => handleGameStart(game.id)}
                             nextAction={handleCreateNewGame}
                             next={game.isNext}
+                            key={game.id}
+                            isLoading={genModal}
                         />
                     ))}
                 </div>
@@ -183,6 +209,7 @@ interface GameBoxProps {
     action: () => {};
     next?: boolean;
     nextAction?: () => {};
+    isLoading: boolean;
 }
 
 const GameBox = ({
@@ -192,6 +219,7 @@ const GameBox = ({
     action,
     next,
     nextAction,
+    isLoading,
 }: GameBoxProps) => {
     return (
         <div className="relative w-[80px] h-[80px]">
@@ -224,7 +252,9 @@ const GameBox = ({
                     className="absolute inset-0 flex items-center justify-center z-20"
                     onClick={nextAction}
                 >
-                    <span className="text-white text-3xl font-bold">+</span>
+                    <span className="text-white text-3xl font-bold">
+                        {!isLoading && "+"}
+                    </span>
                 </button>
             )}
         </div>

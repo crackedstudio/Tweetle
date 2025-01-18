@@ -7,11 +7,12 @@ import WinModal from "../components/modal/WinModal";
 import LoseModal from "../components/modal/LoseModal";
 import Keyboard from "../components/gameplay/Keyboard";
 import { useOutletContext } from "react-router-dom";
-import axios from "axios";
+// import axios from "axios";
 import { byteArray, cairo, CallData } from "starknet";
 import { useLocation } from "react-router-dom";
 import GenModal from "../components/modal/GenModal";
 import useGameLogic from "../hooks/useGameLogic";
+import { Bounce, toast } from "react-toastify";
 
 interface OutletContextType {
     account: any | null;
@@ -36,23 +37,30 @@ interface ModalState {
     loseModal: boolean;
     genModal: boolean;
     claimPointsLoading: boolean;
+    hasClaimed: boolean;
 }
 
 interface DailyGameData {
     index: number;
     id: number;
     attempts: string[];
+    state: number[][];
 }
 
 const Play = () => {
     const location = useLocation();
-    const { classicGameAttempts, classicGameIndex, classicGameId } =
-        location.state || {};
+    const {
+        classicGameAttempts,
+        classicGameIndex,
+        classicGameId,
+        classicGameState,
+    } = location.state || {};
     const {
         fetchUserDailyGame,
         fetchDailyGameId,
-        fetchDailyGameAttempts,
+        // fetchDailyGameAttempts,
         claimPoints,
+        getAttempts,
     } = useGameLogic();
     const { account } = useOutletContext<OutletContextType>();
 
@@ -73,6 +81,7 @@ const Play = () => {
         loseModal: false,
         genModal: false,
         claimPointsLoading: false,
+        hasClaimed: false,
     });
 
     // Game data states
@@ -80,10 +89,12 @@ const Play = () => {
         index: 0,
         id: 0,
         attempts: [],
+        state: [],
     });
 
     const [currentWordState, setCurrentWordState] = useState([0, 0, 0, 0, 0]);
     const [vibratorsArray, setVibratorsArray] = useState<boolean[]>([]);
+    const [finalEmojiTweet, setFinalEmojiTweet] = useState("");
     const [wordBoxes, setWordBoxes] = useState<string[][]>(
         Array(6)
             .fill(null)
@@ -97,6 +108,20 @@ const Play = () => {
 
     const getKeyboardInput = (key: string) => {
         updateBox(key);
+    };
+
+    const callToast = (msg: string) => {
+        return toast(msg, {
+            position: "top-right",
+            autoClose: 5000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            theme: "dark",
+            transition: Bounce,
+        });
     };
 
     const updateBox = async (value: string) => {
@@ -243,26 +268,57 @@ const Play = () => {
             ? dailyGameData.index
             : classicGameIndex;
 
+        const gameType = gameState.isGameDaily ? "daily" : "classic";
+        const gameId = gameState.isGameDaily ? dailyGameData.id : classicGameId;
+        console.log(
+            "POST DATA IS ----------->>>>>",
+            gameIndex,
+            gameId,
+            gameType
+        );
+        const body = {
+            word: word.toLowerCase(),
+            i: Number(gameIndex),
+            tg_id: "2200639342",
+            game_type: gameType,
+            game_id: Number(gameId),
+        };
         try {
-            const response = await axios.post(
+            // const response = await axios.post(
+            //     "https://tweetle-bot-backend.onrender.com/game",
+            //     {
+            //         word: word.toLowerCase(),
+            //         i: Number(gameIndex),
+            //         tg_id: "2200639342",
+            //         game_type: Number(gameType),
+            //         game_id: Number(gameId),
+            //     },
+            //     {
+            //         headers: {
+            //             "Content-Type": "application/json; charset=utf-8",
+            //         },
+            //     }
+            // );
+
+            const _response = await fetch(
                 "https://tweetle-bot-backend.onrender.com/game",
                 {
-                    word: word.toLowerCase(),
-                    i: Number(gameIndex),
-                    tg_id: "2200639342",
-                },
-                {
                     headers: {
+                        Accept: "application/json",
                         "Content-Type": "application/json; charset=utf-8",
                     },
+                    method: "POST",
+                    body: JSON.stringify(body),
                 }
             );
-            console.log("RESPONSE IS ==========>>>", response.data);
+
+            let response = await _response.json();
+            console.log("RESPONSE IS ==========>>>", response);
             setGameState((prev) => ({
                 ...prev,
-                currentPoints: response.data.points,
+                currentPoints: response.points,
             }));
-            return response.data.data;
+            return response.data;
         } catch (error: any) {
             console.error("Error getting word state:", error);
             return [0, 0, 0, 0, 0];
@@ -341,11 +397,15 @@ const Play = () => {
         }
     };
 
-    const processExistingAttempts = async (attempts: string[]) => {
+    const processExistingAttempts = async (
+        attempts: string[],
+        states: number[][]
+    ) => {
         for (let i = 0; i < attempts.length; i++) {
             if (attempts[i].length > 5) continue;
 
-            const arrayColorCode = await getWordState(attempts[i]);
+            // const arrayColorCode = await getWordState(attempts[i]);
+            const arrayColorCode = states[i];
             updateCorrectOrder(i, arrayColorCode);
 
             setWordBoxes((prevBoxes) => {
@@ -359,8 +419,21 @@ const Play = () => {
                 currentWordbox: i + 1,
             }));
         }
+        if (attempts.length === 6) {
+            setGameState((prev) => ({ ...prev, userWon: true }));
+            callToast("You have played this game already 🔴 ⚠️ 🚨");
+        }
+        if (checkArrayEqual(states[attempts.length - 1], [2, 2, 2, 2, 2])) {
+            setGameState((prev) => ({ ...prev, userWon: true }));
+            callToast("You have played this game already 🔴 ⚠️ 🚨");
+        }
     };
-
+    function checkArrayEqual(arr: number[], target: number[]) {
+        return (
+            arr.every((num) => num === target[0]) &&
+            arr.length === target.length
+        );
+    }
     // Modal handlers
     const closeModal = () => {
         setModalState((prev) => ({
@@ -375,8 +448,34 @@ const Play = () => {
             ...prev,
             claimPointsLoading: true,
         }));
+        if (modalState.hasClaimed) {
+            callToast("Already Claimed Points 🔴 ⚠️ 🚨");
+            setModalState((prev) => ({
+                ...prev,
+                claimPointsLoading: false,
+            }));
+            return;
+        }
+        const _final = await claimPoints(gameState.currentPoints);
 
-        await claimPoints(gameState.currentPoints);
+        if (_final != null) {
+            callToast(
+                `Successfully claimed ${gameState.currentPoints} 🪙 points 🦅`
+            );
+            setModalState((prev) => ({
+                ...prev,
+                claimPointsLoading: false,
+                hasClaimed: true,
+            }));
+            const _finalEmojiTweet = createEmojiTweet(correctOrder);
+            setFinalEmojiTweet(_finalEmojiTweet);
+        } else {
+            callToast("Failed to claim points 🔴 ⚠️ 🚨");
+            setModalState((prev) => ({
+                ...prev,
+                claimPointsLoading: false,
+            }));
+        }
     };
 
     useEffect(() => {
@@ -394,8 +493,18 @@ const Play = () => {
                 ) {
                     const dailyGame = await fetchUserDailyGame();
                     const dailyId = await fetchDailyGameId();
-                    const dailyAttempts = await fetchDailyGameAttempts(
-                        Number(dailyId)
+                    // const dailyAttempts = await fetchDailyGameAttempts(
+                    //     Number(dailyId)
+                    // );
+                    const _attemptsObject = await getAttempts(
+                        true,
+                        String(dailyId)
+                    );
+                    const dailyAttempts = _attemptsObject.map(
+                        (item) => item.attempt
+                    );
+                    const dailyState = _attemptsObject.map(
+                        (item) => item.state
                     );
 
                     if (isMounted) {
@@ -407,6 +516,7 @@ const Play = () => {
                             index: Number(dailyGame.word_index),
                             id: Number(dailyId),
                             attempts: dailyAttempts,
+                            state: dailyState,
                         });
                     }
                 }
@@ -415,8 +525,11 @@ const Play = () => {
                 const attempts = gameState.isGameDaily
                     ? dailyGameData.attempts
                     : classicGameAttempts;
+                const state = gameState.isGameDaily
+                    ? dailyGameData.state
+                    : classicGameState;
                 if (attempts?.length > 0) {
-                    await processExistingAttempts(attempts);
+                    await processExistingAttempts(attempts, state);
                 }
             } catch (error) {
                 console.error("Game initialization error:", error);
@@ -432,6 +545,24 @@ const Play = () => {
             isMounted = false;
         };
     }, []);
+
+    const createEmojiTweet = (arr: number[][]) => {
+        let finalTweet = "";
+        for (let _arr of arr) {
+            for (let elem of _arr) {
+                if (elem == 2) {
+                    finalTweet += "🟩 ";
+                } else if (elem == 1) {
+                    finalTweet += "🟧 ";
+                } else if (elem == 0) {
+                    finalTweet += "⬛ ";
+                }
+            }
+            finalTweet += "%0A";
+        }
+        console.log(finalTweet);
+        return finalTweet;
+    };
 
     return (
         <div>
@@ -466,6 +597,8 @@ const Play = () => {
                     cancelHandler={closeModal}
                     claimHandler={claimHandler}
                     loadingState={modalState.claimPointsLoading}
+                    pointsWon={gameState.currentPoints}
+                    emojiTweet={finalEmojiTweet}
                 />
             )}
             {modalState.loseModal && (
@@ -473,6 +606,8 @@ const Play = () => {
                     cancelHandler={closeModal}
                     claimHandler={claimHandler}
                     loadingState={modalState.claimPointsLoading}
+                    pointsWon={gameState.currentPoints}
+                    emojiTweet={finalEmojiTweet}
                 />
             )}
             {modalState.genModal && <GenModal />}
