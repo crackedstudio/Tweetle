@@ -6,13 +6,16 @@ interface WinModalProps {
     claimHandler?: () => void;
     shareHandler?: () => void;
     loadingState?: boolean;
+    pointsWon: number;
+    emojiTweet: string;
 }
 
 const WinModal = ({
     cancelHandler,
     claimHandler,
-    shareHandler,
     loadingState,
+    pointsWon,
+    emojiTweet,
 }: WinModalProps) => {
     return (
         <>
@@ -46,11 +49,13 @@ const WinModal = ({
                                 CLAIM POINTS
                             </button>
 
-                            <button
-                                className="bg-[#F5F5F580] text-center w-[203px] block h-[73px] rounded-xl text-white border-[3px] border-[#C4C4C4] shadow-[0_10px_0_0_rgba(0,0,0,1),0_12px_0_0_rgba(225,225,225,1)]"
-                                onClick={shareHandler}
-                            >
-                                Share your progress
+                            <button className="bg-[#F5F5F580] text-center w-[203px] block h-[73px] rounded-xl text-white border-[3px] border-[#C4C4C4] shadow-[0_10px_0_0_rgba(0,0,0,1),0_12px_0_0_rgba(225,225,225,1)]">
+                                <a
+                                    href={`https://twitter.com/intent/tweet?text=${emojiTweet}%20I%20just%20finished%20playing%20Tweetle%20and%20i%20scored%20${pointsWon}%20points%2C%20go%20check%20it%20out%20%40tweetlehq`}
+                                    target="_blank"
+                                >
+                                    Share your progress
+                                </a>
                             </button>
                         </div>
                     </>

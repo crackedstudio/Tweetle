@@ -6,6 +6,8 @@ interface LoseModalProps {
     claimHandler?: () => void;
     shareHandler?: () => void;
     loadingState?: boolean;
+    pointsWon: number;
+    emojiTweet: string;
 }
 
 const LoseModal = ({
@@ -13,6 +15,8 @@ const LoseModal = ({
     claimHandler,
     shareHandler,
     loadingState,
+    pointsWon,
+    emojiTweet,
 }: LoseModalProps) => {
     return (
         <>
@@ -43,14 +47,19 @@ const LoseModal = ({
                                 className="bg-[#12830D] text-center w-[203px] block h-[73px] rounded-xl text-white border-[3px] border-[#71ED00] shadow-[0_10px_0_0_rgba(0,81,37,1),0_12px_0_0_rgba(113,237,0,1)]"
                                 onClick={claimHandler}
                             >
-                                Play Again
+                                Claim Points
                             </button>
 
                             <button
                                 className="bg-[#F5F5F580] text-center w-[203px] block h-[73px] rounded-xl text-white border-[3px] border-[#C4C4C4] shadow-[0_10px_0_0_rgba(0,0,0,1),0_12px_0_0_rgba(225,225,225,1)]"
                                 onClick={shareHandler}
                             >
-                                Share your progress
+                                <a
+                                    href={`https://twitter.com/intent/tweet?text=${emojiTweet}%20I%20just%20finished%20playing%20Tweetle%20and%20i%20scored%20${pointsWon}%20points%2C%20go%20check%20it%20out%20%40tweetlehq`}
+                                    target="_blank"
+                                >
+                                    Share your progress
+                                </a>
                             </button>
                         </div>
                     </>

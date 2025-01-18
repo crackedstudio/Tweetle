@@ -11,6 +11,8 @@ import FullPageConnect from "../components/pages/FullPageConnect";
 // import gameAbi from "../utils/gameAbi.json";
 // import useGameLogic from "../hooks/useGameLogic";
 
+import { Bounce, ToastContainer } from "react-toastify";
+
 interface ArgumentArgentTMA {
     callbackData?: string | undefined;
     approvalRequests?: string[] | undefined;
@@ -253,12 +255,26 @@ const MainLayout = () => {
     return (
         <div className="flex flex-col h-[100vh] overflow-hidden text-white relative">
             <main className="flex-grow h-full overflow-auto">
+                <ToastContainer
+                    position="top-right"
+                    autoClose={5000}
+                    hideProgressBar={false}
+                    newestOnTop
+                    closeOnClick
+                    rtl={false}
+                    pauseOnFocusLoss
+                    draggable
+                    pauseOnHover
+                    theme="dark"
+                    transition={Bounce}
+                />
                 <div className="flex flex-col">
                     <button onClick={handleRegisterPlayer}>
                         execute_calls
                     </button>
                     <button onClick={deployAccountAction}>check</button>
                 </div>
+
                 <Outlet
                     context={{
                         account,

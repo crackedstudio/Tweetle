@@ -12,6 +12,7 @@ import { byteArray, cairo, CallData } from "starknet";
 import { useLocation } from "react-router-dom";
 import GenModal from "../components/modal/GenModal";
 import useGameLogic from "../hooks/useGameLogic";
+import { Bounce, toast } from "react-toastify";
 
 interface OutletContextType {
     account: any | null;
@@ -36,6 +37,7 @@ interface ModalState {
     loseModal: boolean;
     genModal: boolean;
     claimPointsLoading: boolean;
+    hasClaimed: boolean;
 }
 
 interface DailyGameData {
@@ -79,6 +81,7 @@ const Play = () => {
         loseModal: false,
         genModal: false,
         claimPointsLoading: false,
+        hasClaimed: false,
     });
 
     // Game data states
@@ -91,6 +94,7 @@ const Play = () => {
 
     const [currentWordState, setCurrentWordState] = useState([0, 0, 0, 0, 0]);
     const [vibratorsArray, setVibratorsArray] = useState<boolean[]>([]);
+    const [finalEmojiTweet, setFinalEmojiTweet] = useState("");
     const [wordBoxes, setWordBoxes] = useState<string[][]>(
         Array(6)
             .fill(null)
@@ -104,6 +108,20 @@ const Play = () => {
 
     const getKeyboardInput = (key: string) => {
         updateBox(key);
+    };
+
+    const callToast = (msg: string) => {
+        return toast(msg, {
+            position: "top-right",
+            autoClose: 5000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            theme: "dark",
+            transition: Bounce,
+        });
     };
 
     const updateBox = async (value: string) => {
@@ -401,8 +419,21 @@ const Play = () => {
                 currentWordbox: i + 1,
             }));
         }
+        if (attempts.length === 6) {
+            setGameState((prev) => ({ ...prev, userWon: true }));
+            callToast("You have played this game already 🔴 ⚠️ 🚨");
+        }
+        if (checkArrayEqual(states[attempts.length - 1], [2, 2, 2, 2, 2])) {
+            setGameState((prev) => ({ ...prev, userWon: true }));
+            callToast("You have played this game already 🔴 ⚠️ 🚨");
+        }
     };
-
+    function checkArrayEqual(arr: number[], target: number[]) {
+        return (
+            arr.every((num) => num === target[0]) &&
+            arr.length === target.length
+        );
+    }
     // Modal handlers
     const closeModal = () => {
         setModalState((prev) => ({
@@ -417,16 +448,29 @@ const Play = () => {
             ...prev,
             claimPointsLoading: true,
         }));
-
-        const _final = await claimPoints(gameState.currentPoints);
-        if (_final != null) {
-            alert("claimed");
+        if (modalState.hasClaimed) {
+            callToast("Already Claimed Points 🔴 ⚠️ 🚨");
             setModalState((prev) => ({
                 ...prev,
                 claimPointsLoading: false,
             }));
+            return;
+        }
+        const _final = await claimPoints(gameState.currentPoints);
+
+        if (_final != null) {
+            callToast(
+                `Successfully claimed ${gameState.currentPoints} 🪙 points 🦅`
+            );
+            setModalState((prev) => ({
+                ...prev,
+                claimPointsLoading: false,
+                hasClaimed: true,
+            }));
+            const _finalEmojiTweet = createEmojiTweet(correctOrder);
+            setFinalEmojiTweet(_finalEmojiTweet);
         } else {
-            alert("not claimed");
+            callToast("Failed to claim points 🔴 ⚠️ 🚨");
             setModalState((prev) => ({
                 ...prev,
                 claimPointsLoading: false,
@@ -502,6 +546,24 @@ const Play = () => {
         };
     }, []);
 
+    const createEmojiTweet = (arr: number[][]) => {
+        let finalTweet = "";
+        for (let _arr of arr) {
+            for (let elem of _arr) {
+                if (elem == 2) {
+                    finalTweet += "🟩 ";
+                } else if (elem == 1) {
+                    finalTweet += "🟧 ";
+                } else if (elem == 0) {
+                    finalTweet += "⬛ ";
+                }
+            }
+            finalTweet += "%0A";
+        }
+        console.log(finalTweet);
+        return finalTweet;
+    };
+
     return (
         <div>
             <div className="flex flex-col">
@@ -535,6 +597,8 @@ const Play = () => {
                     cancelHandler={closeModal}
                     claimHandler={claimHandler}
                     loadingState={modalState.claimPointsLoading}
+                    pointsWon={gameState.currentPoints}
+                    emojiTweet={finalEmojiTweet}
                 />
             )}
             {modalState.loseModal && (
@@ -542,6 +606,8 @@ const Play = () => {
                     cancelHandler={closeModal}
                     claimHandler={claimHandler}
                     loadingState={modalState.claimPointsLoading}
+                    pointsWon={gameState.currentPoints}
+                    emojiTweet={finalEmojiTweet}
                 />
             )}
             {modalState.genModal && <GenModal />}
