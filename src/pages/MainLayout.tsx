@@ -20,8 +20,8 @@ interface ArgumentArgentTMA {
 
 const argentTMA = ArgentTMA.init({
     environment: "sepolia", // "sepolia" | "mainnet" (not supperted yet)
-    appName: "burnout", // Your Telegram app name
-    appTelegramUrl: "https://t.me/crankyBot/burnout", // Your Telegram app URL
+    appName: "Token_wordle", // Your Telegram app name
+    appTelegramUrl: "https://t.me/Wordle_bot/Token_wordle", // Your Telegram app URL
     sessionParams: {
         allowedMethods: [
             // List of contracts/methods allowed to be called by the session key
@@ -238,6 +238,32 @@ const MainLayout = () => {
         console.log(result);
     };
 
+    const deployAccount = async () => {
+        const _deploymentPayload = await account?.getDeploymentPayload();
+
+        const estimateAmt = await account?.estimateAccountDeployFee(_deploymentPayload);
+
+        console.log(_deploymentPayload, estimateAmt)
+
+        const response = await fetch(
+            "https://tweetle-bot-backend.onrender.com/player/deploy-account",
+            {
+                headers: {
+                    Accept: "application/json",
+                    "Content-Type": "application/json",
+                },
+                method: "POST",
+                body: JSON.stringify(_deploymentPayload),
+            }
+        );
+
+        console.log("fetch");
+
+        let result = await response.json();
+
+        console.log(result);
+    }
+
     if (isLoading) {
         return <LoadingFullPage />;
     }
@@ -272,7 +298,7 @@ const MainLayout = () => {
                     <button onClick={handleRegisterPlayer}>
                         execute_calls
                     </button>
-                    <button onClick={deployAccountAction}>check</button>
+                    <button onClick={deployAccount}>check</button>
                 </div>
 
                 <Outlet

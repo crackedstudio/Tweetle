@@ -6,6 +6,7 @@ import PwdByStrk from "../ui/PwdByStrk";
 import useGameLogic from "../../hooks/useGameLogic";
 import { useOutletContext } from "react-router-dom";
 import { useEffect } from "react";
+import { div, h4 } from "framer-motion/client";
 
 interface OutletContextType {
     account: any | null;
@@ -58,6 +59,18 @@ const Dashboard = () => {
             }
         }
     }, []);
+
+    if(isAccountDeployed) {
+        return (
+            <div className=" p-5 flex flex-col items-center gap-y-2">
+                <h4 className="font-bold text-black">Please deploy your account</h4>
+                <p className="text-[20px]">we sent you some strk send some to another address to fully to get your account deployed and stsrt tweetling !!!</p>
+
+                <a className="p-2 bg-white text-blue-800" href="https://t.me/ArgentTestBot">open argent</a>
+            </div>
+        )
+    }
+
     return (
         <>
             <div className="h-full overflow-auto text-white">
