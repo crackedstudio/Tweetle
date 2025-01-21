@@ -1,6 +1,7 @@
 import { useOutletContext } from "react-router-dom";
 import { cairo, CallData, Contract, num, RPC, RpcProvider } from "starknet";
 import gameAbi from "../utils/gameAbi.json";
+import { ERC20_ABI } from "../utils/erc20Abi.ts";
 import { useState } from "react";
 
 interface OutletContextType {
@@ -13,6 +14,9 @@ interface OutletContextType {
 }
 const GAME_ADDRESS =
     "0x974d27dbf588cd1a581722921906d03b552d64107264d599e06c97b28e848e";
+
+const ERC20_ADDRESS =
+    "0x04718f5a0Fc34cC1AF16A1cdee98fFB20C31f5cD61D6Ab07201858f4287c938D";
 const PROVIDER = new RpcProvider({
     nodeUrl:
         "https://starknet-sepolia.g.alchemy.com/starknet/version/rpc/v0_7/xZih3RhtucH0P0PvbFte29FfJzMmJ5E6",
@@ -39,24 +43,20 @@ const useGameLogic = () => {
     // read abi of Test contract
 
     const getUserBalance = async () => {
-        try {
-            const { abi: testAbi } = await PROVIDER.getClassAt(
-                account?.address
-            );
-            if (testAbi === undefined) {
-                throw new Error("no abi.");
-            }
-            const myTestContract = new Contract(
-                testAbi,
-                account?.address,
-                PROVIDER
-            );
+        if (!account) return;
+        const erc20Contract = new Contract(ERC20_ABI, ERC20_ADDRESS, account);
 
-            // Interaction with the contract with call
-            const bal1 = await myTestContract.get_balance();
-            return Number(bal1);
+        try {
+            if (!account) {
+                return;
+            }
+            const _playersBalance = await erc20Contract.balance_of(
+                account.address
+            );
+            console.log("Players balance is ====+++++?>>>>>", _playersBalance);
+            return _playersBalance;
         } catch (err) {
-            console.log("error is ----", err);
+            console.log(err);
             return 0;
         }
     };

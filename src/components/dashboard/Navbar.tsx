@@ -27,11 +27,15 @@ const Navbar = () => {
     const { getUserBalance } = useGameLogic();
 
     const [userBalance, setUserBalance] = useState("0");
-
+    function divideBy10To18(value: bigint) {
+        const divisor = 10n ** 18n; // 10^18 as BigInt
+        return Number(value / divisor);
+    }
     useEffect(() => {
         const fetchBal = async () => {
-            const _bal = await getUserBalance();
-            setUserBalance(String(_bal));
+            let _bal = await getUserBalance();
+            _bal = Math.round(divideBy10To18(_bal));
+            setUserBalance(String(_bal) + " STRK");
         };
         fetchBal();
     }, []);
