@@ -20,8 +20,8 @@ interface ArgumentArgentTMA {
 
 const argentTMA = ArgentTMA.init({
     environment: "sepolia", // "sepolia" | "mainnet" (not supperted yet)
-    appName: "Token_wordle", // Your Telegram app name
-    appTelegramUrl: "https://t.me/Wordle_bot/Token_wordle", // Your Telegram app URL
+    appName: "tweetle", // Your Telegram app name
+    appTelegramUrl: "https://t.me/tweetle_bot/tweetle", // Your Telegram app URL
     sessionParams: {
         allowedMethods: [
             // List of contracts/methods allowed to be called by the session key
@@ -202,13 +202,20 @@ const MainLayout = () => {
     };
 
     const handleOutsideExecution = async () => {
+
+        let tg_id = localStorage.getItem('tg_id');
+
+        if(tg_id == '') {
+            return 
+        }
+
         let calls = [
             {
                 contractAddress:
                     "0x974d27dbf588cd1a581722921906d03b552d64107264d599e06c97b28e848e",
                 entrypoint: "register_player",
                 calldata: CallData.compile({
-                    _tg_id: "123567",
+                    _tg_id: tg_id ? tg_id : 0,
                 }),
             },
         ];
@@ -294,12 +301,6 @@ const MainLayout = () => {
                     theme="dark"
                     transition={Bounce}
                 />
-                <div className="flex flex-col">
-                    <button onClick={handleRegisterPlayer}>
-                        execute_calls
-                    </button>
-                    <button onClick={deployAccount}>check</button>
-                </div>
 
                 <Outlet
                     context={{
