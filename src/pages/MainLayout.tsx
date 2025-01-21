@@ -60,6 +60,11 @@ const argentTMA = ArgentTMA.init({
                     "0x974d27dbf588cd1a581722921906d03b552d64107264d599e06c97b28e848e",
                 selector: "claim_points",
             },
+            {
+                contract:
+                    "0x974d27dbf588cd1a581722921906d03b552d64107264d599e06c97b28e848e",
+                selector: "join_daily_game",
+            },
         ],
         validityDays: 90, // session validity (in days) - default: 90
     },
@@ -202,11 +207,10 @@ const MainLayout = () => {
     };
 
     const handleOutsideExecution = async () => {
+        let tg_id = localStorage.getItem("tg_id");
 
-        let tg_id = localStorage.getItem('tg_id');
-
-        if(tg_id == '') {
-            return 
+        if (tg_id == "") {
+            return;
         }
 
         let calls = [
@@ -248,9 +252,11 @@ const MainLayout = () => {
     const deployAccount = async () => {
         const _deploymentPayload = await account?.getDeploymentPayload();
 
-        const estimateAmt = await account?.estimateAccountDeployFee(_deploymentPayload);
+        const estimateAmt = await account?.estimateAccountDeployFee(
+            _deploymentPayload
+        );
 
-        console.log(_deploymentPayload, estimateAmt)
+        console.log(_deploymentPayload, estimateAmt);
 
         const response = await fetch(
             "https://tweetle-bot-backend.onrender.com/player/deploy-account",
@@ -269,7 +275,7 @@ const MainLayout = () => {
         let result = await response.json();
 
         console.log(result);
-    }
+    };
 
     if (isLoading) {
         return <LoadingFullPage />;

@@ -222,6 +222,46 @@ const useGameLogic = () => {
         } catch (error) {}
     };
 
+    const createNewDailyGame = async () => {
+        if (!account) return;
+        const gameContract = new Contract(gameAbi, GAME_ADDRESS, account);
+        try {
+            const myCall = gameContract.populate("join_daily_game", []);
+
+            const estimatedFee1 = await account.estimateInvokeFee([myCall], {
+                version: 3,
+            });
+            const resourceBounds = {
+                ...estimatedFee1.resourceBounds,
+                l1_gas: {
+                    ...estimatedFee1.resourceBounds.l1_gas,
+                    max_amount: num.toHex(
+                        BigInt(
+                            parseInt(
+                                estimatedFee1.resourceBounds.l1_gas.max_amount,
+                                16
+                            ) * 2
+                        ) // Double the estimated amount
+                    ),
+                },
+            };
+            const { transaction_hash } = await account.execute(myCall, {
+                version: 3,
+                maxFee: estimatedFee1.suggestedMaxFee,
+                feeDataAvailabilityMode: RPC.EDataAvailabilityMode.L1,
+                resourceBounds: resourceBounds,
+            });
+
+            console.log("transaction_hash", transaction_hash);
+            let receipt = await PROVIDER.waitForTransaction(transaction_hash);
+            console.log("receipt", receipt);
+            return true;
+        } catch (error) {
+            console.log("ERROR JOINING DAILY GAME FROM CONTRACT ===>>>", error);
+            return false;
+        }
+    };
+
     const claimPoints = async (points: number) => {
         try {
             let calls = [
@@ -313,6 +353,7 @@ const useGameLogic = () => {
         playerDetails,
         playerClassicGames,
         createNewClassicGame,
+        createNewDailyGame,
         fetchDailyGameId,
         claimPoints,
         getAttempts,

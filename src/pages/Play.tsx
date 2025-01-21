@@ -13,6 +13,7 @@ import { useLocation } from "react-router-dom";
 import GenModal from "../components/modal/GenModal";
 import useGameLogic from "../hooks/useGameLogic";
 import { Bounce, toast } from "react-toastify";
+import JoinDailyModal from "../components/modal/JoinDailyModal";
 
 interface OutletContextType {
     account: any | null;
@@ -38,6 +39,7 @@ interface ModalState {
     genModal: boolean;
     claimPointsLoading: boolean;
     hasClaimed: boolean;
+    joinModal: boolean;
 }
 
 interface DailyGameData {
@@ -45,6 +47,7 @@ interface DailyGameData {
     id: number;
     attempts: string[];
     state: number[][];
+    isTodaysGame: boolean;
 }
 
 const Play = () => {
@@ -61,6 +64,7 @@ const Play = () => {
         // fetchDailyGameAttempts,
         claimPoints,
         getAttempts,
+        createNewDailyGame,
     } = useGameLogic();
     const { account } = useOutletContext<OutletContextType>();
 
@@ -82,6 +86,7 @@ const Play = () => {
         genModal: false,
         claimPointsLoading: false,
         hasClaimed: false,
+        joinModal: false,
     });
 
     // Game data states
@@ -90,11 +95,13 @@ const Play = () => {
         id: 0,
         attempts: [],
         state: [],
+        isTodaysGame: false,
     });
 
     const [currentWordState, setCurrentWordState] = useState([0, 0, 0, 0, 0]);
     const [vibratorsArray, setVibratorsArray] = useState<boolean[]>([]);
     const [finalEmojiTweet, setFinalEmojiTweet] = useState("");
+    const [triggerRefresh, setTriggerRefresh] = useState("");
     const [wordBoxes, setWordBoxes] = useState<string[][]>(
         Array(6)
             .fill(null)
@@ -440,6 +447,7 @@ const Play = () => {
             ...prev,
             winModal: false,
             loseModal: false,
+            joinModal: false,
         }));
     };
 
@@ -478,6 +486,35 @@ const Play = () => {
         }
     };
 
+    const handleJoin = async () => {
+        setModalState((prev) => ({
+            ...prev,
+            joinModal: false,
+            genModal: true,
+        }));
+        try {
+            const _status = await createNewDailyGame();
+            if (_status) {
+                callToast("Successfully Joined Daily Game 🎆🎆🎉🎉🎇🎇");
+                setModalState((prev) => ({
+                    ...prev,
+                    joinModal: false,
+                    genModal: false,
+                }));
+            }
+
+            setTriggerRefresh("trigger now");
+        } catch (err) {
+            callToast("Failed to Join Daily Game 💩💩💩");
+            setModalState((prev) => ({
+                ...prev,
+                joinModal: true,
+                genModal: false,
+            }));
+            console.log("error joining daily gaeme ++++++++++++++", err);
+        }
+    };
+
     useEffect(() => {
         let isMounted = true;
 
@@ -507,16 +544,23 @@ const Play = () => {
                         (item) => item.state
                     );
 
+                    const _endTime = new Date(Number(dailyGame.end_time));
+                    const _todaysDate = new Date(Date.now());
+                    const _isTodaysGame = _endTime > _todaysDate;
+                    // console.log("IS TODAYS GAME =====", _isTodaysGame);
+
                     if (isMounted) {
                         setGameState((prev) => ({
                             ...prev,
                             isGameDaily: true,
                         }));
+
                         setDailyGameData({
                             index: Number(dailyGame.word_index),
                             id: Number(dailyId),
-                            attempts: dailyAttempts,
-                            state: dailyState,
+                            attempts: _isTodaysGame ? dailyAttempts : [],
+                            state: _isTodaysGame ? dailyState : [],
+                            isTodaysGame: _isTodaysGame,
                         });
                     }
                 }
@@ -541,10 +585,15 @@ const Play = () => {
         };
 
         initializeGame();
+        console.log("IS Game daily =====", gameState.isGameDaily);
+        if (gameState.isGameDaily && !dailyGameData.isTodaysGame) {
+            console.log("I MADE IT HERE");
+            setModalState((prev) => ({ ...prev, joinModal: true }));
+        }
         return () => {
             isMounted = false;
         };
-    }, []);
+    }, [triggerRefresh]);
 
     const createEmojiTweet = (arr: number[][]) => {
         let finalTweet = "";
@@ -608,6 +657,12 @@ const Play = () => {
                     loadingState={modalState.claimPointsLoading}
                     pointsWon={gameState.currentPoints}
                     emojiTweet={finalEmojiTweet}
+                />
+            )}
+            {modalState.joinModal && (
+                <JoinDailyModal
+                    cancelHandler={closeModal}
+                    joinHandler={handleJoin}
                 />
             )}
             {modalState.genModal && <GenModal />}

@@ -359,6 +359,50 @@
                     }
                 ],
                 "state_mutability": "view"
+            },
+            {
+                "type": "function",
+                "name": "get_last_daily_update",
+                "inputs": [],
+                "outputs": [
+                    {
+                        "type": "core::integer::u64"
+                    }
+                ],
+                "state_mutability": "view"
+            },
+            {
+                "type": "function",
+                "name": "get_all_players",
+                "inputs": [],
+                "outputs": [
+                    {
+                        "type": "core::array::Array::<tweetle__contract::game_contract::Player>"
+                    }
+                ],
+                "state_mutability": "view"
+            },
+            {
+                "type": "function",
+                "name": "get_contract_version",
+                "inputs": [],
+                "outputs": [
+                    {
+                        "type": "core::integer::u8"
+                    }
+                ],
+                "state_mutability": "view"
+            },
+            {
+                "type": "function",
+                "name": "join_daily_game",
+                "inputs": [],
+                "outputs": [
+                    {
+                        "type": "core::bool"
+                    }
+                ],
+                "state_mutability": "external"
             }
         ]
     },
