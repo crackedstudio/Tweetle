@@ -137,6 +137,26 @@ const useGameLogic = () => {
             return;
         }
     };
+
+    // const fetchAllPlayers = async () => {
+    //     if (!account) return;
+    //     const gameContract = new Contract(gameAbi, GAME_ADDRESS, account);
+
+    //     try {
+    //         if (!account) {
+    //             return;
+    //         }
+    //         const _players = await gameContract.get_all_players();
+    //         // alert("player details is ___" + _players.game_count);
+    //         console.log("ALL PLAYERS are --------------- ___---->>>>>", _players);
+    //         setPlayers(_players);
+    //         return _players;
+    //     } catch (err) {
+    //         console.log(err);
+    //         return;
+    //     }
+    // };
+
     const fetchClassicGameDetails = async (_gameId: number) => {
         if (!account) return;
         const gameContract = new Contract(gameAbi, GAME_ADDRESS, account);

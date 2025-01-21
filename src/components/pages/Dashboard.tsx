@@ -5,8 +5,7 @@ import arrowRight from "../../assets/arrow-right.png";
 import PwdByStrk from "../ui/PwdByStrk";
 import useGameLogic from "../../hooks/useGameLogic";
 import { useOutletContext } from "react-router-dom";
-import { useEffect } from "react";
-import { div, h4 } from "framer-motion/client";
+import { useEffect, useState } from "react";
 import HomeStats from "../dashboard/HomeStats";
 
 interface OutletContextType {
@@ -28,7 +27,8 @@ const Dashboard = () => {
         isAccountDeployed,
     } = useOutletContext<OutletContextType>();
     const { fetchPlayerDetails, fetchUserClassicGames } = useGameLogic();
-
+    const [gamesPlayed, setGamesPlayed] = useState(0);
+    // const [activePlayers, setActivePlayers] = useState(0)
     useEffect(() => {
         const registerUser = async () => {
             if (!account) return;
@@ -49,6 +49,11 @@ const Dashboard = () => {
             const _playerClassicGames = await fetchUserClassicGames();
             updatePlayerDetails(_playerDetails);
             updatePlayerClassicGames(_playerClassicGames);
+            let _gamesPlayed = 0;
+            for (let i of _playerClassicGames) {
+                if (i.is_completed) _gamesPlayed += 1;
+            }
+            setGamesPlayed(_gamesPlayed);
             updatePlayerClassicGameCount(
                 Number(_playerDetails?.classic_game_count)
             );
@@ -114,7 +119,7 @@ const Dashboard = () => {
                                                     />
                                                 </svg>
                                             </p>
-                                            <p>245 Active players</p>
+                                            <p>247 Active players</p>
                                         </div>
                                     </div>
                                 </DashboardButtons>
@@ -142,7 +147,7 @@ const Dashboard = () => {
                                                     />
                                                 </svg>
                                             </p>
-                                            <p>24 Games Played</p>
+                                            <p>{gamesPlayed} Games Played</p>
                                         </div>
                                     </div>
                                 </DashboardButtons>
