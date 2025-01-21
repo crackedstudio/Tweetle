@@ -69,6 +69,7 @@ const WinModal = ({
                             loop
                             autoPlay
                             className="w-full mt-[30%]"
+                            controls={false}
                         />
                     </div>
                 )}
