@@ -36,6 +36,30 @@ const useGameLogic = () => {
     //         console.log(err);
     //     }
     // };
+    // read abi of Test contract
+
+    const getUserBalance = async () => {
+        try {
+            const { abi: testAbi } = await PROVIDER.getClassAt(
+                account?.address
+            );
+            if (testAbi === undefined) {
+                throw new Error("no abi.");
+            }
+            const myTestContract = new Contract(
+                testAbi,
+                account?.address,
+                PROVIDER
+            );
+
+            // Interaction with the contract with call
+            const bal1 = await myTestContract.get_balance();
+            return Number(bal1);
+        } catch (err) {
+            console.log("error is ----", err);
+            return 0;
+        }
+    };
 
     const fetchUserClassicGames = async () => {
         if (!account) return;
@@ -350,6 +374,7 @@ const useGameLogic = () => {
         fetchClassicGameAttempts,
         fetchUserDailyGame,
         fetchDailyGameAttempts,
+        getUserBalance,
         playerDetails,
         playerClassicGames,
         createNewClassicGame,
