@@ -1,11 +1,15 @@
 import readingOwl from "../../assets/reading-owl.png";
 
 import Navbar from "./Navbar";
-
-export default function HomeHeroSection() {
+interface HomeHeroSectionProps {
+    isNavbarActive: boolean;
+}
+export default function HomeHeroSection({
+    isNavbarActive,
+}: HomeHeroSectionProps) {
     return (
         <>
-            <Navbar />
+            {isNavbarActive && <Navbar />}
             <div className="pb-2 flex flex-col items-center">
                 <img src={readingOwl} className="mb-2 w-[80px]" />
                 <h1 className="mb-2 font-bold text-[28px] leading-5">
