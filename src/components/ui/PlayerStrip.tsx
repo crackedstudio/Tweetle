@@ -5,7 +5,6 @@ export default function PlayerStrip({
     player: {
         username?: string;
         points?: number;
-        referral_code: string;
         position: number;
     };
     showPosition?: boolean;
@@ -13,11 +12,17 @@ export default function PlayerStrip({
     return (
         <div className="flex justify-between items-center">
             <div className="flex items-stretch gap-x-2">
-                <div className="w-10 h-10 bg-[#6AAA64] text-center flex items-center justify-center">
-                    {player?.referral_code.slice(0, 3)}
-                </div>
-                <div className="flex flex-col gap-y- text-sm leading-[15px] font-medium">
-                    <h3 className="text-white font-bold">{player.username}</h3>
+                {
+                    <div className="w-10 h-10 bg-[#6AAA64] text-center flex items-center justify-center">
+                        {player.username
+                            ? player.username.slice(0, 2).toUpperCase()
+                            : "REF"}
+                    </div>
+                }
+                <div className="flex flex-col space-y-2 text-sm leading-[15px] font-medium">
+                    <h3 className="text-white font-bold uppercase">
+                        {player.username}
+                    </h3>
                     <h4 className="text-[#F5F5F5B2]">{player.points} Points</h4>
                 </div>
             </div>

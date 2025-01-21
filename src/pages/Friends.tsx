@@ -47,7 +47,7 @@ export default function Friends() {
         const fetchData = async () => {
             const userTgId = localStorage.getItem("tg_id");
             let response = await fetch(
-                `https://tweetle-bot-backend.onrender.com/player/referred-by/${userTgId}`,
+                `https://tweetle-bot-backend.onrender.com/player/referred-by/REF-${userTgId}`,
                 {}
             );
 
@@ -68,13 +68,15 @@ export default function Friends() {
             <div className="pt-[40px] pb-6 flex flex-col items-center bg-gradient-svg">
                 <img src={readingOwl} className="w-[90px]" alt="" />
                 {friends && friends?.length > 0 ? (
-                    <h1>{friends?.length} Hatchling in your nest</h1>
+                    <h1 className="font-bold text-3xl">
+                        {friends?.length} Active Nesters
+                    </h1>
                 ) : (
                     <h1 className="text-[28px] leading-5 font-bold mb-4">
                         Your Nest is empty
                     </h1>
                 )}
-                <h4 className="text-[18px] leading-5 font-medium text-[#F5F5F6B2]">
+                <h4 className="text-[18px] leading-5 font-medium text-[#F5F5F6B2] mt-2">
                     Invite friends and earn rewards
                 </h4>
             </div>
