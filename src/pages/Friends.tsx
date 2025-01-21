@@ -2,7 +2,6 @@ import PlayerStrip from "../components/ui/PlayerStrip";
 import { dummyPlayers } from "../utils/data";
 import readingOwl from "../assets/reading-owl.png";
 import { useEffect, useState } from "react";
-import { h4 } from "framer-motion/client";
 
 export default function Friends() {
 
@@ -10,7 +9,7 @@ export default function Friends() {
 
     useEffect(() => {
         const fetchData = async () => {
-            let response = await fetch('https://tweetle-bot-backend.onrender.com/player/referred-by/REF-2200639342', {
+            let response = await fetch(`https://tweetle-bot-backend.onrender.com/player/referred-by/${12}`, {
 
             })
 
