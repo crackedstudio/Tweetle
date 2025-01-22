@@ -138,17 +138,17 @@ const MainLayout = () => {
             });
     }, []);
 
-    const deployAccountAction = async () => {
-        console.log("Step 1");
-        if (!isConnected) return;
-        const _isAccountDeployed = await account?.isDeployed();
-        setIsAccountDeployed(true);
-        console.log("is Account deployed????", _isAccountDeployed);
-        if (_isAccountDeployed) return;
-        console.log("is Account deployed????", _isAccountDeployed);
-        const _deployedSuccessfully = await handleAccountDeployment();
-        console.log("has account been deployed ? ===>>", _deployedSuccessfully);
-    };
+    // const deployAccountAction = async () => {
+    //     console.log("Step 1");
+    //     if (!isConnected) return;
+    //     const _isAccountDeployed = await account?.isDeployed();
+    //     setIsAccountDeployed(true);
+    //     console.log("is Account deployed????", _isAccountDeployed);
+    //     if (_isAccountDeployed) return;
+    //     console.log("is Account deployed????", _isAccountDeployed);
+    //     const _deployedSuccessfully = await handleAccountDeployment();
+    //     console.log("has account been deployed ? ===>>", _deployedSuccessfully);
+    // };
 
     const argumentArgentTMA: ArgumentArgentTMA = {
         callbackData: "custom_callback_data",
@@ -165,46 +165,46 @@ const MainLayout = () => {
         setAccount(undefined);
     };
 
-    const handleRegisterPlayer = async () => {
-        console.log(
-            "is account deployed====>>>>>>",
-            await account?.isDeployed()
-        );
-        console.log(await account?.getDeploymentPayload());
-    };
+    // const handleRegisterPlayer = async () => {
+    //     console.log(
+    //         "is account deployed====>>>>>>",
+    //         await account?.isDeployed()
+    //     );
+    //     console.log(await account?.getDeploymentPayload());
+    // };
 
-    const handleAccountDeployment = async () => {
-        try {
-            const _deploymentPayload = await account?.getDeploymentPayload();
+    // const handleAccountDeployment = async () => {
+    //     try {
+    //         const _deploymentPayload = await account?.getDeploymentPayload();
 
-            const response = await fetch(
-                "https://tweetle-bot-backend.onrender.com/player/deploy-account",
-                {
-                    headers: {
-                        Accept: "application/json",
-                        "Content-Type": "application/json",
-                    },
-                    method: "POST",
-                    body: JSON.stringify(_deploymentPayload),
-                }
-            );
+    //         const response = await fetch(
+    //             "https://tweetle-bot-backend.onrender.com/player/deploy-account",
+    //             {
+    //                 headers: {
+    //                     Accept: "application/json",
+    //                     "Content-Type": "application/json",
+    //                 },
+    //                 method: "POST",
+    //                 body: JSON.stringify(_deploymentPayload),
+    //             }
+    //         );
 
-            console.log("fetch");
-            let result = await response.json();
+    //         console.log("fetch");
+    //         let result = await response.json();
 
-            console.log(result);
+    //         console.log(result);
 
-            const _deployCall = await account?.deployAccount(
-                _deploymentPayload
-            );
-            console.log("deploy call returned ===>>>>>>>>", _deployCall);
+    //         const _deployCall = await account?.deployAccount(
+    //             _deploymentPayload
+    //         );
+    //         console.log("deploy call returned ===>>>>>>>>", _deployCall);
 
-            return await account?.isDeployed();
-        } catch (err) {
-            console.log("error deploying account ===>>>>", err);
-            return await account?.isDeployed();
-        }
-    };
+    //         return await account?.isDeployed();
+    //     } catch (err) {
+    //         console.log("error deploying account ===>>>>", err);
+    //         return await account?.isDeployed();
+    //     }
+    // };
 
     const handleOutsideExecution = async () => {
         let tg_id = localStorage.getItem("tg_id");
@@ -249,33 +249,33 @@ const MainLayout = () => {
         console.log(result);
     };
 
-    const deployAccount = async () => {
-        const _deploymentPayload = await account?.getDeploymentPayload();
+    // const deployAccount = async () => {
+    //     const _deploymentPayload = await account?.getDeploymentPayload();
 
-        const estimateAmt = await account?.estimateAccountDeployFee(
-            _deploymentPayload
-        );
+    //     const estimateAmt = await account?.estimateAccountDeployFee(
+    //         _deploymentPayload
+    //     );
 
-        console.log(_deploymentPayload, estimateAmt);
+    //     console.log(_deploymentPayload, estimateAmt);
 
-        const response = await fetch(
-            "https://tweetle-bot-backend.onrender.com/player/deploy-account",
-            {
-                headers: {
-                    Accept: "application/json",
-                    "Content-Type": "application/json",
-                },
-                method: "POST",
-                body: JSON.stringify(_deploymentPayload),
-            }
-        );
+    //     const response = await fetch(
+    //         "https://tweetle-bot-backend.onrender.com/player/deploy-account",
+    //         {
+    //             headers: {
+    //                 Accept: "application/json",
+    //                 "Content-Type": "application/json",
+    //             },
+    //             method: "POST",
+    //             body: JSON.stringify(_deploymentPayload),
+    //         }
+    //     );
 
-        console.log("fetch");
+    //     console.log("fetch");
 
-        let result = await response.json();
+    //     let result = await response.json();
 
-        console.log(result);
-    };
+    //     console.log(result);
+    // };
 
     if (isLoading) {
         return <LoadingFullPage />;
@@ -322,6 +322,7 @@ const MainLayout = () => {
                         playerClassicGames,
                         playerClassicGameCount,
                         handleOutsideExecution,
+                        setIsAccountDeployed,
                     }}
                 />
             </main>
