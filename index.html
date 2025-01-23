@@ -21,28 +21,24 @@
     <body>
         <div id="root"></div>
         <script type="module" src="/src/main.tsx"></script>
-        <div id="user-details">Loading...</div>
 
         <script>
-          // Initialize Telegram WebApp
-          Telegram.WebApp.ready();
-      
-          // Retrieve Telegram user info
-          const userData = Telegram.WebApp.initDataUnsafe;
-      
-          // Extract the Telegram ID
-          const telegramId = userData.user?.id;
+            // Initialize Telegram WebApp
+            Telegram.WebApp.ready();
 
+            // Retrieve Telegram user info
+            const userData = Telegram.WebApp.initDataUnsafe;
 
-      
-          if (telegramId) {
-            // save item to localstorage
-            localStorage.setItem('tg_id', telegramId);
-            console.log('saved')
-            
-          } else {
-            document.getElementById('user-details').innerText = 'Telegram ID not found.';
-          }
+            // Extract the Telegram ID
+            const telegramId = userData.user?.id;
+
+            if (telegramId) {
+                // save item to localstorage
+                localStorage.setItem("tg_id", telegramId);
+                console.log("saved");
+            } else {
+                console.log("TELEGRAM ID NOT FOUND...");
+            }
         </script>
     </body>
 </html>

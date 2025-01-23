@@ -12,6 +12,7 @@ import FullPageConnect from "../components/pages/FullPageConnect";
 // import useGameLogic from "../hooks/useGameLogic";
 
 import { Bounce, ToastContainer } from "react-toastify";
+// import useGameLogic from "../hooks/useGameLogic";
 
 interface ArgumentArgentTMA {
     callbackData?: string | undefined;
@@ -21,7 +22,7 @@ interface ArgumentArgentTMA {
 const argentTMA = ArgentTMA.init({
     environment: "sepolia", // "sepolia" | "mainnet" (not supperted yet)
     appName: "tweetle", // Your Telegram app name
-    appTelegramUrl: "https://t.me/tweetle_bot/tweetle", // Your Telegram app URL
+    appTelegramUrl: "https://t.me/crankyBot/burnout", // Your Telegram app URL
     sessionParams: {
         allowedMethods: [
             // List of contracts/methods allowed to be called by the session key
@@ -83,6 +84,7 @@ const MainLayout = () => {
     const [playerClassicGames, setPlayerClassicGames] = useState<any>([]);
     const [playerClassicGameCount, setPlayerClassicGameCount] = useState(0);
     const [isAccountDeployed, setIsAccountDeployed] = useState(false);
+    const [showJoinModal, setShowJoinModal] = useState(false);
 
     const updatePlayerDetails = (item: {}) => {
         setPlayerDetails(item);
@@ -92,6 +94,9 @@ const MainLayout = () => {
     };
     const updatePlayerClassicGameCount = (count: number) => {
         setPlayerClassicGameCount(count);
+    };
+    const updateShowJoinModal = (state: boolean) => {
+        setShowJoinModal(state);
     };
 
     useEffect(() => {
@@ -104,6 +109,15 @@ const MainLayout = () => {
     }, []);
 
     useEffect(() => {
+        const checkDeployStatus = async () => {
+            const _isAccountDeployed = await account?.isDeployed();
+            console.log("IS ACCOUNT DEPLOYED _----", _isAccountDeployed);
+            if (typeof _isAccountDeployed === "boolean")
+                setIsAccountDeployed(_isAccountDeployed);
+            if (_isAccountDeployed === false) {
+                setShowJoinModal(true);
+            }
+        };
         argentTMA
             .connect()
             .then((res) => {
@@ -119,6 +133,7 @@ const MainLayout = () => {
                     const { account } = res;
                     setAccount(account);
                     setIsConnected(false);
+                    checkDeployStatus();
                     return;
                 }
                 // Connected
@@ -136,6 +151,8 @@ const MainLayout = () => {
             .catch((err) => {
                 console.error("Failed to connect", err);
             });
+
+        checkDeployStatus();
     }, []);
 
     // const deployAccountAction = async () => {
@@ -206,6 +223,17 @@ const MainLayout = () => {
     //     }
     // };
 
+    // const registerUser = async () => {
+    //     if (!account) return;
+    //     const _isAccountDeployed = await account?.isDeployed();
+    //     if (_isAccountDeployed) return;
+    //     const _playerDetails = await fetchPlayerDetails(account?.address);
+    //     const _isPlayerRegistered = _playerDetails?.is_registered;
+    //     if (_isPlayerRegistered) return;
+    //     const _registeredSuccessfully = await handleOutsideExecution();
+    //     console.log("DID USER REGISTER SUCCESSFULLY", _registeredSuccessfully);
+    // };
+
     const handleOutsideExecution = async () => {
         let tg_id = localStorage.getItem("tg_id");
 
@@ -249,33 +277,33 @@ const MainLayout = () => {
         console.log(result);
     };
 
-    // const deployAccount = async () => {
-    //     const _deploymentPayload = await account?.getDeploymentPayload();
+    const deployAccount = async () => {
+        const _deploymentPayload = await account?.getDeploymentPayload();
 
-    //     const estimateAmt = await account?.estimateAccountDeployFee(
-    //         _deploymentPayload
-    //     );
+        const estimateAmt = await account?.estimateAccountDeployFee(
+            _deploymentPayload
+        );
 
-    //     console.log(_deploymentPayload, estimateAmt);
+        console.log(_deploymentPayload, estimateAmt);
 
-    //     const response = await fetch(
-    //         "https://tweetle-bot-backend.onrender.com/player/deploy-account",
-    //         {
-    //             headers: {
-    //                 Accept: "application/json",
-    //                 "Content-Type": "application/json",
-    //             },
-    //             method: "POST",
-    //             body: JSON.stringify(_deploymentPayload),
-    //         }
-    //     );
+        const response = await fetch(
+            "https://tweetle-bot-backend.onrender.com/player/deploy-account",
+            {
+                headers: {
+                    Accept: "application/json",
+                    "Content-Type": "application/json",
+                },
+                method: "POST",
+                body: JSON.stringify(_deploymentPayload),
+            }
+        );
 
-    //     console.log("fetch");
+        console.log("fetch");
 
-    //     let result = await response.json();
+        let result = await response.json();
 
-    //     console.log(result);
-    // };
+        console.log(result);
+    };
 
     if (isLoading) {
         return <LoadingFullPage />;
@@ -316,11 +344,14 @@ const MainLayout = () => {
                         updatePlayerDetails,
                         updatePlayerClassicGames,
                         updatePlayerClassicGameCount,
+                        updateShowJoinModal,
+                        deployAccount,
                         isConnected,
                         isAccountDeployed,
                         playerDetails,
                         playerClassicGames,
                         playerClassicGameCount,
+                        showJoinModal,
                         handleOutsideExecution,
                         setIsAccountDeployed,
                     }}

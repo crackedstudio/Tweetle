@@ -7,14 +7,18 @@ import useGameLogic from "../../hooks/useGameLogic";
 import { useOutletContext } from "react-router-dom";
 import { useEffect, useState } from "react";
 import HomeStats from "../dashboard/HomeStats";
+import JoinModal from "../modal/JoinModal";
+import { Bounce, toast } from "react-toastify";
 
 interface OutletContextType {
     account: any | null;
     updatePlayerDetails: ({}) => void;
     updatePlayerClassicGames: ([]) => void;
+    deployAccount: () => void;
     updatePlayerClassicGameCount: (a: number) => void;
+    updateShowJoinModal: (a: boolean) => void;
     handleOutsideExecution: () => boolean;
-    isAccountDeployed: boolean;
+    showJoinModal: boolean;
 }
 
 const Dashboard = () => {
@@ -24,26 +28,51 @@ const Dashboard = () => {
         updatePlayerClassicGameCount,
         updatePlayerClassicGames,
         handleOutsideExecution,
-        isAccountDeployed,
+        showJoinModal,
+        updateShowJoinModal,
+        deployAccount,
     } = useOutletContext<OutletContextType>();
     const { fetchPlayerDetails, fetchUserClassicGames } = useGameLogic();
     const [gamesPlayed, setGamesPlayed] = useState(0);
     // const [activePlayers, setActivePlayers] = useState(0)
-    useEffect(() => {
-        const registerUser = async () => {
-            if (!account) return;
-            const _isAccountDeployed = await account?.isDeployed();
-            if (_isAccountDeployed) return;
-            const _playerDetails = await fetchPlayerDetails(account?.address);
-            const _isPlayerRegistered = _playerDetails?.is_registered;
-            if (_isPlayerRegistered) return;
-            const _registeredSuccessfully = await handleOutsideExecution();
-            console.log(
-                "DID USER REGISTER SUCCESSFULLY",
-                _registeredSuccessfully
-            );
-        };
 
+    const callToast = (msg: string) => {
+        return toast(msg, {
+            position: "top-right",
+            autoClose: 5000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            theme: "dark",
+            transition: Bounce,
+        });
+    };
+
+    const registerUser = async () => {
+        if (!account) return;
+        const _isAccountDeployed = await account?.isDeployed();
+        if (!_isAccountDeployed) await deployAccount;
+        const _playerDetails = await fetchPlayerDetails(account?.address);
+        const _isPlayerRegistered = _playerDetails?.is_registered;
+        if (_isPlayerRegistered) return;
+        const _registeredSuccessfully = await handleOutsideExecution();
+        console.log("DID USER REGISTER SUCCESSFULLY", _registeredSuccessfully);
+    };
+
+    const handleJoinModal = async () => {
+        try {
+            await registerUser();
+            callToast("Welcome to Tweetle");
+            updateShowJoinModal(false);
+        } catch (err) {
+            console.log("error is ---", err);
+            callToast("Error with User registration , please try again!");
+        }
+    };
+
+    useEffect(() => {
         const performAllUpdates = async () => {
             const _playerDetails = await fetchPlayerDetails(account?.address);
             const _playerClassicGames = await fetchUserClassicGames();
@@ -60,101 +89,81 @@ const Dashboard = () => {
         };
         if (account) {
             performAllUpdates();
-            if (isAccountDeployed) {
-                registerUser();
-            }
         }
+        console.log("SHOW JOIN MODAL is ", showJoinModal);
     }, []);
-
-    if (isAccountDeployed) {
-        return (
-            <div className=" p-5 flex flex-col items-center gap-y-2">
-                <h4 className="font-bold text-black">
-                    Please deploy your account
-                </h4>
-                <p className="text-[20px]">
-                    we sent you some strk send some to another address to fully
-                    to get your account deployed and stsrt tweetling !!!
-                </p>
-
-                <a
-                    className="p-2 bg-white text-blue-800"
-                    href="https://t.me/ArgentTestBot"
-                >
-                    open argent
-                </a>
-            </div>
-        );
-    }
 
     return (
         <>
             <div className="h-full overflow-auto text-white">
                 <HomeHeroSection isNavbarActive={true} />
 
-                <div className="bg-black p-2 flex flex-col text-white space-y-4">
-                    <HomeStats />
-                    <GlassCard>
-                        <>
-                            <div className="w-full">
-                                <DashboardButtons where="/play">
-                                    <div className="flex flex-col space-y-2">
-                                        <p className="text-xl font-bold">
-                                            DAILY CHALLENGE
-                                        </p>
-                                        <div className="flex space-x-2 text-[#7FF474] font-bold text-sm items-center">
-                                            <p className="">
-                                                <svg
-                                                    width="6"
-                                                    height="6"
-                                                    viewBox="0 0 6 6"
-                                                    fill="none"
-                                                    xmlns="http://www.w3.org/2000/svg"
-                                                >
-                                                    <circle
-                                                        cx="3"
-                                                        cy="3"
-                                                        r="3"
-                                                        fill="#7FF474"
-                                                    />
-                                                </svg>
+                {!showJoinModal && (
+                    <div className="bg-black p-2 flex flex-col text-white space-y-4">
+                        <HomeStats />
+                        <GlassCard>
+                            <>
+                                <div className="w-full">
+                                    <DashboardButtons where="/play">
+                                        <div className="flex flex-col space-y-2">
+                                            <p className="text-xl font-bold">
+                                                DAILY CHALLENGE
                                             </p>
-                                            <p>247 Active players</p>
+                                            <div className="flex space-x-2 text-[#7FF474] font-bold text-sm items-center">
+                                                <p className="">
+                                                    <svg
+                                                        width="6"
+                                                        height="6"
+                                                        viewBox="0 0 6 6"
+                                                        fill="none"
+                                                        xmlns="http://www.w3.org/2000/svg"
+                                                    >
+                                                        <circle
+                                                            cx="3"
+                                                            cy="3"
+                                                            r="3"
+                                                            fill="#7FF474"
+                                                        />
+                                                    </svg>
+                                                </p>
+                                                <p>247 Active players</p>
+                                            </div>
                                         </div>
-                                    </div>
-                                </DashboardButtons>
-                            </div>
-                            <div className="w-full">
-                                <DashboardButtons where="/classic">
-                                    <div className="flex flex-col space-y-2">
-                                        <p className="text-xl font-bold">
-                                            CLASSIC
-                                        </p>
-                                        <div className="flex space-x-2 text-[#7FF474] font-bold text-sm items-center">
-                                            <p className="">
-                                                <svg
-                                                    width="6"
-                                                    height="6"
-                                                    viewBox="0 0 6 6"
-                                                    fill="none"
-                                                    xmlns="http://www.w3.org/2000/svg"
-                                                >
-                                                    <circle
-                                                        cx="3"
-                                                        cy="3"
-                                                        r="3"
-                                                        fill="#7FF474"
-                                                    />
-                                                </svg>
+                                    </DashboardButtons>
+                                </div>
+                                <div className="w-full">
+                                    <DashboardButtons where="/classic">
+                                        <div className="flex flex-col space-y-2">
+                                            <p className="text-xl font-bold">
+                                                CLASSIC
                                             </p>
-                                            <p>{gamesPlayed} Games Played</p>
+                                            <div className="flex space-x-2 text-[#7FF474] font-bold text-sm items-center">
+                                                <p className="">
+                                                    <svg
+                                                        width="6"
+                                                        height="6"
+                                                        viewBox="0 0 6 6"
+                                                        fill="none"
+                                                        xmlns="http://www.w3.org/2000/svg"
+                                                    >
+                                                        <circle
+                                                            cx="3"
+                                                            cy="3"
+                                                            r="3"
+                                                            fill="#7FF474"
+                                                        />
+                                                    </svg>
+                                                </p>
+                                                <p>
+                                                    {gamesPlayed} Games Played
+                                                </p>
+                                            </div>
                                         </div>
-                                    </div>
-                                </DashboardButtons>
-                            </div>
-                        </>
-                    </GlassCard>
-                    {/* <div className="flex justify-between h-[50%]">
+                                    </DashboardButtons>
+                                </div>
+                            </>
+                        </GlassCard>
+                        {/* <div className="flex justify-between h-[50%]">
                         <DashboardButtons where="/">
                             <p className="w-[50%] mx-auto text-center">
                                 WORD FEVER
@@ -166,18 +175,26 @@ const Dashboard = () => {
                             </p>
                         </DashboardButtons>
                     </div> */}
-                    <p className="text-white text-center">
-                        How to Play!{" "}
-                        <img
-                            src={arrowRight}
-                            alt="arrow-right"
-                            className="inline"
-                        />
-                    </p>
-                    <div className="">
-                        <PwdByStrk />
+                        <p className="text-white text-center">
+                            How to Play!{" "}
+                            <img
+                                src={arrowRight}
+                                alt="arrow-right"
+                                className="inline"
+                            />
+                        </p>
+                        <div className="">
+                            <PwdByStrk />
+                        </div>
                     </div>
-                </div>
+                )}
+                {showJoinModal && (
+                    <JoinModal
+                        cancelHandler={() => {}}
+                        isDailyModal={false}
+                        joinHandler={handleJoinModal}
+                    />
+                )}
             </div>
         </>
     );

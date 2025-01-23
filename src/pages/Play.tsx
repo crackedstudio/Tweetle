@@ -13,7 +13,7 @@ import { useLocation } from "react-router-dom";
 import GenModal from "../components/modal/GenModal";
 import useGameLogic from "../hooks/useGameLogic";
 import { Bounce, toast } from "react-toastify";
-import JoinDailyModal from "../components/modal/JoinDailyModal";
+import JoinModal from "../components/modal/JoinModal";
 
 interface OutletContextType {
     account: any | null;
@@ -660,9 +660,10 @@ const Play = () => {
                 />
             )}
             {modalState.joinModal && (
-                <JoinDailyModal
+                <JoinModal
                     cancelHandler={closeModal}
                     joinHandler={handleJoin}
+                    isDailyModal={true}
                 />
             )}
             {modalState.genModal && <GenModal />}
