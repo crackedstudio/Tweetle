@@ -38,7 +38,7 @@ export default function Leaderboard() {
                 </h4>
                 <div className="flex flex-col gap-y-6">
                     {dummyPlayers
-                        .sort((a, b) => parseInt(b.points) - parseInt(a.points))
+                        .sort((a, b) => b.points - a.points)
                         .map((player, i) => {
                             return { ...player, position: i + 1 };
                         })
