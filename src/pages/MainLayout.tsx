@@ -22,7 +22,7 @@ interface ArgumentArgentTMA {
 const argentTMA = ArgentTMA.init({
     environment: "sepolia", // "sepolia" | "mainnet" (not supperted yet)
     appName: "tweetle", // Your Telegram app name
-    appTelegramUrl: "https://t.me/tweetle_bot/tweetle", // Your Telegram app URL
+    appTelegramUrl: "https://t.me/crankyBot/burnout", // Your Telegram app URL
     sessionParams: {
         allowedMethods: [
             // List of contracts/methods allowed to be called by the session key
@@ -82,6 +82,7 @@ const MainLayout = () => {
     const [isLoading, setIsLoading] = useState(true);
     const [playerDetails, setPlayerDetails] = useState({});
     const [playerClassicGames, setPlayerClassicGames] = useState<any>([]);
+    const [allPlayers, setAllPlayers] = useState<{}>([]);
     const [playerClassicGameCount, setPlayerClassicGameCount] = useState(0);
     const [isAccountDeployed, setIsAccountDeployed] = useState(false);
     const [showJoinModal, setShowJoinModal] = useState(false);
@@ -97,6 +98,10 @@ const MainLayout = () => {
     };
     const updateShowJoinModal = (state: boolean) => {
         setShowJoinModal(state);
+    };
+
+    const updateAllPlayers = (_players: []) => {
+        setAllPlayers(_players);
     };
 
     useEffect(() => {
@@ -345,12 +350,14 @@ const MainLayout = () => {
                         updatePlayerClassicGames,
                         updatePlayerClassicGameCount,
                         updateShowJoinModal,
+                        updateAllPlayers,
                         deployAccount,
                         isConnected,
                         isAccountDeployed,
                         playerDetails,
                         playerClassicGames,
                         playerClassicGameCount,
+                        allPlayers,
                         showJoinModal,
                         handleOutsideExecution,
                         setIsAccountDeployed,

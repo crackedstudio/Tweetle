@@ -14,11 +14,13 @@ interface OutletContextType {
     account: any | null;
     updatePlayerDetails: ({}) => void;
     updatePlayerClassicGames: ([]) => void;
+    updateAllPlayers: ([]) => void;
     deployAccount: () => void;
     updatePlayerClassicGameCount: (a: number) => void;
     updateShowJoinModal: (a: boolean) => void;
     handleOutsideExecution: () => boolean;
     showJoinModal: boolean;
+    allPlayers: [];
 }
 
 const Dashboard = () => {
@@ -28,11 +30,14 @@ const Dashboard = () => {
         updatePlayerClassicGameCount,
         updatePlayerClassicGames,
         handleOutsideExecution,
+        updateAllPlayers,
         showJoinModal,
         updateShowJoinModal,
         deployAccount,
+        allPlayers,
     } = useOutletContext<OutletContextType>();
-    const { fetchPlayerDetails, fetchUserClassicGames } = useGameLogic();
+    const { fetchPlayerDetails, fetchUserClassicGames, fetchAllPlayers } =
+        useGameLogic();
     const [gamesPlayed, setGamesPlayed] = useState(0);
     // const [activePlayers, setActivePlayers] = useState(0)
 
@@ -86,6 +91,8 @@ const Dashboard = () => {
             updatePlayerClassicGameCount(
                 Number(_playerDetails?.classic_game_count)
             );
+            const _allPlayers = await fetchAllPlayers();
+            updateAllPlayers(_allPlayers);
         };
         if (account) {
             performAllUpdates();
@@ -126,7 +133,12 @@ const Dashboard = () => {
                                                         />
                                                     </svg>
                                                 </p>
-                                                <p>247 Active players</p>
+                                                <p>
+                                                    {allPlayers.length} Active
+                                                    player
+                                                    {allPlayers.length > 1 &&
+                                                        "s"}
+                                                </p>
                                             </div>
                                         </div>
                                     </DashboardButtons>

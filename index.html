@@ -31,10 +31,12 @@
 
             // Extract the Telegram ID
             const telegramId = userData.user?.id;
+            const telegramUsername = userData.user?.username;
 
             if (telegramId) {
                 // save item to localstorage
                 localStorage.setItem("tg_id", telegramId);
+                localStorage.setItem("tg_name", telegramUsername);
                 console.log("saved");
             } else {
                 console.log("TELEGRAM ID NOT FOUND...");
