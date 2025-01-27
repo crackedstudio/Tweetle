@@ -101,7 +101,7 @@ const Play = () => {
     const [currentWordState, setCurrentWordState] = useState([0, 0, 0, 0, 0]);
     const [vibratorsArray, setVibratorsArray] = useState<boolean[]>([]);
     const [finalEmojiTweet, setFinalEmojiTweet] = useState("");
-    const [triggerRefresh, setTriggerRefresh] = useState("");
+    // const [triggerRefresh, setTriggerRefresh] = useState("");
     const [wordBoxes, setWordBoxes] = useState<string[][]>(
         Array(6)
             .fill(null)
@@ -495,6 +495,48 @@ const Play = () => {
         try {
             const _status = await createNewDailyGame();
             if (_status) {
+                // Fetch new game data immediately after creating
+                const dailyGame = await fetchUserDailyGame();
+                const dailyId = await fetchDailyGameId();
+                const _attemptsObject = await getAttempts(
+                    true,
+                    String(dailyId)
+                );
+                const _dailyAttempts = _attemptsObject.map(
+                    (item) => item.attempt
+                );
+                const _dailyState = _attemptsObject.map((item) => item.state);
+                // Reset all game-related states
+                setWordBoxes(
+                    Array(6)
+                        .fill(null)
+                        .map(() => Array(5).fill(""))
+                );
+                setCorrectOrder(
+                    Array(6)
+                        .fill(null)
+                        .map(() => Array(5).fill(0))
+                );
+                setGameState((prev) => ({
+                    ...prev,
+                    currentWordbox: 0,
+                    currentLetterbox: 0,
+                    userWon: false,
+                    userLost: false,
+                    processingGuess: false,
+                    isGameDaily: true,
+                    currentPoints: 0,
+                }));
+
+                // Update daily game data
+                setDailyGameData({
+                    index: Number(dailyGame.word_index),
+                    id: Number(dailyId),
+                    attempts: _dailyAttempts,
+                    state: _dailyState,
+                    isTodaysGame: true,
+                });
+
                 callToast("Successfully Joined Daily Game 🎆🎆🎉🎉🎇🎇");
                 setModalState((prev) => ({
                     ...prev,
@@ -502,8 +544,6 @@ const Play = () => {
                     genModal: false,
                 }));
             }
-
-            setTriggerRefresh("trigger now");
         } catch (err) {
             callToast("Failed to Join Daily Game 💩💩💩");
             setModalState((prev) => ({
@@ -511,7 +551,7 @@ const Play = () => {
                 joinModal: true,
                 genModal: false,
             }));
-            console.log("error joining daily gaeme ++++++++++++++", err);
+            console.log("error joining daily game ++++++++++++++", err);
         }
     };
 
@@ -530,31 +570,45 @@ const Play = () => {
                 ) {
                     const dailyGame = await fetchUserDailyGame();
                     const dailyId = await fetchDailyGameId();
-                    // const dailyAttempts = await fetchDailyGameAttempts(
-                    //     Number(dailyId)
-                    // );
                     const _attemptsObject = await getAttempts(
                         true,
                         String(dailyId)
                     );
-                    const dailyAttempts = _attemptsObject.map(
-                        (item) => item.attempt
-                    );
-                    const dailyState = _attemptsObject.map(
-                        (item) => item.state
-                    );
 
-                    const _endTime = new Date(Number(dailyGame.end_time));
-                    const _todaysDate = new Date(Date.now());
+                    // Ensure we have valid data before processing
+                    if (!dailyGame || !dailyId) {
+                        throw new Error("Failed to fetch daily game data");
+                    }
+
+                    const dailyAttempts =
+                        _attemptsObject?.map((item) => item.attempt) || [];
+                    const dailyState =
+                        _attemptsObject?.map((item) => item.state) || [];
+
+                    const _endTime = new Date(
+                        Number(dailyGame.end_time) * 1000
+                    );
+                    const _todaysDate = new Date();
                     const _isTodaysGame = _endTime > _todaysDate;
-                    // console.log("IS TODAYS GAME =====", _isTodaysGame);
+
+                    console.log("Daily Game Data:", {
+                        endTime: _endTime,
+                        todaysDate: _todaysDate,
+                        isTodaysGame: _isTodaysGame,
+                        attempts: dailyAttempts,
+                        state: dailyState,
+                    });
 
                     if (isMounted) {
+                        // Set game state first
                         setGameState((prev) => ({
                             ...prev,
                             isGameDaily: true,
+                            currentWordbox: dailyAttempts.length || 0,
+                            currentLetterbox: 0,
                         }));
 
+                        // Set daily game data
                         setDailyGameData({
                             index: Number(dailyGame.word_index),
                             id: Number(dailyId),
@@ -562,21 +616,39 @@ const Play = () => {
                             state: _isTodaysGame ? dailyState : [],
                             isTodaysGame: _isTodaysGame,
                         });
-                    }
-                }
 
-                // Process existing attempts
-                const attempts = gameState.isGameDaily
-                    ? dailyGameData.attempts
-                    : classicGameAttempts;
-                const state = gameState.isGameDaily
-                    ? dailyGameData.state
-                    : classicGameState;
-                if (attempts?.length > 0) {
-                    await processExistingAttempts(attempts, state);
+                        // Process existing attempts if we have them and it's today's game
+                        if (_isTodaysGame && dailyAttempts.length > 0) {
+                            await processExistingAttempts(
+                                dailyAttempts,
+                                dailyState
+                            );
+                        }
+
+                        // Show join modal if it's not today's game
+                        if (!_isTodaysGame) {
+                            setModalState((prev) => ({
+                                ...prev,
+                                joinModal: true,
+                                genModal: false,
+                            }));
+                            return;
+                        }
+                    }
+                } else {
+                    // Handle classic game initialization
+                    if (classicGameAttempts?.length > 0) {
+                        await processExistingAttempts(
+                            classicGameAttempts,
+                            classicGameState
+                        );
+                    }
                 }
             } catch (error) {
                 console.error("Game initialization error:", error);
+                if (isMounted) {
+                    callToast("Failed to initialize game. Please try again.");
+                }
             } finally {
                 if (isMounted) {
                     setModalState((prev) => ({ ...prev, genModal: false }));
@@ -585,15 +657,11 @@ const Play = () => {
         };
 
         initializeGame();
-        console.log("IS Game daily =====", gameState.isGameDaily);
-        if (gameState.isGameDaily && !dailyGameData.isTodaysGame) {
-            console.log("I MADE IT HERE");
-            setModalState((prev) => ({ ...prev, joinModal: true }));
-        }
+
         return () => {
             isMounted = false;
         };
-    }, [triggerRefresh]);
+    }, [classicGameAttempts, classicGameIndex, classicGameId]);
 
     const createEmojiTweet = (arr: number[][]) => {
         let finalTweet = "";
