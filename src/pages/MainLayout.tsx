@@ -1,4 +1,4 @@
-import { Outlet } from "react-router-dom";
+import { Outlet, useLocation } from "react-router-dom";
 import BottomNav from "../components/BottomNav";
 
 import { ArgentTMA, SessionAccountInterface } from "@argent/tma-wallet";
@@ -310,6 +310,9 @@ const MainLayout = () => {
         console.log(result);
     };
 
+    const location = useLocation(); // Add this hook
+    const showBottomNav = !(location.pathname === "/play"); // Add this condition
+
     if (isLoading) {
         return <LoadingFullPage />;
     }
@@ -364,8 +367,7 @@ const MainLayout = () => {
                     }}
                 />
             </main>
-            {/* {!isOnPlayOrShuffle && <BottomNav />} */}
-            <BottomNav />
+            {showBottomNav && <BottomNav />}
         </div>
     );
 };
