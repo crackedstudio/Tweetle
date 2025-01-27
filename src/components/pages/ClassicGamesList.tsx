@@ -90,6 +90,7 @@ const ClassicGamesList = () => {
                         Number(_playerClassicGames.length)
                     );
                 } catch (error) {
+                    callToast("Error fetching games, try again");
                     console.error("Error fetching games:", error);
                 }
             } else {
@@ -100,6 +101,7 @@ const ClassicGamesList = () => {
                         Number(_playerClassicGames.length)
                     );
                 } catch (error) {
+                    callToast("Error fetching games, try again");
                     console.error("Error fetching games:", error);
                 }
             }
@@ -135,9 +137,12 @@ const ClassicGamesList = () => {
             callToast("Creating new game 🦉");
             const txn = await createNewClassicGame();
             console.log("created new classic game with hash======", txn);
-            callToast("Successfully created new game 🐣");
+            callToast(
+                "Successfully created new game 🐣, refresh page to see game"
+            );
             setGenModal(false);
         } catch (err) {
+            callToast("Error creating new game, try again");
             console.log(err);
             setGenModal(false);
         }
@@ -173,6 +178,7 @@ const ClassicGamesList = () => {
                 },
             });
         } catch (err) {
+            callToast("Error starting classic game, try again");
             console.log(err);
         }
     };

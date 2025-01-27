@@ -11,7 +11,7 @@ import FullPageConnect from "../components/pages/FullPageConnect";
 // import gameAbi from "../utils/gameAbi.json";
 // import useGameLogic from "../hooks/useGameLogic";
 
-import { Bounce, ToastContainer } from "react-toastify";
+import { Bounce, toast, ToastContainer } from "react-toastify";
 // import useGameLogic from "../hooks/useGameLogic";
 
 interface ArgumentArgentTMA {
@@ -87,6 +87,20 @@ const MainLayout = () => {
     const [isAccountDeployed, setIsAccountDeployed] = useState(false);
     const [showJoinModal, setShowJoinModal] = useState(false);
 
+    const callToast = (msg: string) => {
+        return toast(msg, {
+            position: "top-right",
+            autoClose: 5000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            theme: "dark",
+            transition: Bounce,
+        });
+    };
+
     const updatePlayerDetails = (item: {}) => {
         setPlayerDetails(item);
     };
@@ -154,6 +168,7 @@ const MainLayout = () => {
                 // if user is connected , check if account is deployed , if it isnt deploy account for user
             })
             .catch((err) => {
+                callToast("Failed to connect to wallet ❗❗❗, Try again 🔁");
                 console.error("Failed to connect", err);
             });
 
@@ -290,24 +305,27 @@ const MainLayout = () => {
         );
 
         console.log(_deploymentPayload, estimateAmt);
+        try {
+            const response = await fetch(
+                "https://tweetle-bot-backend.onrender.com/player/deploy-account",
+                {
+                    headers: {
+                        Accept: "application/json",
+                        "Content-Type": "application/json",
+                    },
+                    method: "POST",
+                    body: JSON.stringify(_deploymentPayload),
+                }
+            );
 
-        const response = await fetch(
-            "https://tweetle-bot-backend.onrender.com/player/deploy-account",
-            {
-                headers: {
-                    Accept: "application/json",
-                    "Content-Type": "application/json",
-                },
-                method: "POST",
-                body: JSON.stringify(_deploymentPayload),
-            }
-        );
+            console.log("fetch");
 
-        console.log("fetch");
+            let result = await response.json();
 
-        let result = await response.json();
-
-        console.log(result);
+            console.log(result);
+        } catch {
+            callToast("Failed to deploy account ❗❗❗, Try again 🔁");
+        }
     };
 
     const location = useLocation(); // Add this hook

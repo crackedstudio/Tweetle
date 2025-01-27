@@ -220,6 +220,7 @@ const Play = () => {
 
             handleWordStatus(status);
         } catch (error) {
+            callToast("Error Processing word 🟥 , Try Again 🔁🔁");
             console.error("Error processing word:", error);
         } finally {
             setGameState((prev) => ({ ...prev, processingGuess: false }));
@@ -327,6 +328,7 @@ const Play = () => {
             }));
             return response.data;
         } catch (error: any) {
+            callToast("Error getting word state 🔺🔺 , Try Again 🔁🔁 ");
             console.error("Error getting word state:", error);
             return [0, 0, 0, 0, 0];
         }
@@ -364,6 +366,7 @@ const Play = () => {
 
             return await response.json();
         } catch (error) {
+            callToast("Error saving classic attempt ❌🔺 , Try Again 🔁🔁");
             console.error("Error saving classic attempt:", error);
         }
     };
@@ -400,6 +403,7 @@ const Play = () => {
 
             return await response.json();
         } catch (error) {
+            callToast("Error saving daily Attempt🔺🔺 , Try Again 🔁🔁");
             console.error("Error saving daily attempt:", error);
         }
     };
@@ -645,6 +649,7 @@ const Play = () => {
                     }
                 }
             } catch (error) {
+                callToast("Game Initializzation error ❌ ❌, Try Again 🔁🔁");
                 console.error("Game initialization error:", error);
                 if (isMounted) {
                     callToast("Failed to initialize game. Please try again.");

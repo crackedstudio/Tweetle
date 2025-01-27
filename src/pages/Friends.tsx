@@ -46,16 +46,21 @@ export default function Friends() {
     useEffect(() => {
         const fetchData = async () => {
             const userTgId = localStorage.getItem("tg_id");
-            let response = await fetch(
-                `https://tweetle-bot-backend.onrender.com/player/referred-by/REF-${userTgId}`,
-                {}
-            );
+            try {
+                let response = await fetch(
+                    `https://tweetle-bot-backend.onrender.com/player/referred-by/REF-${userTgId}`,
+                    {}
+                );
 
-            let data = await response.json();
+                let data = await response.json();
 
-            console.log("GOTTEN FRIENDS DATA IS ----------", data);
-            if (data.data) setFriends(data.data);
-            if (!data.data) callToast(data.message);
+                console.log("GOTTEN FRIENDS DATA IS ----------", data);
+                if (data.data) setFriends(data.data);
+                if (!data.data) callToast(data.message);
+            } catch (err) {
+                callToast("Error fetching referee data ❌🔺 , Try Again 🔁🔁");
+                console.log("error fetching data: ", err);
+            }
         };
 
         fetchData();
