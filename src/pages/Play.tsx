@@ -307,7 +307,7 @@ const Play = () => {
             //         },
             //     }
             // );
-
+            console.log("req body is ===____>>>>>>", body);
             const _response = await fetch(
                 "https://tweetle-bot-backend.onrender.com/game",
                 {
@@ -704,7 +704,11 @@ const Play = () => {
                             wordArray={wordArray}
                             key={index}
                             wordState={correctOrder[index]}
-                            isLoading={gameState.processingGuess}
+                            isLoading={
+                                index == gameState.currentWordbox
+                                    ? gameState.processingGuess
+                                    : false
+                            }
                         />
                     ))}
                 </div>
