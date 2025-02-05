@@ -578,6 +578,7 @@ const Play = () => {
                         true,
                         String(dailyId)
                     );
+                    console.log("fetchhhh -----", dailyGame, dailyId);
 
                     // Ensure we have valid data before processing
                     if (!dailyGame || !dailyId) {
@@ -654,6 +655,11 @@ const Play = () => {
                 if (isMounted) {
                     callToast("Failed to initialize game. Please try again.");
                 }
+                setModalState((prev) => ({
+                    ...prev,
+                    joinModal: true,
+                    genModal: false,
+                }));
             } finally {
                 if (isMounted) {
                     setModalState((prev) => ({ ...prev, genModal: false }));

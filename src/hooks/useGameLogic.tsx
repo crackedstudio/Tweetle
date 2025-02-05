@@ -13,7 +13,7 @@ interface OutletContextType {
     playerClassicGames: [];
 }
 const GAME_ADDRESS =
-    "0x974d27dbf588cd1a581722921906d03b552d64107264d599e06c97b28e848e";
+    "0x054221ea3f585e97816b42b2ed4a5f7a5e971accabdfd0ee698be7d9f102bd03";
 
 const ERC20_ADDRESS =
     "0x04718f5a0Fc34cC1AF16A1cdee98fFB20C31f5cD61D6Ab07201858f4287c938D";
@@ -316,7 +316,7 @@ const useGameLogic = () => {
             let calls = [
                 {
                     contractAddress:
-                        "0x974d27dbf588cd1a581722921906d03b552d64107264d599e06c97b28e848e",
+                        "0x054221ea3f585e97816b42b2ed4a5f7a5e971accabdfd0ee698be7d9f102bd03",
                     entrypoint: "claim_points",
                     calldata: CallData.compile({
                         points: cairo.uint256(points),

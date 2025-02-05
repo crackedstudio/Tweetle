@@ -62,19 +62,29 @@ const Dashboard = () => {
         if (!_isAccountDeployed) {
             console.log("deplooying account ---");
             await deployAccount;
+            return;
         }
         const _playerDetails = await fetchPlayerDetails(account?.address);
         const _isPlayerRegistered = _playerDetails?.is_registered;
-        if (_isPlayerRegistered) return;
+        if (_isPlayerRegistered) {
+            return true;
+        }
         const _registeredSuccessfully = await handleOutsideExecution();
         console.log("DID USER REGISTER SUCCESSFULLY", _registeredSuccessfully);
+        let __playerDetails = await fetchPlayerDetails(account?.address);
+        let __isPlayerRegistered = __playerDetails?.is_registered;
+        return __isPlayerRegistered;
     };
 
     const handleJoinModal = async () => {
         try {
-            await registerUser();
-            callToast("Welcome to Tweetle");
-            updateShowJoinModal(false);
+            const _isPlayerRegistered = await registerUser();
+            if (_isPlayerRegistered) {
+                callToast("Welcome to Tweetle");
+                updateShowJoinModal(false);
+            } else {
+                callToast("Failed to Register User");
+            }
         } catch (err) {
             console.log("error is ---", err);
             callToast("Error with User registration , please try again!");
@@ -84,6 +94,11 @@ const Dashboard = () => {
     useEffect(() => {
         const performAllUpdates = async () => {
             const _playerDetails = await fetchPlayerDetails(account?.address);
+            const _isPlayerRegistered = _playerDetails?.is_registered;
+            if (!_isPlayerRegistered) {
+                updateShowJoinModal(true);
+            }
+
             const _playerClassicGames = await fetchUserClassicGames();
             updatePlayerDetails(_playerDetails);
             updatePlayerClassicGames(_playerClassicGames);

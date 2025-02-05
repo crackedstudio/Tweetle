@@ -33,37 +33,37 @@ const argentTMA = ArgentTMA.init({
             },
             {
                 contract:
-                    "0x974d27dbf588cd1a581722921906d03b552d64107264d599e06c97b28e848e",
+                    "0x054221ea3f585e97816b42b2ed4a5f7a5e971accabdfd0ee698be7d9f102bd03",
                 selector: "create_new_classic_game",
             },
             {
                 contract:
-                    "0x974d27dbf588cd1a581722921906d03b552d64107264d599e06c97b28e848e",
+                    "0x054221ea3f585e97816b42b2ed4a5f7a5e971accabdfd0ee698be7d9f102bd03",
                 selector: "save_player_guess",
             },
             {
                 contract:
-                    "0x974d27dbf588cd1a581722921906d03b552d64107264d599e06c97b28e848e",
+                    "0x054221ea3f585e97816b42b2ed4a5f7a5e971accabdfd0ee698be7d9f102bd03",
                 selector: "register_player",
             },
             {
                 contract:
-                    "0x974d27dbf588cd1a581722921906d03b552d64107264d599e06c97b28e848e",
+                    "0x054221ea3f585e97816b42b2ed4a5f7a5e971accabdfd0ee698be7d9f102bd03",
                 selector: "save_Player_classic_attempt",
             },
             {
                 contract:
-                    "0x974d27dbf588cd1a581722921906d03b552d64107264d599e06c97b28e848e",
+                    "0x054221ea3f585e97816b42b2ed4a5f7a5e971accabdfd0ee698be7d9f102bd03",
                 selector: "save_player_daily_attempt",
             },
             {
                 contract:
-                    "0x974d27dbf588cd1a581722921906d03b552d64107264d599e06c97b28e848e",
+                    "0x054221ea3f585e97816b42b2ed4a5f7a5e971accabdfd0ee698be7d9f102bd03",
                 selector: "claim_points",
             },
             {
                 contract:
-                    "0x974d27dbf588cd1a581722921906d03b552d64107264d599e06c97b28e848e",
+                    "0x054221ea3f585e97816b42b2ed4a5f7a5e971accabdfd0ee698be7d9f102bd03",
                 selector: "join_daily_game",
             },
         ],
@@ -130,8 +130,12 @@ const MainLayout = () => {
     useEffect(() => {
         const checkDeployStatus = async () => {
             try {
+                console.log("account is -----", account);
                 const _isAccountDeployed = await account?.isDeployed();
                 console.log("IS ACCOUNT DEPLOYED _----", _isAccountDeployed);
+                if (typeof _isAccountDeployed !== "boolean") {
+                    setShowJoinModal(true);
+                }
                 if (typeof _isAccountDeployed === "boolean") {
                     setIsAccountDeployed(_isAccountDeployed);
                     if (_isAccountDeployed === false) {
@@ -278,7 +282,7 @@ const MainLayout = () => {
         let calls = [
             {
                 contractAddress:
-                    "0x974d27dbf588cd1a581722921906d03b552d64107264d599e06c97b28e848e",
+                    "0x054221ea3f585e97816b42b2ed4a5f7a5e971accabdfd0ee698be7d9f102bd03",
                 entrypoint: "register_player",
                 calldata: CallData.compile({
                     _tg_id: tg_id ? tg_id : 0,
@@ -337,6 +341,7 @@ const MainLayout = () => {
             let result = await response.json();
 
             console.log(result);
+            return;
         } catch {
             callToast("Failed to deploy account ❗❗❗, Try again 🔁");
         }

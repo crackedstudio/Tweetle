@@ -43,8 +43,8 @@ const JoinModal = ({
                                     Pro Tip
                                 </h1>
                                 <p className="text-center">
-                                    Pro Tip Pay attention to the colors for
-                                    hints – Green 🟩 means you’re spot on!
+                                    Makes sense to always start out with an
+                                    "AEIOU" combination so you know all vowels
                                 </p>
                             </>
                         )}
@@ -62,13 +62,13 @@ const JoinModal = ({
                                     To Begin we would get you registered and
                                     initialize your account
                                 </p>
-                                <h1 className="text-[#FE97D5] text-center text-2xl font-bold">
+                                <h1 className="text-red-600 text-center text-2xl font-bold">
                                     {" "}
-                                    Pro Tip
+                                    NOTE !!!
                                 </h1>
                                 <p className="text-center">
-                                    Makes sense to always start out with an
-                                    "AEIOU" combination so you know all vowels
+                                    KIndly ensure you have deployed your
+                                    starknet account before proceeding
                                 </p>
                             </>
                         )}
