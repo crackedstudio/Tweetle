@@ -34,8 +34,13 @@ const Navbar = () => {
     useEffect(() => {
         const fetchBal = async () => {
             let _bal = await getUserBalance();
-            _bal = Math.round(divideBy10To18(_bal));
-            setUserBalance(String(_bal) + " STRK");
+            console.log("got balance is ---", _bal);
+            if (!_bal) {
+                setUserBalance("0 STRK");
+            } else {
+                _bal = Math.round(divideBy10To18(_bal));
+                setUserBalance(String(_bal) + " STRK");
+            }
         };
         fetchBal();
     }, []);
