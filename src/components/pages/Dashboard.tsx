@@ -58,7 +58,11 @@ const Dashboard = () => {
     const registerUser = async () => {
         if (!account) return;
         const _isAccountDeployed = await account?.isDeployed();
-        if (!_isAccountDeployed) await deployAccount;
+        console.log("is acct deployed in reg user --", _isAccountDeployed);
+        if (!_isAccountDeployed) {
+            console.log("deplooying account ---");
+            await deployAccount;
+        }
         const _playerDetails = await fetchPlayerDetails(account?.address);
         const _isPlayerRegistered = _playerDetails?.is_registered;
         if (_isPlayerRegistered) return;

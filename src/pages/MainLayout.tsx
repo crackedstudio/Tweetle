@@ -129,51 +129,65 @@ const MainLayout = () => {
 
     useEffect(() => {
         const checkDeployStatus = async () => {
-            const _isAccountDeployed = await account?.isDeployed();
-            console.log("IS ACCOUNT DEPLOYED _----", _isAccountDeployed);
-            if (typeof _isAccountDeployed === "boolean")
-                setIsAccountDeployed(_isAccountDeployed);
-            if (_isAccountDeployed === false) {
-                setShowJoinModal(true);
+            try {
+                const _isAccountDeployed = await account?.isDeployed();
+                console.log("IS ACCOUNT DEPLOYED _----", _isAccountDeployed);
+                if (typeof _isAccountDeployed === "boolean") {
+                    setIsAccountDeployed(_isAccountDeployed);
+                    if (_isAccountDeployed === false) {
+                        setShowJoinModal(true);
+                    }
+                }
+            } catch (error) {
+                callToast("Failed to check account deployment status ❗❗❗");
+                console.error("Deploy status check error:", error);
             }
         };
+
         argentTMA
             .connect()
             .then((res) => {
                 if (!res) {
-                    // Not connected
                     setIsConnected(false);
                     return;
                 }
 
-                // Connected
                 const { account } = res;
                 if (account.getSessionStatus() !== "VALID") {
-                    const { account } = res;
                     setAccount(account);
                     setIsConnected(false);
-                    checkDeployStatus();
                     return;
                 }
-                // Connected
-                // const { account, callbackData } = res;git
-                // The session account is returned and can be used to submit transactions
+
+                // Set account and connection status first
                 setAccount(account);
                 setIsConnected(true);
-                // console.log("Step2.5");
-                // deployAccountAction();
-                // Custom data passed to the requestConnection() method is available here
-                // console.log("callback data:", callbackData);
 
-                // if user is connected , check if account is deployed , if it isnt deploy account for user
+                // Then check deployment status
+                checkDeployStatus();
             })
             .catch((err) => {
                 callToast("Failed to connect to wallet ❗❗❗, Try again 🔁");
                 console.error("Failed to connect", err);
             });
+    }, []); // Remove checkDeployStatus() from here
 
-        checkDeployStatus();
-    }, []);
+    // Add a separate useEffect to monitor account changes
+    useEffect(() => {
+        if (account && isConnected) {
+            const checkStatus = async () => {
+                try {
+                    const _isAccountDeployed = await account.isDeployed();
+                    setIsAccountDeployed(_isAccountDeployed);
+                    setShowJoinModal(!_isAccountDeployed);
+                } catch (error) {
+                    console.error("Error checking deployment status:", error);
+                }
+            };
+
+            checkStatus();
+        }
+    }, [account, isConnected]);
 
     // const deployAccountAction = async () => {
     //     console.log("Step 1");

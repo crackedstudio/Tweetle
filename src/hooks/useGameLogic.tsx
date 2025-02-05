@@ -53,7 +53,10 @@ const useGameLogic = () => {
             const _playersBalance = await erc20Contract.balance_of(
                 account.address
             );
-            console.log("Players balance is ====+++++?>>>>>", _playersBalance);
+            console.log(
+                "Players balance is ====+++++?>>>>>",
+                typeof _playersBalance
+            );
             return _playersBalance;
         } catch (err) {
             console.log(err);
