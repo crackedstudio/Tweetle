@@ -330,8 +330,12 @@ const useGameLogic = () => {
 
             console.log(call);
 
+            let tg_id = localStorage.getItem("tg_id");
+
             const response = await fetch(
-                "https://tweetle-bot-backend.onrender.com/player/claim-points/2200639342",
+                `https://tweetle-bot-backend.onrender.com/player/claim-points/${String(
+                    tg_id
+                )}`,
                 {
                     headers: {
                         Accept: "application/json",
@@ -357,9 +361,9 @@ const useGameLogic = () => {
 
     const getAttempts = async (_isGameDaily: boolean, _gameId: string) => {
         const _gameType = _isGameDaily ? "daily" : "classic";
-
+        let tg_id = localStorage.getItem("tg_id");
         const params = new URLSearchParams({
-            tg_id: "2200639342",
+            tg_id: String(tg_id),
             gameId: _gameId,
             gameType: _gameType,
         });
