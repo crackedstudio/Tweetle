@@ -340,7 +340,7 @@ const Play = () => {
         const calls = [
             {
                 contractAddress:
-                    "0x974d27dbf588cd1a581722921906d03b552d64107264d599e06c97b28e848e",
+                    "0x054221ea3f585e97816b42b2ed4a5f7a5e971accabdfd0ee698be7d9f102bd03",
                 entrypoint: "save_Player_classic_attempt",
                 calldata: CallData.compile({
                     _game_id: Number(classicGameId),
@@ -377,7 +377,7 @@ const Play = () => {
         const calls = [
             {
                 contractAddress:
-                    "0x974d27dbf588cd1a581722921906d03b552d64107264d599e06c97b28e848e",
+                    "0x054221ea3f585e97816b42b2ed4a5f7a5e971accabdfd0ee698be7d9f102bd03",
                 entrypoint: "save_player_daily_attempt",
                 calldata: CallData.compile({
                     _word: byteArray.byteArrayFromString(word),
@@ -581,9 +581,9 @@ const Play = () => {
                     console.log("fetchhhh -----", dailyGame, dailyId);
 
                     // Ensure we have valid data before processing
-                    if (!dailyGame || !dailyId) {
-                        throw new Error("Failed to fetch daily game data");
-                    }
+                    // if (!dailyGame || !dailyId) {
+                    //     throw new Error("Failed to fetch daily game data");
+                    // }
 
                     const dailyAttempts =
                         _attemptsObject?.map((item) => item.attempt) || [];
