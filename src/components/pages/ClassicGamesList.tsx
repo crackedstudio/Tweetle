@@ -33,6 +33,182 @@ const GAMES_LIST = [
     { id: 22, active: false, played: false, isNext: false },
     { id: 23, active: false, played: false, isNext: false },
     { id: 24, active: false, played: false, isNext: false },
+    { id: 25, active: false, played: false, isNext: false },
+    { id: 26, active: false, played: false, isNext: false },
+    { id: 27, active: false, played: false, isNext: false },
+    { id: 28, active: false, played: false, isNext: false },
+    { id: 29, active: false, played: false, isNext: false },
+    { id: 30, active: false, played: false, isNext: false },
+    { id: 31, active: false, played: false, isNext: false },
+    { id: 32, active: false, played: false, isNext: false },
+    { id: 33, active: false, played: false, isNext: false },
+    { id: 34, active: false, played: false, isNext: false },
+    { id: 35, active: false, played: false, isNext: false },
+    { id: 36, active: false, played: false, isNext: false },
+    { id: 37, active: false, played: false, isNext: false },
+    { id: 38, active: false, played: false, isNext: false },
+    { id: 39, active: false, played: false, isNext: false },
+    { id: 40, active: false, played: false, isNext: false },
+    { id: 41, active: false, played: false, isNext: false },
+    { id: 42, active: false, played: false, isNext: false },
+    { id: 43, active: false, played: false, isNext: false },
+    { id: 44, active: false, played: false, isNext: false },
+    { id: 45, active: false, played: false, isNext: false },
+    { id: 46, active: false, played: false, isNext: false },
+    { id: 47, active: false, played: false, isNext: false },
+    { id: 48, active: false, played: false, isNext: false },
+    { id: 49, active: false, played: false, isNext: false },
+    { id: 50, active: false, played: false, isNext: false },
+    { id: 51, active: false, played: false, isNext: false },
+    { id: 52, active: false, played: false, isNext: false },
+    { id: 53, active: false, played: false, isNext: false },
+    { id: 54, active: false, played: false, isNext: false },
+    { id: 55, active: false, played: false, isNext: false },
+    { id: 56, active: false, played: false, isNext: false },
+    { id: 57, active: false, played: false, isNext: false },
+    { id: 58, active: false, played: false, isNext: false },
+    { id: 59, active: false, played: false, isNext: false },
+    { id: 60, active: false, played: false, isNext: false },
+    { id: 61, active: false, played: false, isNext: false },
+    { id: 62, active: false, played: false, isNext: false },
+    { id: 63, active: false, played: false, isNext: false },
+    { id: 64, active: false, played: false, isNext: false },
+    { id: 65, active: false, played: false, isNext: false },
+    { id: 66, active: false, played: false, isNext: false },
+    { id: 67, active: false, played: false, isNext: false },
+    { id: 68, active: false, played: false, isNext: false },
+    { id: 69, active: false, played: false, isNext: false },
+    { id: 70, active: false, played: false, isNext: false },
+    { id: 71, active: false, played: false, isNext: false },
+    { id: 72, active: false, played: false, isNext: false },
+    { id: 73, active: false, played: false, isNext: false },
+    { id: 74, active: false, played: false, isNext: false },
+    { id: 75, active: false, played: false, isNext: false },
+    { id: 76, active: false, played: false, isNext: false },
+    { id: 77, active: false, played: false, isNext: false },
+    { id: 78, active: false, played: false, isNext: false },
+    { id: 79, active: false, played: false, isNext: false },
+    { id: 80, active: false, played: false, isNext: false },
+    { id: 81, active: false, played: false, isNext: false },
+    { id: 82, active: false, played: false, isNext: false },
+    { id: 83, active: false, played: false, isNext: false },
+    { id: 84, active: false, played: false, isNext: false },
+    { id: 85, active: false, played: false, isNext: false },
+    { id: 86, active: false, played: false, isNext: false },
+    { id: 87, active: false, played: false, isNext: false },
+    { id: 88, active: false, played: false, isNext: false },
+    { id: 89, active: false, played: false, isNext: false },
+    { id: 90, active: false, played: false, isNext: false },
+    { id: 91, active: false, played: false, isNext: false },
+    { id: 92, active: false, played: false, isNext: false },
+    { id: 93, active: false, played: false, isNext: false },
+    { id: 94, active: false, played: false, isNext: false },
+    { id: 95, active: false, played: false, isNext: false },
+    { id: 96, active: false, played: false, isNext: false },
+    { id: 97, active: false, played: false, isNext: false },
+    { id: 98, active: false, played: false, isNext: false },
+    { id: 99, active: false, played: false, isNext: false },
+    { id: 100, active: false, played: false, isNext: false },
+    { id: 101, active: false, played: false, isNext: false },
+    { id: 102, active: false, played: false, isNext: false },
+    { id: 103, active: false, played: false, isNext: false },
+    { id: 104, active: false, played: false, isNext: false },
+    { id: 105, active: false, played: false, isNext: false },
+    { id: 106, active: false, played: false, isNext: false },
+    { id: 107, active: false, played: false, isNext: false },
+    { id: 108, active: false, played: false, isNext: false },
+    { id: 109, active: false, played: false, isNext: false },
+    { id: 110, active: false, played: false, isNext: false },
+    { id: 111, active: false, played: false, isNext: false },
+    { id: 112, active: false, played: false, isNext: false },
+    { id: 113, active: false, played: false, isNext: false },
+    { id: 114, active: false, played: false, isNext: false },
+    { id: 115, active: false, played: false, isNext: false },
+    { id: 116, active: false, played: false, isNext: false },
+    { id: 117, active: false, played: false, isNext: false },
+    { id: 118, active: false, played: false, isNext: false },
+    { id: 119, active: false, played: false, isNext: false },
+    { id: 120, active: false, played: false, isNext: false },
+    { id: 121, active: false, played: false, isNext: false },
+    { id: 122, active: false, played: false, isNext: false },
+    { id: 123, active: false, played: false, isNext: false },
+    { id: 124, active: false, played: false, isNext: false },
+    { id: 125, active: false, played: false, isNext: false },
+    { id: 126, active: false, played: false, isNext: false },
+    { id: 127, active: false, played: false, isNext: false },
+    { id: 128, active: false, played: false, isNext: false },
+    { id: 129, active: false, played: false, isNext: false },
+    { id: 130, active: false, played: false, isNext: false },
+    { id: 131, active: false, played: false, isNext: false },
+    { id: 132, active: false, played: false, isNext: false },
+    { id: 133, active: false, played: false, isNext: false },
+    { id: 134, active: false, played: false, isNext: false },
+    { id: 135, active: false, played: false, isNext: false },
+    { id: 136, active: false, played: false, isNext: false },
+    { id: 137, active: false, played: false, isNext: false },
+    { id: 138, active: false, played: false, isNext: false },
+    { id: 139, active: false, played: false, isNext: false },
+    { id: 140, active: false, played: false, isNext: false },
+    { id: 141, active: false, played: false, isNext: false },
+    { id: 142, active: false, played: false, isNext: false },
+    { id: 143, active: false, played: false, isNext: false },
+    { id: 144, active: false, played: false, isNext: false },
+    { id: 145, active: false, played: false, isNext: false },
+    { id: 146, active: false, played: false, isNext: false },
+    { id: 147, active: false, played: false, isNext: false },
+    { id: 148, active: false, played: false, isNext: false },
+    { id: 149, active: false, played: false, isNext: false },
+    { id: 150, active: false, played: false, isNext: false },
+    { id: 151, active: false, played: false, isNext: false },
+    { id: 152, active: false, played: false, isNext: false },
+    { id: 153, active: false, played: false, isNext: false },
+    { id: 154, active: false, played: false, isNext: false },
+    { id: 155, active: false, played: false, isNext: false },
+    { id: 156, active: false, played: false, isNext: false },
+    { id: 157, active: false, played: false, isNext: false },
+    { id: 158, active: false, played: false, isNext: false },
+    { id: 159, active: false, played: false, isNext: false },
+    { id: 160, active: false, played: false, isNext: false },
+    { id: 161, active: false, played: false, isNext: false },
+    { id: 162, active: false, played: false, isNext: false },
+    { id: 163, active: false, played: false, isNext: false },
+    { id: 164, active: false, played: false, isNext: false },
+    { id: 165, active: false, played: false, isNext: false },
+    { id: 166, active: false, played: false, isNext: false },
+    { id: 167, active: false, played: false, isNext: false },
+    { id: 168, active: false, played: false, isNext: false },
+    { id: 169, active: false, played: false, isNext: false },
+    { id: 170, active: false, played: false, isNext: false },
+    { id: 171, active: false, played: false, isNext: false },
+    { id: 172, active: false, played: false, isNext: false },
+    { id: 173, active: false, played: false, isNext: false },
+    { id: 174, active: false, played: false, isNext: false },
+    { id: 175, active: false, played: false, isNext: false },
+    { id: 176, active: false, played: false, isNext: false },
+    { id: 177, active: false, played: false, isNext: false },
+    { id: 178, active: false, played: false, isNext: false },
+    { id: 179, active: false, played: false, isNext: false },
+    { id: 180, active: false, played: false, isNext: false },
+    { id: 181, active: false, played: false, isNext: false },
+    { id: 182, active: false, played: false, isNext: false },
+    { id: 183, active: false, played: false, isNext: false },
+    { id: 184, active: false, played: false, isNext: false },
+    { id: 185, active: false, played: false, isNext: false },
+    { id: 186, active: false, played: false, isNext: false },
+    { id: 187, active: false, played: false, isNext: false },
+    { id: 188, active: false, played: false, isNext: false },
+    { id: 189, active: false, played: false, isNext: false },
+    { id: 190, active: false, played: false, isNext: false },
+    { id: 191, active: false, played: false, isNext: false },
+    { id: 192, active: false, played: false, isNext: false },
+    { id: 193, active: false, played: false, isNext: false },
+    { id: 194, active: false, played: false, isNext: false },
+    { id: 195, active: false, played: false, isNext: false },
+    { id: 196, active: false, played: false, isNext: false },
+    { id: 197, active: false, played: false, isNext: false },
+    { id: 198, active: false, played: false, isNext: false },
+    { id: 199, active: false, played: false, isNext: false },
+    { id: 200, active: false, played: false, isNext: false },
 ];
 
 interface OutletContextType {
@@ -49,6 +225,7 @@ interface OutletContextType {
 
 const ClassicGamesList = () => {
     const [genModal, setGenModal] = useState(false);
+    const [refresh, setRefresh] = useState(false);
     const navigate = useNavigate();
 
     const {
@@ -89,9 +266,11 @@ const ClassicGamesList = () => {
                     updatePlayerClassicGameCount(
                         Number(_playerClassicGames.length)
                     );
+                    setRefresh(!refresh);
                 } catch (error) {
                     callToast("Error fetching games, try again");
                     console.error("Error fetching games:", error);
+                    setRefresh(!refresh);
                 }
             } else {
                 try {
@@ -100,19 +279,23 @@ const ClassicGamesList = () => {
                     updatePlayerClassicGameCount(
                         Number(_playerClassicGames.length)
                     );
+                    setRefresh(!refresh);
                 } catch (error) {
                     callToast("Error fetching games, try again");
                     console.error("Error fetching games:", error);
+                    setRefresh(!refresh);
                 }
             }
         };
         updateGameState();
-    }, [GAMES_LIST]);
+    }, [GAMES_LIST, refresh]);
 
     useEffect(() => {
-        GAMES_LIST[playerClassicGames.length].isNext = true;
-        GAMES_LIST[playerClassicGames.length - 1].isNext = false;
-    }, [GAMES_LIST]);
+        if (playerClassicGames) {
+            GAMES_LIST[playerClassicGames.length].isNext = true;
+            GAMES_LIST[playerClassicGames.length - 1].isNext = false;
+        }
+    }, [GAMES_LIST, refresh]);
 
     const callToast = (msg: string) => {
         return toast(msg, {
@@ -141,10 +324,12 @@ const ClassicGamesList = () => {
                 "Successfully created new game 🐣, refresh page to see game"
             );
             setGenModal(false);
+            setRefresh(!refresh);
         } catch (err) {
             callToast("Error creating new game, try again");
             console.log(err);
             setGenModal(false);
+            setRefresh(!refresh);
         }
     };
     //han
