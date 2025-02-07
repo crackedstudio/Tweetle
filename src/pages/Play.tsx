@@ -340,7 +340,7 @@ const Play = () => {
         const calls = [
             {
                 contractAddress:
-                    "0x054221ea3f585e97816b42b2ed4a5f7a5e971accabdfd0ee698be7d9f102bd03",
+                    "0x065a247553dbb49922ee472cd27baa26897a9b00b02513997cd2832b1adc99b2",
                 entrypoint: "save_Player_classic_attempt",
                 calldata: CallData.compile({
                     _game_id: Number(classicGameId),
@@ -377,7 +377,7 @@ const Play = () => {
         const calls = [
             {
                 contractAddress:
-                    "0x054221ea3f585e97816b42b2ed4a5f7a5e971accabdfd0ee698be7d9f102bd03",
+                    "0x065a247553dbb49922ee472cd27baa26897a9b00b02513997cd2832b1adc99b2",
                 entrypoint: "save_player_daily_attempt",
                 calldata: CallData.compile({
                     _word: byteArray.byteArrayFromString(word),

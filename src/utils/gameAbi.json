@@ -1,12 +1,12 @@
 [
     {
-        "type": "impl",
         "name": "GameImpl",
+        "type": "impl",
         "interface_name": "tweetle__contract::game_contract::IGame"
     },
     {
-        "type": "enum",
         "name": "core::bool",
+        "type": "enum",
         "variants": [
             {
                 "name": "False",
@@ -19,8 +19,8 @@
         ]
     },
     {
-        "type": "struct",
         "name": "core::integer::u256",
+        "type": "struct",
         "members": [
             {
                 "name": "low",
@@ -33,8 +33,8 @@
         ]
     },
     {
-        "type": "struct",
         "name": "tweetle__contract::game_contract::Player",
+        "type": "struct",
         "members": [
             {
                 "name": "tg_id",
@@ -67,8 +67,8 @@
         ]
     },
     {
-        "type": "struct",
         "name": "core::byte_array::ByteArray",
+        "type": "struct",
         "members": [
             {
                 "name": "data",
@@ -85,8 +85,8 @@
         ]
     },
     {
-        "type": "struct",
         "name": "tweetle__contract::game_contract::Game",
+        "type": "struct",
         "members": [
             {
                 "name": "word_index",
@@ -111,8 +111,8 @@
         ]
     },
     {
-        "type": "struct",
         "name": "tweetle__contract::game_contract::DailyGame",
+        "type": "struct",
         "members": [
             {
                 "name": "player_count",
@@ -133,12 +133,12 @@
         ]
     },
     {
-        "type": "interface",
         "name": "tweetle__contract::game_contract::IGame",
+        "type": "interface",
         "items": [
             {
-                "type": "function",
                 "name": "register_player",
+                "type": "function",
                 "inputs": [
                     {
                         "name": "_tg_id",
@@ -153,8 +153,8 @@
                 "state_mutability": "external"
             },
             {
-                "type": "function",
                 "name": "set_new_daily_game",
+                "type": "function",
                 "inputs": [],
                 "outputs": [
                     {
@@ -164,8 +164,8 @@
                 "state_mutability": "external"
             },
             {
-                "type": "function",
                 "name": "get_player_details",
+                "type": "function",
                 "inputs": [
                     {
                         "name": "player_address",
@@ -180,8 +180,8 @@
                 "state_mutability": "view"
             },
             {
-                "type": "function",
                 "name": "get_game_word",
+                "type": "function",
                 "inputs": [
                     {
                         "name": "word",
@@ -200,8 +200,8 @@
                 "state_mutability": "view"
             },
             {
-                "type": "function",
                 "name": "create_new_classic_game",
+                "type": "function",
                 "inputs": [],
                 "outputs": [
                     {
@@ -211,8 +211,8 @@
                 "state_mutability": "external"
             },
             {
-                "type": "function",
                 "name": "get_player_classic_games",
+                "type": "function",
                 "inputs": [
                     {
                         "name": "_player",
@@ -227,8 +227,8 @@
                 "state_mutability": "view"
             },
             {
-                "type": "function",
                 "name": "save_player_daily_attempt",
+                "type": "function",
                 "inputs": [
                     {
                         "name": "_word",
@@ -247,8 +247,8 @@
                 "state_mutability": "external"
             },
             {
-                "type": "function",
                 "name": "get_player_classic_game_attempts",
+                "type": "function",
                 "inputs": [
                     {
                         "name": "_player",
@@ -267,8 +267,8 @@
                 "state_mutability": "view"
             },
             {
-                "type": "function",
                 "name": "save_Player_classic_attempt",
+                "type": "function",
                 "inputs": [
                     {
                         "name": "_game_id",
@@ -287,8 +287,8 @@
                 "state_mutability": "external"
             },
             {
-                "type": "function",
                 "name": "get_player_classic_game",
+                "type": "function",
                 "inputs": [
                     {
                         "name": "_player",
@@ -307,8 +307,8 @@
                 "state_mutability": "view"
             },
             {
-                "type": "function",
                 "name": "get_daily_game",
+                "type": "function",
                 "inputs": [],
                 "outputs": [
                     {
@@ -318,8 +318,8 @@
                 "state_mutability": "view"
             },
             {
-                "type": "function",
                 "name": "get_player_daily_game_attempts",
+                "type": "function",
                 "inputs": [
                     {
                         "name": "_player",
@@ -338,8 +338,8 @@
                 "state_mutability": "view"
             },
             {
-                "type": "function",
                 "name": "claim_points",
+                "type": "function",
                 "inputs": [
                     {
                         "name": "_points",
@@ -350,8 +350,8 @@
                 "state_mutability": "external"
             },
             {
-                "type": "function",
                 "name": "get_daily_game_id",
+                "type": "function",
                 "inputs": [],
                 "outputs": [
                     {
@@ -361,8 +361,8 @@
                 "state_mutability": "view"
             },
             {
-                "type": "function",
                 "name": "get_last_daily_update",
+                "type": "function",
                 "inputs": [],
                 "outputs": [
                     {
@@ -372,8 +372,8 @@
                 "state_mutability": "view"
             },
             {
-                "type": "function",
                 "name": "get_all_players",
+                "type": "function",
                 "inputs": [],
                 "outputs": [
                     {
@@ -383,8 +383,8 @@
                 "state_mutability": "view"
             },
             {
-                "type": "function",
                 "name": "get_contract_version",
+                "type": "function",
                 "inputs": [],
                 "outputs": [
                     {
@@ -394,8 +394,8 @@
                 "state_mutability": "view"
             },
             {
-                "type": "function",
                 "name": "join_daily_game",
+                "type": "function",
                 "inputs": [],
                 "outputs": [
                     {
@@ -407,17 +407,17 @@
         ]
     },
     {
-        "type": "impl",
         "name": "UpgradeableImpl",
+        "type": "impl",
         "interface_name": "openzeppelin_upgrades::interface::IUpgradeable"
     },
     {
-        "type": "interface",
         "name": "openzeppelin_upgrades::interface::IUpgradeable",
+        "type": "interface",
         "items": [
             {
-                "type": "function",
                 "name": "upgrade",
+                "type": "function",
                 "inputs": [
                     {
                         "name": "new_class_hash",
@@ -430,8 +430,8 @@
         ]
     },
     {
-        "type": "constructor",
         "name": "constructor",
+        "type": "constructor",
         "inputs": [
             {
                 "name": "_daily_instructor",
@@ -440,60 +440,60 @@
         ]
     },
     {
-        "type": "event",
+        "kind": "struct",
         "name": "tweetle__contract::game_contract::GameContract::GeneratedRandomWord",
-        "kind": "struct",
+        "type": "event",
         "members": [
             {
+                "kind": "data",
                 "name": "index",
-                "type": "core::felt252",
-                "kind": "data"
+                "type": "core::felt252"
             },
             {
+                "kind": "data",
                 "name": "word",
-                "type": "core::byte_array::ByteArray",
-                "kind": "data"
+                "type": "core::byte_array::ByteArray"
             }
         ]
     },
     {
-        "type": "event",
-        "name": "openzeppelin_upgrades::upgradeable::UpgradeableComponent::Upgraded",
         "kind": "struct",
+        "name": "openzeppelin_upgrades::upgradeable::UpgradeableComponent::Upgraded",
+        "type": "event",
         "members": [
             {
+                "kind": "data",
                 "name": "class_hash",
-                "type": "core::starknet::class_hash::ClassHash",
-                "kind": "data"
+                "type": "core::starknet::class_hash::ClassHash"
             }
         ]
     },
     {
-        "type": "event",
+        "kind": "enum",
         "name": "openzeppelin_upgrades::upgradeable::UpgradeableComponent::Event",
-        "kind": "enum",
+        "type": "event",
         "variants": [
             {
+                "kind": "nested",
                 "name": "Upgraded",
-                "type": "openzeppelin_upgrades::upgradeable::UpgradeableComponent::Upgraded",
-                "kind": "nested"
+                "type": "openzeppelin_upgrades::upgradeable::UpgradeableComponent::Upgraded"
             }
         ]
     },
     {
-        "type": "event",
-        "name": "tweetle__contract::game_contract::GameContract::Event",
         "kind": "enum",
+        "name": "tweetle__contract::game_contract::GameContract::Event",
+        "type": "event",
         "variants": [
             {
+                "kind": "nested",
                 "name": "GeneratedRandomWord",
-                "type": "tweetle__contract::game_contract::GameContract::GeneratedRandomWord",
-                "kind": "nested"
+                "type": "tweetle__contract::game_contract::GameContract::GeneratedRandomWord"
             },
             {
+                "kind": "flat",
                 "name": "UpgradeableEvent",
-                "type": "openzeppelin_upgrades::upgradeable::UpgradeableComponent::Event",
-                "kind": "flat"
+                "type": "openzeppelin_upgrades::upgradeable::UpgradeableComponent::Event"
             }
         ]
     }

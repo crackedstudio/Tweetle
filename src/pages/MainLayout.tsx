@@ -20,7 +20,7 @@ interface ArgumentArgentTMA {
 }
 
 const argentTMA = ArgentTMA.init({
-    environment: "sepolia", // "sepolia" | "mainnet" (not supperted yet)
+    environment: "mainnet", // "sepolia" | "mainnet" (not supperted yet)
     appName: "Tweetle", // Your Telegram app name
     appTelegramUrl: "https://t.me/tweetle_bot/tweetle", // Your Telegram app URL
     sessionParams: {
@@ -33,37 +33,37 @@ const argentTMA = ArgentTMA.init({
             },
             {
                 contract:
-                    "0x054221ea3f585e97816b42b2ed4a5f7a5e971accabdfd0ee698be7d9f102bd03",
+                    "0x065a247553dbb49922ee472cd27baa26897a9b00b02513997cd2832b1adc99b2",
                 selector: "create_new_classic_game",
             },
             {
                 contract:
-                    "0x054221ea3f585e97816b42b2ed4a5f7a5e971accabdfd0ee698be7d9f102bd03",
+                    "0x065a247553dbb49922ee472cd27baa26897a9b00b02513997cd2832b1adc99b2",
                 selector: "save_player_guess",
             },
             {
                 contract:
-                    "0x054221ea3f585e97816b42b2ed4a5f7a5e971accabdfd0ee698be7d9f102bd03",
+                    "0x065a247553dbb49922ee472cd27baa26897a9b00b02513997cd2832b1adc99b2",
                 selector: "register_player",
             },
             {
                 contract:
-                    "0x054221ea3f585e97816b42b2ed4a5f7a5e971accabdfd0ee698be7d9f102bd03",
+                    "0x065a247553dbb49922ee472cd27baa26897a9b00b02513997cd2832b1adc99b2",
                 selector: "save_Player_classic_attempt",
             },
             {
                 contract:
-                    "0x054221ea3f585e97816b42b2ed4a5f7a5e971accabdfd0ee698be7d9f102bd03",
+                    "0x065a247553dbb49922ee472cd27baa26897a9b00b02513997cd2832b1adc99b2",
                 selector: "save_player_daily_attempt",
             },
             {
                 contract:
-                    "0x054221ea3f585e97816b42b2ed4a5f7a5e971accabdfd0ee698be7d9f102bd03",
+                    "0x065a247553dbb49922ee472cd27baa26897a9b00b02513997cd2832b1adc99b2",
                 selector: "claim_points",
             },
             {
                 contract:
-                    "0x054221ea3f585e97816b42b2ed4a5f7a5e971accabdfd0ee698be7d9f102bd03",
+                    "0x065a247553dbb49922ee472cd27baa26897a9b00b02513997cd2832b1adc99b2",
                 selector: "join_daily_game",
             },
         ],
@@ -282,7 +282,7 @@ const MainLayout = () => {
         let calls = [
             {
                 contractAddress:
-                    "0x054221ea3f585e97816b42b2ed4a5f7a5e971accabdfd0ee698be7d9f102bd03",
+                    "0x065a247553dbb49922ee472cd27baa26897a9b00b02513997cd2832b1adc99b2",
                 entrypoint: "register_player",
                 calldata: CallData.compile({
                     _tg_id: tg_id ? tg_id : 0,

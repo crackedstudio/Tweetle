@@ -13,13 +13,13 @@ interface OutletContextType {
     playerClassicGames: [];
 }
 const GAME_ADDRESS =
-    "0x054221ea3f585e97816b42b2ed4a5f7a5e971accabdfd0ee698be7d9f102bd03";
+    "0x065a247553dbb49922ee472cd27baa26897a9b00b02513997cd2832b1adc99b2";
 
 const ERC20_ADDRESS =
     "0x04718f5a0Fc34cC1AF16A1cdee98fFB20C31f5cD61D6Ab07201858f4287c938D";
 const PROVIDER = new RpcProvider({
     nodeUrl:
-        "https://starknet-sepolia.g.alchemy.com/starknet/version/rpc/v0_7/xZih3RhtucH0P0PvbFte29FfJzMmJ5E6",
+        "https://starknet-mainnet.g.alchemy.com/starknet/version/rpc/v0_7/7XU2ilLPxAyuPWRGINEYGb1dgRc4oUU5",
 });
 const useGameLogic = () => {
     const { account } = useOutletContext<OutletContextType>();
@@ -316,7 +316,7 @@ const useGameLogic = () => {
             let calls = [
                 {
                     contractAddress:
-                        "0x054221ea3f585e97816b42b2ed4a5f7a5e971accabdfd0ee698be7d9f102bd03",
+                        "0x065a247553dbb49922ee472cd27baa26897a9b00b02513997cd2832b1adc99b2",
                     entrypoint: "claim_points",
                     calldata: CallData.compile({
                         points: cairo.uint256(points),
