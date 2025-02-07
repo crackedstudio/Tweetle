@@ -22,7 +22,7 @@ interface ArgumentArgentTMA {
 const argentTMA = ArgentTMA.init({
     environment: "mainnet", // "sepolia" | "mainnet" (not supperted yet)
     appName: "Tweetle", // Your Telegram app name
-    appTelegramUrl: "https://t.me/tweetle_bot/tweetle", // Your Telegram app URL
+    appTelegramUrl: "https://t.me/Tweetle_bot/Tweetle", // Your Telegram app URL
     sessionParams: {
         allowedMethods: [
             // List of contracts/methods allowed to be called by the session key
