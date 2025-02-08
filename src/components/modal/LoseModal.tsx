@@ -8,6 +8,7 @@ interface LoseModalProps {
     loadingState?: boolean;
     pointsWon: number;
     emojiTweet: string;
+    canShare: boolean;
 }
 
 const LoseModal = ({
@@ -17,6 +18,7 @@ const LoseModal = ({
     loadingState,
     pointsWon,
     emojiTweet,
+    canShare,
 }: LoseModalProps) => {
     return (
         <>
@@ -50,17 +52,19 @@ const LoseModal = ({
                                 Claim Points
                             </button>
 
-                            <button
-                                className="bg-[#F5F5F580] text-center w-[203px] block h-[73px] rounded-xl text-white border-[3px] border-[#C4C4C4] shadow-[0_10px_0_0_rgba(0,0,0,1),0_12px_0_0_rgba(225,225,225,1)]"
-                                onClick={shareHandler}
-                            >
-                                <a
-                                    href={`https://twitter.com/intent/tweet?text=${emojiTweet}%20I%20just%20finished%20playing%20Tweetle%20and%20i%20scored%20${pointsWon}%20points%2C%20go%20check%20it%20out%20%40tweetlehq`}
-                                    target="_blank"
+                            {canShare && (
+                                <button
+                                    className="bg-[#F5F5F580] text-center w-[203px] block h-[73px] rounded-xl text-white border-[3px] border-[#C4C4C4] shadow-[0_10px_0_0_rgba(0,0,0,1),0_12px_0_0_rgba(225,225,225,1)]"
+                                    onClick={shareHandler}
                                 >
-                                    Share your progress
-                                </a>
-                            </button>
+                                    <a
+                                        href={`https://twitter.com/intent/tweet?text=${emojiTweet}%20I%20just%20finished%20playing%20Tweetle%20and%20i%20scored%20${pointsWon}%20points%2C%20go%20check%20it%20out%20%40tweetlehq%20%40starknet%0A%23starknet%20%23tweetle`}
+                                        target="_blank"
+                                    >
+                                        Share your progress
+                                    </a>
+                                </button>
+                            )}
                         </div>
                     </>
                 )}

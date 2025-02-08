@@ -101,6 +101,8 @@ const Play = () => {
     const [currentWordState, setCurrentWordState] = useState([0, 0, 0, 0, 0]);
     const [vibratorsArray, setVibratorsArray] = useState<boolean[]>([]);
     const [finalEmojiTweet, setFinalEmojiTweet] = useState("");
+    const [canShareTweet, setCanShareTweet] = useState(false);
+
     // const [triggerRefresh, setTriggerRefresh] = useState("");
     const [wordBoxes, setWordBoxes] = useState<string[][]>(
         Array(6)
@@ -482,6 +484,7 @@ const Play = () => {
             }));
             const _finalEmojiTweet = createEmojiTweet(correctOrder);
             setFinalEmojiTweet(_finalEmojiTweet);
+            setCanShareTweet(true);
         } else {
             callToast("Failed to claim points 🔴 ⚠️ 🚨");
             setModalState((prev) => ({
@@ -732,6 +735,7 @@ const Play = () => {
                     loadingState={modalState.claimPointsLoading}
                     pointsWon={gameState.currentPoints}
                     emojiTweet={finalEmojiTweet}
+                    canShare={canShareTweet}
                 />
             )}
             {modalState.loseModal && (
@@ -741,6 +745,7 @@ const Play = () => {
                     loadingState={modalState.claimPointsLoading}
                     pointsWon={gameState.currentPoints}
                     emojiTweet={finalEmojiTweet}
+                    canShare={canShareTweet}
                 />
             )}
             {modalState.joinModal && (

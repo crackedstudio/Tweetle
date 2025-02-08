@@ -291,9 +291,11 @@ const ClassicGamesList = () => {
     }, [GAMES_LIST, refresh]);
 
     useEffect(() => {
-        if (playerClassicGames) {
+        if (playerClassicGames.length !== 0) {
             GAMES_LIST[playerClassicGames.length].isNext = true;
             GAMES_LIST[playerClassicGames.length - 1].isNext = false;
+        } else {
+            GAMES_LIST[playerClassicGames.length].isNext = true;
         }
     }, [GAMES_LIST, refresh]);
 
