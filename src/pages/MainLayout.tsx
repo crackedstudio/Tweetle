@@ -134,12 +134,12 @@ const MainLayout = () => {
         const checkDeployStatus = async () => {
             try {
                 console.log("account is -----", account);
-                const _isAccountDeployed = await account?.isDeployed();
-                console.log("IS ACCOUNT DEPLOYED _----", _isAccountDeployed);
                 const _playerDetails = await fetchPlayerDetails(
                     account?.address
                 );
                 const _isPlayerRegistered = _playerDetails?.is_registered;
+                console.log("IS Player registered _----", _isPlayerRegistered);
+
                 if (typeof _isPlayerRegistered === "boolean") {
                     setIsAccountDeployed(_isPlayerRegistered);
                     if (_isPlayerRegistered === false) {
@@ -189,6 +189,10 @@ const MainLayout = () => {
                         account?.address
                     );
                     const _isPlayerRegistered = _playerDetails?.is_registered;
+                    console.log(
+                        "IS Player registered _----",
+                        _isPlayerRegistered
+                    );
                     setIsAccountDeployed(_isPlayerRegistered);
                     setShowJoinModal(!_isPlayerRegistered);
                 } catch (error) {
