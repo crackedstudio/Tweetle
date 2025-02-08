@@ -29,17 +29,19 @@ const Navbar = () => {
     const [userBalance, setUserBalance] = useState("0");
     function divideBy10To18(value: bigint) {
         const divisor = 10n ** 18n; // 10^18 as BigInt
-        return Number(value / divisor);
+        // Convert to number and round to 2 decimal places
+        return Number((value * 100n) / divisor) / 100;
     }
+
     useEffect(() => {
         const fetchBal = async () => {
             let _bal = await getUserBalance();
             console.log("got balance is ---", _bal);
             if (!_bal) {
-                setUserBalance("0 STRK");
+                setUserBalance("0.00 STRK");
             } else {
-                _bal = Math.round(divideBy10To18(_bal));
-                setUserBalance(String(_bal) + " STRK");
+                _bal = divideBy10To18(_bal);
+                setUserBalance(_bal.toFixed(2) + " STRK");
             }
         };
         fetchBal();
