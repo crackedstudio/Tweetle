@@ -1,5 +1,7 @@
 import cancel from "../../assets/cancel-circle.png";
-import banner from "../../assets/banner.png";
+// import banner from "../../assets/banner.png";
+import DashboardButtons from "../dashboard/DashboardButtons";
+import HomeHeroSection from "../dashboard/HomeHeroSection";
 
 interface JoinModalProps {
     cancelHandler: () => void;
@@ -50,26 +52,19 @@ const JoinModal = ({
                         )}
                         {!isDailyModal && (
                             <>
-                                <h1 className="text-[#FE97D5] text-center text-2xl font-bold">
-                                    Welcome to Tweetle
-                                </h1>
-                                <img src={banner} alt="" className="block" />
-                                <p className="text-center text-white">
-                                    Lets get you started{" "}
-                                    <span className="text-[#FE97D5]">
-                                        on Tweetle{" "}
-                                    </span>
-                                    To Begin we would get you registered and
-                                    initialize your account
-                                </p>
-                                <h1 className="text-red-600 text-center text-2xl font-bold">
-                                    {" "}
-                                    NOTE !!!
-                                </h1>
-                                <p className="text-center">
-                                    KIndly ensure you have deployed your
-                                    starknet account before proceeding
-                                </p>
+                                <HomeHeroSection isNavbarActive={false} />
+                                <DashboardButtons where="/">
+                                    <div className="flex flex-col space-y-4">
+                                        <h1 className="text-[#FE97D5] text-center text-2xl font-bold">
+                                            {" "}
+                                            NOTE !!!
+                                        </h1>
+                                        <p className="text-center">
+                                            KIndly ensure you have deployed your
+                                            starknet account before proceeding
+                                        </p>
+                                    </div>
+                                </DashboardButtons>
                             </>
                         )}
                     </div>
