@@ -236,7 +236,7 @@ const useGameLogic = () => {
 
     const createNewClassicGame = async () => {
         if (!account) return;
-        const gameContract = new Contract(gameAbi, GAME_ADDRESS, PROVIDER);
+        const gameContract = new Contract(gameAbi, GAME_ADDRESS, account);
         try {
             const myCall = gameContract.populate("create_new_classic_game", []);
 
@@ -273,7 +273,7 @@ const useGameLogic = () => {
 
     const createNewDailyGame = async () => {
         if (!account) return;
-        const gameContract = new Contract(gameAbi, GAME_ADDRESS, PROVIDER);
+        const gameContract = new Contract(gameAbi, GAME_ADDRESS, account);
         try {
             const myCall = gameContract.populate("join_daily_game", []);
 

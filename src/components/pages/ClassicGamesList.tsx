@@ -293,6 +293,7 @@ const ClassicGamesList = () => {
             GAMES_LIST[playerClassicGames.length - 1].isNext = false;
         } else {
             GAMES_LIST[playerClassicGames.length].isNext = true;
+            GAMES_LIST[playerClassicGames.length - 1].isNext = false;
         }
     }, [GAMES_LIST, refresh]);
 
