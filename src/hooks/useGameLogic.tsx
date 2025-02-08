@@ -27,7 +27,7 @@ const useGameLogic = () => {
     const [playerDetails, setPlayerDetails] = useState([]);
 
     // const createNewClassicGame = async () => {
-    //     const gameContract = new Contract(gameAbi, GAME_ADDRESS, account);
+    //     const gameContract = new Contract(gameAbi, GAME_ADDRESS, PROVIDER);
 
     //     try {
     //         if (!account) {
@@ -44,7 +44,7 @@ const useGameLogic = () => {
 
     const getUserBalance = async () => {
         if (!account) return;
-        const erc20Contract = new Contract(ERC20_ABI, ERC20_ADDRESS, account);
+        const erc20Contract = new Contract(ERC20_ABI, ERC20_ADDRESS, PROVIDER);
 
         try {
             if (!account) {
@@ -66,7 +66,7 @@ const useGameLogic = () => {
 
     const fetchUserClassicGames = async () => {
         if (!account) return;
-        const gameContract = new Contract(gameAbi, GAME_ADDRESS, account);
+        const gameContract = new Contract(gameAbi, GAME_ADDRESS, PROVIDER);
 
         try {
             if (!account) {
@@ -87,7 +87,7 @@ const useGameLogic = () => {
     };
     const fetchUserDailyGame = async () => {
         if (!account) return;
-        const gameContract = new Contract(gameAbi, GAME_ADDRESS, account);
+        const gameContract = new Contract(gameAbi, GAME_ADDRESS, PROVIDER);
 
         try {
             if (!account) {
@@ -106,7 +106,7 @@ const useGameLogic = () => {
     };
     const fetchDailyGameId = async () => {
         if (!account) return;
-        const gameContract = new Contract(gameAbi, GAME_ADDRESS, account);
+        const gameContract = new Contract(gameAbi, GAME_ADDRESS, PROVIDER);
 
         try {
             if (!account) {
@@ -122,7 +122,7 @@ const useGameLogic = () => {
     };
     const fetchPlayerDetails = async (address: string) => {
         if (!account) return;
-        const gameContract = new Contract(gameAbi, GAME_ADDRESS, account);
+        const gameContract = new Contract(gameAbi, GAME_ADDRESS, PROVIDER);
 
         try {
             if (!account) {
@@ -143,7 +143,7 @@ const useGameLogic = () => {
 
     const fetchAllPlayers = async () => {
         if (!account) return;
-        const gameContract = new Contract(gameAbi, GAME_ADDRESS, account);
+        const gameContract = new Contract(gameAbi, GAME_ADDRESS, PROVIDER);
 
         try {
             if (!account) {
@@ -164,7 +164,7 @@ const useGameLogic = () => {
 
     const fetchClassicGameDetails = async (_gameId: number) => {
         if (!account) return;
-        const gameContract = new Contract(gameAbi, GAME_ADDRESS, account);
+        const gameContract = new Contract(gameAbi, GAME_ADDRESS, PROVIDER);
 
         try {
             if (!account) {
@@ -188,7 +188,7 @@ const useGameLogic = () => {
 
     const fetchClassicGameAttempts = async (_gameId: number) => {
         if (!account) return;
-        const gameContract = new Contract(gameAbi, GAME_ADDRESS, account);
+        const gameContract = new Contract(gameAbi, GAME_ADDRESS, PROVIDER);
 
         try {
             if (!account) {
@@ -212,7 +212,7 @@ const useGameLogic = () => {
 
     const fetchDailyGameAttempts = async (_gameId: number) => {
         if (!account) return;
-        const gameContract = new Contract(gameAbi, GAME_ADDRESS, account);
+        const gameContract = new Contract(gameAbi, GAME_ADDRESS, PROVIDER);
 
         try {
             if (!account) {
@@ -236,7 +236,7 @@ const useGameLogic = () => {
 
     const createNewClassicGame = async () => {
         if (!account) return;
-        const gameContract = new Contract(gameAbi, GAME_ADDRESS, account);
+        const gameContract = new Contract(gameAbi, GAME_ADDRESS, PROVIDER);
         try {
             const myCall = gameContract.populate("create_new_classic_game", []);
 
@@ -273,7 +273,7 @@ const useGameLogic = () => {
 
     const createNewDailyGame = async () => {
         if (!account) return;
-        const gameContract = new Contract(gameAbi, GAME_ADDRESS, account);
+        const gameContract = new Contract(gameAbi, GAME_ADDRESS, PROVIDER);
         try {
             const myCall = gameContract.populate("join_daily_game", []);
 
