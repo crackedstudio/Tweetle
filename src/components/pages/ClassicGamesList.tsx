@@ -270,7 +270,6 @@ const ClassicGamesList = () => {
                 } catch (error) {
                     callToast("Error fetching games, try again");
                     console.error("Error fetching games:", error);
-                    setRefresh(!refresh);
                 }
             } else {
                 try {
@@ -279,11 +278,9 @@ const ClassicGamesList = () => {
                     updatePlayerClassicGameCount(
                         Number(_playerClassicGames.length)
                     );
-                    setRefresh(!refresh);
                 } catch (error) {
                     callToast("Error fetching games, try again");
                     console.error("Error fetching games:", error);
-                    setRefresh(!refresh);
                 }
             }
         };
@@ -331,7 +328,6 @@ const ClassicGamesList = () => {
             callToast("Error creating new game, try again");
             console.log(err);
             setGenModal(false);
-            setRefresh(!refresh);
         }
     };
     //han

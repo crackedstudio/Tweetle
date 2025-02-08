@@ -1,3 +1,7 @@
+import firstPlace from "../../assets/svg/firstplace-medal.svg";
+import secondPlace from "../../assets/svg/secondplace-medal.svg";
+import thirdPlace from "../../assets/svg/thirdplace-medal.svg";
+
 export default function PlayerStrip({
     player,
     showPosition = true,
@@ -27,13 +31,13 @@ export default function PlayerStrip({
                 </div>
             </div>
             {showPosition && player.position === 1 && (
-                <img src="/assets/firstplace-medal.svg" alt="" />
+                <img src={firstPlace} alt="" />
             )}
             {showPosition && player.position === 2 && (
-                <img src="/assets/secondplace-medal.svg" alt="" />
+                <img src={secondPlace} alt="" />
             )}
             {showPosition && player.position === 3 && (
-                <img src="/assets/thirdplace-medal.svg" alt="" />
+                <img src={thirdPlace} alt="" />
             )}
             {showPosition && player.position > 3 && (
                 <h3 className="text-base leading-[15px] font-bold text-white">
