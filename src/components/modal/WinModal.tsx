@@ -1,5 +1,6 @@
 import celebrateGif from "../../assets/celebrate.gif";
 import cancel from "../../assets/cancel-circle.png";
+import NeonSpinner from "./NeonSpinner";
 
 interface WinModalProps {
     cancelHandler: () => void;
@@ -66,15 +67,12 @@ const WinModal = ({
                 )}
                 {loadingState && (
                     <div className="">
-                        <video
-                            src={
-                                "https://res.cloudinary.com/dzlhavqtd/video/upload/v1737145163/n3y1xo3zehavtp2ozpqp.mp4"
-                            }
-                            loop
-                            autoPlay
-                            className="w-full mt-[30%]"
-                            controls={false}
-                        />
+                        <div className="w-full mt-[30%]">
+                            <NeonSpinner
+                                firstText="Claiming"
+                                secondText="Points"
+                            />
+                        </div>
                     </div>
                 )}
             </div>

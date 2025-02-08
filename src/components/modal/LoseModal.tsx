@@ -1,5 +1,6 @@
 import cancel from "../../assets/cancel-circle.png";
 import Adblock from "../../assets/svg/ad-block.svg";
+import NeonSpinner from "./NeonSpinner";
 
 interface LoseModalProps {
     cancelHandler: () => void;
@@ -71,15 +72,12 @@ const LoseModal = ({
 
                 {loadingState && (
                     <div className="">
-                        <video
-                            src={
-                                "https://res.cloudinary.com/dzlhavqtd/video/upload/v1737145163/n3y1xo3zehavtp2ozpqp.mp4"
-                            }
-                            loop
-                            autoPlay
-                            className="w-full mt-[30%]"
-                            controls={false}
-                        />
+                        <div className="w-full mt-[30%]">
+                            <NeonSpinner
+                                firstText="Claiming"
+                                secondText="Points"
+                            />
+                        </div>
                     </div>
                 )}
             </div>
