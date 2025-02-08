@@ -2,7 +2,7 @@ import { useOutletContext } from "react-router-dom";
 import checkmark from "../../assets/svg/checkmark-badge-01.svg";
 // import { Contract } from "starknet";
 // import gameAbi from "../../utils/gameAbi.json";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import useGameLogic from "../../hooks/useGameLogic";
 import { useNavigate } from "react-router-dom";
 import GenModal from "../modal/GenModal";
@@ -243,8 +243,6 @@ const ClassicGamesList = () => {
         getAttempts,
     } = useGameLogic();
 
-    const chunkedGames = [];
-
     for (let i = 0; i < playerClassicGames.length; i++) {
         GAMES_LIST[i].active = true;
         if (playerClassicGames[i].is_completed) {
@@ -252,9 +250,14 @@ const ClassicGamesList = () => {
         }
     }
 
-    for (let i = 0; i < GAMES_LIST.length; i += 4) {
-        chunkedGames.push(GAMES_LIST.slice(i, i + 4));
-    }
+    const chunkedGames = useMemo(() => {
+        const games = [...GAMES_LIST];
+        const chunks = [];
+        for (let i = 0; i < games.length; i += 4) {
+            chunks.push(games.slice(i, i + 4));
+        }
+        return chunks;
+    }, [GAMES_LIST]);
 
     useEffect(() => {
         const updateGameState = async () => {
