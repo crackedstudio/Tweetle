@@ -1,5 +1,5 @@
 import CoinPill from "../ui/CoinPill";
-import calendar from "../../assets/bi_calendar-date-fill.png";
+// import calendar from "../../assets/bi_calendar-date-fill.png";
 import right from "../../assets/right.png";
 import { useOutletContext, useNavigate } from "react-router-dom";
 
@@ -31,9 +31,9 @@ const GameTopNav = () => {
                     Back
                 </button>
             </div>
-            <div>
+            {/* <div>
                 <img src={calendar} alt="" />
-            </div>
+            </div> */}
             <div>
                 <CoinPill text={String(playerDetails?.points)} />
             </div>

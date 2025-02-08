@@ -1,6 +1,6 @@
 "use client";
 import { useEffect, useState } from "react";
-import GameBottomNav from "../components/gameplay/GameBottomNav";
+// import GameBottomNav from "../components/gameplay/GameBottomNav";
 import WordBox from "../components/gameplay/WordBox";
 import GameTopNav from "../components/gameplay/GameTopNav";
 import WinModal from "../components/modal/WinModal";
@@ -720,12 +720,12 @@ const Play = () => {
                     <div className="mt-2">
                         <Keyboard clickHandler={getKeyboardInput} />
                     </div>
-                    <div className="mt-2">
+                    {/* <div className="mt-2">
                         <GameBottomNav
                             submitHandler={() => {}}
                             isEnded={gameState.userWon}
                         />
-                    </div>
+                    </div> */}
                 </div>
             </div>
             {modalState.winModal && (
