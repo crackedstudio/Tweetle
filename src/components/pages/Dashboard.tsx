@@ -62,7 +62,6 @@ const Dashboard = () => {
         if (!_isAccountDeployed) {
             console.log("deplooying account ---");
             await deployAccount;
-            return;
         }
         const _playerDetails = await fetchPlayerDetails(account?.address);
         const _isPlayerRegistered = _playerDetails?.is_registered;

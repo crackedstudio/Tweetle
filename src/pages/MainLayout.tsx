@@ -12,6 +12,7 @@ import FullPageConnect from "../components/pages/FullPageConnect";
 // import useGameLogic from "../hooks/useGameLogic";
 
 import { Bounce, toast, ToastContainer } from "react-toastify";
+import useGameLogic from "../hooks/useGameLogic";
 // import useGameLogic from "../hooks/useGameLogic";
 
 interface ArgumentArgentTMA {
@@ -87,6 +88,8 @@ const MainLayout = () => {
     const [isAccountDeployed, setIsAccountDeployed] = useState(false);
     const [showJoinModal, setShowJoinModal] = useState(false);
 
+    const { fetchPlayerDetails } = useGameLogic();
+
     const callToast = (msg: string) => {
         return toast(msg, {
             position: "top-right",
@@ -133,12 +136,13 @@ const MainLayout = () => {
                 console.log("account is -----", account);
                 const _isAccountDeployed = await account?.isDeployed();
                 console.log("IS ACCOUNT DEPLOYED _----", _isAccountDeployed);
-                if (typeof _isAccountDeployed !== "boolean") {
-                    setShowJoinModal(true);
-                }
-                if (typeof _isAccountDeployed === "boolean") {
-                    setIsAccountDeployed(_isAccountDeployed);
-                    if (_isAccountDeployed === false) {
+                const _playerDetails = await fetchPlayerDetails(
+                    account?.address
+                );
+                const _isPlayerRegistered = _playerDetails?.is_registered;
+                if (typeof _isPlayerRegistered === "boolean") {
+                    setIsAccountDeployed(_isPlayerRegistered);
+                    if (_isPlayerRegistered === false) {
                         setShowJoinModal(true);
                     }
                 }
@@ -181,9 +185,12 @@ const MainLayout = () => {
         if (account && isConnected) {
             const checkStatus = async () => {
                 try {
-                    const _isAccountDeployed = await account.isDeployed();
-                    setIsAccountDeployed(_isAccountDeployed);
-                    setShowJoinModal(!_isAccountDeployed);
+                    const _playerDetails = await fetchPlayerDetails(
+                        account?.address
+                    );
+                    const _isPlayerRegistered = _playerDetails?.is_registered;
+                    setIsAccountDeployed(_isPlayerRegistered);
+                    setShowJoinModal(!_isPlayerRegistered);
                 } catch (error) {
                     console.error("Error checking deployment status:", error);
                 }
