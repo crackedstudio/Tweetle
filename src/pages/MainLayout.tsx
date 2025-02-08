@@ -12,7 +12,6 @@ import FullPageConnect from "../components/pages/FullPageConnect";
 // import useGameLogic from "../hooks/useGameLogic";
 
 import { Bounce, toast, ToastContainer } from "react-toastify";
-import useGameLogic from "../hooks/useGameLogic";
 // import useGameLogic from "../hooks/useGameLogic";
 
 interface ArgumentArgentTMA {
@@ -88,8 +87,6 @@ const MainLayout = () => {
     const [isAccountDeployed, setIsAccountDeployed] = useState(false);
     const [showJoinModal, setShowJoinModal] = useState(false);
 
-    const { fetchPlayerDetails } = useGameLogic();
-
     const callToast = (msg: string) => {
         return toast(msg, {
             position: "top-right",
@@ -131,27 +128,6 @@ const MainLayout = () => {
     }, []);
 
     useEffect(() => {
-        const checkDeployStatus = async () => {
-            try {
-                console.log("account is -----", account);
-                const _playerDetails = await fetchPlayerDetails(
-                    account?.address
-                );
-                const _isPlayerRegistered = _playerDetails?.is_registered;
-                console.log("IS Player registered _----", _isPlayerRegistered);
-
-                if (typeof _isPlayerRegistered === "boolean") {
-                    setIsAccountDeployed(_isPlayerRegistered);
-                    if (_isPlayerRegistered === false) {
-                        setShowJoinModal(true);
-                    }
-                }
-            } catch (error) {
-                callToast("Failed to check account deployment status ❗❗❗");
-                console.error("Deploy status check error:", error);
-            }
-        };
-
         argentTMA
             .connect()
             .then((res) => {
@@ -172,7 +148,7 @@ const MainLayout = () => {
                 setIsConnected(true);
 
                 // Then check deployment status
-                checkDeployStatus();
+                // checkDeployStatus();
             })
             .catch((err) => {
                 callToast("Failed to connect to wallet ❗❗❗, Try again 🔁");
@@ -181,28 +157,28 @@ const MainLayout = () => {
     }, []); // Remove checkDeployStatus() from here
 
     // Add a separate useEffect to monitor account changes
-    useEffect(() => {
-        if (account && isConnected) {
-            const checkStatus = async () => {
-                try {
-                    const _playerDetails = await fetchPlayerDetails(
-                        account?.address
-                    );
-                    const _isPlayerRegistered = _playerDetails?.is_registered;
-                    console.log(
-                        "IS Player registered _----",
-                        _isPlayerRegistered
-                    );
-                    setIsAccountDeployed(_isPlayerRegistered);
-                    setShowJoinModal(!_isPlayerRegistered);
-                } catch (error) {
-                    console.error("Error checking deployment status:", error);
-                }
-            };
+    // useEffect(() => {
+    //     if (account && isConnected) {
+    //         const checkStatus = async () => {
+    //             try {
+    //                 const _playerDetails = await fetchPlayerDetails(
+    //                     account?.address
+    //                 );
+    //                 const _isPlayerRegistered = _playerDetails?.is_registered;
+    //                 console.log(
+    //                     "IS Player registered _----",
+    //                     _isPlayerRegistered
+    //                 );
+    //                 setIsAccountDeployed(_isPlayerRegistered);
+    //                 setShowJoinModal(!_isPlayerRegistered);
+    //             } catch (error) {
+    //                 console.error("Error checking deployment status:", error);
+    //             }
+    //         };
 
-            checkStatus();
-        }
-    }, [account, isConnected]);
+    //         checkStatus();
+    //     }
+    // }, [account, isConnected]);
 
     // const deployAccountAction = async () => {
     //     console.log("Step 1");
