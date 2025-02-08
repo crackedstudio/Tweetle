@@ -54,8 +54,8 @@ const JoinModal = ({
                             <>
                                 <HomeHeroSection isNavbarActive={false} />
                                 <DashboardButtons where="/">
-                                    <div className="flex flex-col space-y-4">
-                                        <h1 className="text-[#FE97D5] text-center text-2xl font-bold">
+                                    <div className="flex flex-col space-y-3">
+                                        <h1 className="text-[#FE97D5] text-center text-xl font-bold">
                                             {" "}
                                             NOTE !!!
                                         </h1>
@@ -69,7 +69,7 @@ const JoinModal = ({
                         )}
                     </div>
 
-                    <div className="mt-3 px-3 flex flex-col space-y-6 items-center">
+                    <div className="mt-2 px-3 flex flex-col space-y-6 items-center">
                         <button
                             className="bg-[#12830D] text-center w-[203px] block h-[73px] rounded-xl text-white border-[3px] border-[#71ED00] shadow-[0_10px_0_0_rgba(0,81,37,1),0_12px_0_0_rgba(113,237,0,1)]"
                             onClick={joinHandler}
