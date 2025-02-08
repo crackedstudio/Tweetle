@@ -270,6 +270,7 @@ const Play = () => {
     };
 
     const getWordState = async (word: string) => {
+        let tg_id = localStorage.getItem("tg_id");
         if (word.length !== 5) {
             return [0, 0, 0, 0, 0];
         }
@@ -289,7 +290,7 @@ const Play = () => {
         const body = {
             word: word.toLowerCase(),
             i: Number(gameIndex),
-            tg_id: "2200639342",
+            tg_id: String(tg_id),
             game_type: gameType,
             game_id: Number(gameId),
         };
