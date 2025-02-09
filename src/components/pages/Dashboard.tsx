@@ -21,6 +21,7 @@ interface OutletContextType {
     handleOutsideExecution: () => boolean;
     showJoinModal: boolean;
     allPlayers: [];
+    handleClearSessionButton: () => void;
 }
 
 const Dashboard = () => {
@@ -34,6 +35,7 @@ const Dashboard = () => {
         showJoinModal,
         updateShowJoinModal,
         deployAccount,
+        handleClearSessionButton,
         allPlayers,
     } = useOutletContext<OutletContextType>();
     const { fetchPlayerDetails, fetchUserClassicGames, fetchAllPlayers } =
@@ -57,12 +59,18 @@ const Dashboard = () => {
 
     const registerUser = async () => {
         if (!account) return;
+        const _isAccountConnected = await account?.getSessionStatus();
+        if (_isAccountConnected !== "VALID") {
+            await handleClearSessionButton();
+            return;
+        }
         const _isAccountDeployed = await account?.isDeployed();
         console.log("is acct deployed in reg user --", _isAccountDeployed);
         if (!_isAccountDeployed) {
             console.log("deplooying account ---");
             await deployAccount;
         }
+
         const _playerDetails = await fetchPlayerDetails(account?.address);
         const _isPlayerRegistered = _playerDetails?.is_registered;
         if (_isPlayerRegistered) {
