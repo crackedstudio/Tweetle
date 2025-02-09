@@ -23,6 +23,7 @@ const argentTMA = ArgentTMA.init({
     environment: "mainnet", // "sepolia" | "mainnet" (not supperted yet)
     appName: "Tweetle", // Your Telegram app name
     appTelegramUrl: "https://t.me/Tweetle_bot/Tweetle", // Your Telegram app URL
+    // appTelegramUrl: "https://t.me/OtaikiTestBot/fishytweetle", // Your Telegram app URL
     sessionParams: {
         allowedMethods: [
             // List of contracts/methods allowed to be called by the session key
@@ -86,6 +87,7 @@ const MainLayout = () => {
     const [playerClassicGameCount, setPlayerClassicGameCount] = useState(0);
     const [isAccountDeployed, setIsAccountDeployed] = useState(false);
     const [showJoinModal, setShowJoinModal] = useState(false);
+    const [walletConnectLoading, setWalletConnectLoading] = useState(false);
 
     const callToast = (msg: string) => {
         return toast(msg, {
@@ -197,8 +199,10 @@ const MainLayout = () => {
         approvalRequests: [],
     };
     const handleConnectButton = async () => {
+        setWalletConnectLoading(true);
         // @ts-ignore
         await argentTMA.requestConnection(argumentArgentTMA.callbackData);
+        setWalletConnectLoading(false);
     };
 
     // useful for debugging
@@ -348,7 +352,12 @@ const MainLayout = () => {
     //     fetchPlayerDetails(account);
     // }, [account]);
     if (!isConnected) {
-        return <FullPageConnect handler={handleConnectButton} />;
+        return (
+            <FullPageConnect
+                handler={handleConnectButton}
+                isLoading={walletConnectLoading}
+            />
+        );
     }
 
     return (
