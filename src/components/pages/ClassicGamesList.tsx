@@ -1,222 +1,63 @@
 import { useOutletContext } from "react-router-dom";
-import checkmark from "../../assets/svg/checkmark-badge-01.svg";
-// import { Contract } from "starknet";
-// import gameAbi from "../../utils/gameAbi.json";
 import { useEffect, useState } from "react";
-import useGameLogic from "../../hooks/useGameLogic";
 import { useNavigate } from "react-router-dom";
-import GenModal from "../modal/GenModal";
 import { Bounce, toast } from "react-toastify";
+import useGameLogic from "../../hooks/useGameLogic";
+import checkmark from "../../assets/svg/checkmark-badge-01.svg";
+import NeonSpinner from "../modal/NeonSpinner";
 
-const GAMES_LIST = [
-    { id: 1, active: false, played: false, isNext: false },
-    { id: 2, active: false, played: false, isNext: false },
-    { id: 3, active: false, played: false, isNext: false },
-    { id: 4, active: false, played: false, isNext: false },
-    { id: 5, active: false, played: false, isNext: false },
-    { id: 6, active: false, played: false, isNext: false },
-    { id: 7, active: false, played: false, isNext: false },
-    { id: 8, active: false, played: false, isNext: false },
-    { id: 9, active: false, played: false, isNext: false },
-    { id: 10, active: false, played: false, isNext: false },
-    { id: 11, active: false, played: false, isNext: false },
-    { id: 12, active: false, played: false, isNext: false },
-    { id: 13, active: false, played: false, isNext: false },
-    { id: 14, active: false, played: false, isNext: false },
-    { id: 15, active: false, played: false, isNext: false },
-    { id: 16, active: false, played: false, isNext: false },
-    { id: 17, active: false, played: false, isNext: false },
-    { id: 18, active: false, played: false, isNext: false },
-    { id: 19, active: false, played: false, isNext: false },
-    { id: 20, active: false, played: false, isNext: false },
-    { id: 21, active: false, played: false, isNext: false },
-    { id: 22, active: false, played: false, isNext: false },
-    { id: 23, active: false, played: false, isNext: false },
-    { id: 24, active: false, played: false, isNext: false },
-];
+// Types
+interface Game {
+    id: number;
+    active: boolean;
+    played: boolean;
+    isNext: boolean;
+}
 
 interface OutletContextType {
     account: any | null;
     handleConnectButton: () => void;
     handleClearSessionButton: () => void;
     isConnected: boolean;
-    playerDetails: {};
+    playerDetails: Record<string, unknown>;
     playerClassicGameCount: number;
-    playerClassicGames: any;
-    updatePlayerClassicGames: ([]) => void;
-    updatePlayerClassicGameCount: (a: number) => void;
+    playerClassicGames: any[];
+    updatePlayerClassicGames: (games: any[]) => void;
+    updatePlayerClassicGameCount: (count: number) => void;
 }
 
-const ClassicGamesList = () => {
-    const [genModal, setGenModal] = useState(false);
-    const navigate = useNavigate();
-
-    const {
-        account,
-        playerClassicGames,
-        playerClassicGameCount,
-        updatePlayerClassicGames,
-        updatePlayerClassicGameCount,
-    } = useOutletContext<OutletContextType>();
-    const {
-        fetchUserClassicGames,
-        createNewClassicGame,
-        fetchClassicGameDetails,
-        // fetchClassicGameAttempts,
-        getAttempts,
-    } = useGameLogic();
-
-    const chunkedGames = [];
-
-    for (let i = 0; i < playerClassicGames.length; i++) {
-        GAMES_LIST[i].active = true;
-        if (playerClassicGames[i].is_completed) {
-            GAMES_LIST[i].played = true;
-        }
-    }
-
-    for (let i = 0; i < GAMES_LIST.length; i += 4) {
-        chunkedGames.push(GAMES_LIST.slice(i, i + 4));
-    }
-
-    useEffect(() => {
-        const updateGameState = async () => {
-            if (playerClassicGameCount === 0) {
-                try {
-                    handleCreateNewGame();
-                    const _playerClassicGames = await fetchUserClassicGames();
-                    updatePlayerClassicGames(_playerClassicGames);
-                    updatePlayerClassicGameCount(
-                        Number(_playerClassicGames.length)
-                    );
-                } catch (error) {
-                    callToast("Error fetching games, try again");
-                    console.error("Error fetching games:", error);
-                }
-            } else {
-                try {
-                    const _playerClassicGames = await fetchUserClassicGames();
-                    updatePlayerClassicGames(_playerClassicGames);
-                    updatePlayerClassicGameCount(
-                        Number(_playerClassicGames.length)
-                    );
-                } catch (error) {
-                    callToast("Error fetching games, try again");
-                    console.error("Error fetching games:", error);
-                }
-            }
-        };
-        updateGameState();
-    }, [GAMES_LIST]);
-
-    useEffect(() => {
-        GAMES_LIST[playerClassicGames.length].isNext = true;
-        GAMES_LIST[playerClassicGames.length - 1].isNext = false;
-    }, [GAMES_LIST]);
-
-    const callToast = (msg: string) => {
-        return toast(msg, {
-            position: "top-right",
-            autoClose: 5000,
-            hideProgressBar: false,
-            closeOnClick: true,
-            pauseOnHover: true,
-            draggable: true,
-            progress: undefined,
-            theme: "dark",
-            transition: Bounce,
-        });
-    };
-
-    const handleCreateNewGame = async () => {
-        setGenModal(true);
-        try {
-            if (!account) {
-                return;
-            }
-            callToast("Creating new game 🦉");
-            const txn = await createNewClassicGame();
-            console.log("created new classic game with hash======", txn);
-            callToast(
-                "Successfully created new game 🐣, refresh page to see game"
-            );
-            setGenModal(false);
-        } catch (err) {
-            callToast("Error creating new game, try again");
-            console.log(err);
-            setGenModal(false);
-        }
-    };
-    //han
-    const handleGameStart = async (_id: number) => {
-        try {
-            if (!account) {
-                return;
-            }
-            setGenModal(true);
-            console.log("starting/..............");
-            const _gameDetails = await fetchClassicGameDetails(_id);
-            const _gameIndex = _gameDetails.word_index;
-            const _gameId = _gameDetails.id;
-            console.log("gameIndex is ___========>>>>>>>>>>>>", _gameIndex);
-            console.log("gameId is ___========>>>>>>>>>>>>", _gameId);
-
-            // const _gameAttempts = await fetchClassicGameAttempts(
-            //     Number(_gameId)
-            // );
-
-            const _attempts = await getAttempts(false, String(_gameId));
-            const _gameAttempts = _attempts.map((item) => item.attempt);
-            const _gameState = _attempts.map((item) => item.state);
-            setGenModal(false);
-            navigate("/play", {
-                state: {
-                    classicGameAttempts: _gameAttempts,
-                    classicGameIndex: Number(_gameIndex),
-                    classicGameId: Number(_gameId),
-                    classicGameState: _gameState,
-                },
-            });
-        } catch (err) {
-            callToast("Error starting classic game, try again");
-            console.log(err);
-        }
-    };
-
-    return (
-        <div className="bg-black p-3">
-            {chunkedGames.map((gamesRow, rowIndex) => (
-                <div
-                    key={rowIndex}
-                    className="flex mb-4 space-x-2 justify-center items-center"
-                >
-                    {gamesRow.map((game) => (
-                        <GameBox
-                            id={game.id}
-                            active={game.active}
-                            played={game.played}
-                            action={() => handleGameStart(game.id)}
-                            nextAction={handleCreateNewGame}
-                            next={game.isNext}
-                            key={game.id}
-                            isLoading={genModal}
-                        />
-                    ))}
-                </div>
-            ))}
-            {genModal && <GenModal />}
-        </div>
-    );
-};
 interface GameBoxProps {
     id: number;
     active: boolean;
     played?: boolean;
-    action: () => {};
+    action: () => void;
     next?: boolean;
-    nextAction?: () => {};
+    nextAction?: () => void;
     isLoading: boolean;
 }
+
+// Constants
+const INITIAL_GAMES_LIST: Game[] = Array.from({ length: 100 }, (_, index) => ({
+    id: index + 1,
+    active: false,
+    played: false,
+    isNext: false,
+}));
+
+// Helper Functions
+const createToast = (msg: string) => {
+    return toast(msg, {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "dark",
+        transition: Bounce,
+    });
+};
 
 const GameBox = ({
     id,
@@ -227,32 +68,28 @@ const GameBox = ({
     nextAction,
     isLoading,
 }: GameBoxProps) => {
+    const baseButtonClass =
+        "border border-gray-600 bg-button-image bg-cover bg-center flex justify-center items-center w-20 h-20 rounded-lg relative";
+
     return (
         <div className="relative w-[80px] h-[80px]">
-            {" "}
-            {/* Container div */}
             <button
-                className={
-                    active
-                        ? "border border-1 bg-button-image bg-cover bg-center flex justify-center items-center w-[80px] h-[80px] rounded-lg relative"
-                        : "border border-1 bg-button-image bg-cover bg-center flex justify-center items-center w-[80px] h-[80px] rounded-lg relative blur-[2px]"
-                }
+                className={`${baseButtonClass} ${!active ? "blur-[2px]" : ""}`}
                 onClick={action}
                 disabled={!active}
             >
-                <div className="absolute inset-0 bg-black bg-opacity-60 rounded-lg"></div>
+                <div className="absolute inset-0 bg-black bg-opacity-60 rounded-lg" />
                 {played && (
                     <img
                         src={checkmark}
                         alt="check-mark"
-                        className="absolute top-0 left-[70%]"
+                        className="absolute -top-1 left-[70%] w-6 h-6"
                     />
                 )}
                 <div className="text-center relative">
                     <p className="text-xl">{id}</p>
                 </div>
             </button>
-            {/* Separate + button outside the blurred area */}
             {next && (
                 <button
                     className="absolute inset-0 flex items-center justify-center z-20"
@@ -262,6 +99,147 @@ const GameBox = ({
                         {!isLoading && "+"}
                     </span>
                 </button>
+            )}
+        </div>
+    );
+};
+
+const ClassicGamesList = () => {
+    const [gamesList, setGamesList] = useState<Game[]>(INITIAL_GAMES_LIST);
+    const [isLoading, setIsLoading] = useState(false);
+    const [autoRefresh, setAutoRefresh] = useState(false);
+    const [showCreateModal, setShowCreateModal] = useState(false);
+
+    const navigate = useNavigate();
+
+    const {
+        account,
+        playerClassicGameCount,
+        updatePlayerClassicGames,
+        updatePlayerClassicGameCount,
+    } = useOutletContext<OutletContextType>();
+
+    const {
+        fetchUserClassicGames,
+        createNewClassicGame,
+        fetchClassicGameDetails,
+        getAttempts,
+    } = useGameLogic();
+
+    useEffect(() => {
+        const updateGameState = async () => {
+            try {
+                if (playerClassicGameCount === 0) {
+                    await handleCreateNewGame();
+                }
+                const games = await fetchUserClassicGames();
+                updatePlayerClassicGames(games);
+                updatePlayerClassicGameCount(games.length);
+
+                // Update games list state
+                const updatedGames = [...INITIAL_GAMES_LIST];
+                games.forEach((game: any, index: number) => {
+                    updatedGames[index].active = true;
+                    if (game.is_completed) {
+                        updatedGames[index].played = true;
+                    }
+                });
+
+                // Reset all isNext flags first
+                updatedGames.forEach((game) => (game.isNext = false));
+
+                // Set next game if there's room for more games
+                if (games.length < updatedGames.length) {
+                    updatedGames[games.length].isNext = true;
+                }
+
+                setGamesList(updatedGames);
+            } catch (error) {
+                createToast("Error fetching games, try again");
+                console.error("Error fetching games:", error);
+            }
+        };
+
+        updateGameState();
+    }, [playerClassicGameCount, autoRefresh]);
+
+    const handleCreateNewGame = async () => {
+        if (!account) return;
+
+        setIsLoading(true);
+        createToast("Creating new game 🦉");
+        setShowCreateModal(true);
+        try {
+            await createNewClassicGame();
+            createToast(
+                "Successfully created new game 🐣, page will refresh to see game"
+            );
+        } catch (err) {
+            createToast("Error creating new game, try again");
+            console.error(err);
+        } finally {
+            setIsLoading(false);
+            setAutoRefresh(!autoRefresh);
+            setShowCreateModal(false);
+        }
+    };
+
+    const handleGameStart = async (gameId: number) => {
+        if (!account) return;
+
+        setIsLoading(true);
+
+        try {
+            const gameDetails = await fetchClassicGameDetails(gameId);
+            const attempts = await getAttempts(false, String(gameDetails.id));
+
+            navigate("/play", {
+                state: {
+                    classicGameAttempts: attempts.map((item) => item.attempt),
+                    classicGameIndex: Number(gameDetails.word_index),
+                    classicGameId: Number(gameDetails.id),
+                    classicGameState: attempts.map((item) => item.state),
+                },
+            });
+        } catch (err) {
+            createToast("Error starting classic game, try again");
+            console.error(err);
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
+    // Create chunks of 4 games for display
+    const chunkedGames = gamesList.reduce<Game[][]>((acc, _, index) => {
+        if (index % 4 === 0) {
+            acc.push(gamesList.slice(index, index + 4));
+        }
+        return acc;
+    }, []);
+
+    return (
+        <div className="bg-black p-3">
+            {chunkedGames.map((gamesRow, rowIndex) => (
+                <div
+                    key={rowIndex}
+                    className="flex mb-4 space-x-2 justify-center items-center"
+                >
+                    {gamesRow.map((game) => (
+                        <GameBox
+                            key={game.id}
+                            id={game.id}
+                            active={game.active}
+                            played={game.played}
+                            action={() => handleGameStart(game.id)}
+                            nextAction={handleCreateNewGame}
+                            next={game.isNext}
+                            isLoading={isLoading}
+                        />
+                    ))}
+                </div>
+            ))}
+            {showCreateModal && (
+                <NeonSpinner firstText="Creating" secondText="Game" />
             )}
         </div>
     );
