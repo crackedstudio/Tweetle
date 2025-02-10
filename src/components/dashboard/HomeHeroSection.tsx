@@ -8,7 +8,7 @@ export default function HomeHeroSection({
   isNavbarActive,
 }: HomeHeroSectionProps) {
   return (
-    <div className="bg-gradient-svg">
+    <div className="bg-gradient-svg bg-cover">
       {isNavbarActive && <Navbar />}
       <div className="flex flex-col items-center pb-3">
         <img src={readingOwl} className="mb-2 w-[80px]" />

@@ -10,6 +10,8 @@ import HomeStats from "../dashboard/HomeStats";
 import JoinModal from "../modal/JoinModal";
 import { Bounce, toast } from "react-toastify";
 import Dot from "../../svg/Dot";
+import { createPortal } from "react-dom";
+import LockBodyScroll from "../ui/LockBodyScroll";
 
 interface OutletContextType {
   account: any | null;
@@ -131,6 +133,7 @@ const Dashboard = () => {
 
   return (
     <>
+      <LockBodyScroll lock={showJoinModal} />
       <div className="h-full overflow-scroll text-white bg-black">
         <HomeHeroSection isNavbarActive={true} />
 
@@ -191,14 +194,16 @@ const Dashboard = () => {
             </p> */}
           </div>
         )}
-        {showJoinModal && (
-          <JoinModal
-            cancelHandler={() => {}}
-            isDailyModal={false}
-            joinHandler={handleJoinModal}
-            isLoading={isRegistering}
-          />
-        )}
+        {showJoinModal &&
+          createPortal(
+            <JoinModal
+              cancelHandler={() => {}}
+              isDailyModal={false}
+              joinHandler={handleJoinModal}
+              isLoading={isRegistering}
+            />,
+            document.body
+          )}
       </div>
     </>
   );
