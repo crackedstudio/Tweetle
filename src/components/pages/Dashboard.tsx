@@ -9,6 +9,7 @@ import { useEffect, useState } from "react";
 import HomeStats from "../dashboard/HomeStats";
 import JoinModal from "../modal/JoinModal";
 import { Bounce, toast } from "react-toastify";
+import Dot from "../../svg/Dot";
 
 interface OutletContextType {
   account: any | null;
@@ -130,30 +131,20 @@ const Dashboard = () => {
 
   return (
     <>
-      <div className="h-full overflow-auto text-white">
+      <div className="h-full overflow-scroll text-white bg-black">
         <HomeHeroSection isNavbarActive={true} />
 
         {!showJoinModal && (
-          <div className="bg-black p-2 flex flex-col text-white space-y-4">
+          <div className="bg-black h-fit flex flex-col text-white space-y-4">
             <HomeStats />
             <GlassCard>
               <>
                 <div className="w-full">
                   <DashboardButtons where="/play">
-                    <div className="flex flex-col space-y-2">
-                      <p className="text-xl font-bold">DAILY CHALLENGE</p>
-                      <div className="flex space-x-2 text-[#7FF474] font-bold text-sm items-center">
-                        <p className="">
-                          <svg
-                            width="6"
-                            height="6"
-                            viewBox="0 0 6 6"
-                            fill="none"
-                            xmlns="http://www.w3.org/2000/svg"
-                          >
-                            <circle cx="3" cy="3" r="3" fill="#7FF474" />
-                          </svg>
-                        </p>
+                    <div className="flex flex-col gap-y-2">
+                      <p className="text-base font-bold">DAILY CHALLENGE</p>
+                      <div className="flex gap-x-2 text-[#7FF474] font-bold text-sm items-center">
+                        <Dot />
                         <p>
                           {allPlayers.length} Active player
                           {allPlayers.length > 1 && "s"}
@@ -165,7 +156,7 @@ const Dashboard = () => {
                 <div className="w-full">
                   <DashboardButtons where="/classic">
                     <div className="flex flex-col space-y-2">
-                      <p className="text-xl font-bold">CLASSIC</p>
+                      <p className="text-base font-bold">CLASSIC</p>
                       <div className="flex space-x-2 text-[#7FF474] font-bold text-sm items-center">
                         <p className="">
                           <svg
@@ -185,25 +176,19 @@ const Dashboard = () => {
                 </div>
               </>
             </GlassCard>
-            {/* <div className="flex justify-between h-[50%]">
-                        <DashboardButtons where="/">
-                            <p className="w-[50%] mx-auto text-center">
-                                WORD FEVER
-                            </p>
-                        </DashboardButtons>
-                        <DashboardButtons where="/">
-                            <p className="w-[50%] mx-auto text-center">
-                                SECRET WORD
-                            </p>
-                        </DashboardButtons>
-                    </div> */}
-            <p className="text-white text-center">
+
+            <div className="grid grid-cols-2 gap-x-3 px-5">
+              <DashboardButtons where="/">
+                <p className="w-[50%] mx-auto text-center">WORD FEVER</p>
+              </DashboardButtons>
+              <DashboardButtons where="/">
+                <p className="w-[50%] mx-auto text-center">SECRET WORD</p>
+              </DashboardButtons>
+            </div>
+            {/* <p className="text-white text-center">
               How to Play!{" "}
               <img src={arrowRight} alt="arrow-right" className="inline" />
-            </p>
-            <div className="">
-              <PwdByStrk />
-            </div>
+            </p> */}
           </div>
         )}
         {showJoinModal && (
