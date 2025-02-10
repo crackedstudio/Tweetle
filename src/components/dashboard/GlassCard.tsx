@@ -4,13 +4,13 @@
 import { ReactElement } from "react";
 
 interface GlassCardProps {
-    children: ReactElement;
+  children: ReactElement;
 }
 
 export default function GlassCard({ children }: GlassCardProps) {
-    return (
-        <div className="px-4 pt-3 pb-6 rounded-[20px] bg-[#18191B]">
-            {/* <div className="flex justify-between items-center mb-[18px]">
+  return (
+    <div className="px-5 flex flex-col gap-y-4">
+      {/* <div className="flex justify-between items-center mb-[18px]">
                 <h4>Today&apos;s Daily Challenge</h4>
                 <img src={hot} className="w-5 h-5" alt="" />
             </div>
@@ -30,7 +30,7 @@ export default function GlassCard({ children }: GlassCardProps) {
                 <img src={joystick} alt="" />
                 Play
             </a> */}
-            {children}
-        </div>
-    );
+      {children}
+    </div>
+  );
 }
