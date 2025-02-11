@@ -396,6 +396,28 @@ const useGameLogic = () => {
         }
     };
 
+    const getUsernameFromId = async (_tg_id: string) => {
+        try {
+            const _response = await fetch(
+                `https://tweetle-bot-backend.onrender.com/player/username/${_tg_id}`,
+                {
+                    method: "GET",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                }
+            );
+
+            let response = await _response.json();
+            console.log("RESPONSE IS ==========>>>", response.data);
+
+            return response.data;
+        } catch (error: any) {
+            console.error("Error getting word state:", error);
+            return "User";
+        }
+    };
+
     return {
         fetchUserClassicGames,
         fetchClassicGameDetails,
@@ -412,6 +434,7 @@ const useGameLogic = () => {
         fetchDailyGameId,
         claimPoints,
         getAttempts,
+        getUsernameFromId,
     };
 };
 

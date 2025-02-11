@@ -2,11 +2,14 @@ import PlayerStrip from "../components/ui/PlayerStrip";
 import readingOwl from "../assets/reading-owl.png";
 import { useOutletContext } from "react-router-dom";
 import { useEffect, useState } from "react";
+import useGameLogic from "../hooks/useGameLogic";
+import { ClipLoader } from "react-spinners";
 
 // Define proper interfaces for the data structure
 interface Player {
     username?: string;
     points: number;
+    tg_id?: number;
 }
 
 interface OutletContextType {
@@ -15,7 +18,7 @@ interface OutletContextType {
 }
 
 interface PlayerStripped {
-    name: string;
+    username: string;
     abbreviation: string;
     points: number;
     position?: number;
@@ -27,6 +30,9 @@ export default function Leaderboard() {
     const [userRanking, setUserRanking] = useState<number>(0);
     const [username, setUsername] = useState<string | null>(null);
     const [sortedPlayers, setSortedPlayers] = useState<PlayerStripped[]>([]);
+    const [isLoading, setIsLoading] = useState(false);
+
+    const { getUsernameFromId } = useGameLogic();
 
     const getTotalPointsEarned = (): number => {
         return allPlayers.reduce(
@@ -44,21 +50,42 @@ export default function Leaderboard() {
         );
     };
 
-    const sortAllPlayers = (): PlayerStripped[] => {
-        return allPlayers.map((player) => ({
-            name: player.username || "user",
-            abbreviation: player.username
-                ? player.username.slice(0, 2).toUpperCase()
-                : "US",
-            points: Number(player.points),
-        }));
+    const sortAllPlayers = async () => {
+        const _allPlayersWithId = allPlayers
+            .sort((a, b) => Number(b.points) - Number(a.points))
+            .slice(0, 20)
+            .map((player) => ({
+                id: Number(player.tg_id),
+                points: Number(player.points),
+            }));
+
+        console.log("MINI SORT -----____=====", _allPlayersWithId);
+
+        let _allPlayers = [];
+
+        for (let i of _allPlayersWithId) {
+            const _name = await getUsernameFromId(String(i.id));
+            _allPlayers.push({
+                username: _name,
+                abbreviation: _name.slice(0, 2).toUpperCase(),
+                points: i.points,
+            });
+        }
+        console.log("MEGA SORT IS ---+++", _allPlayers);
+        return _allPlayers;
     };
 
     useEffect(() => {
+        setIsLoading(true);
+        const fetchSortedPlayers = async () => {
+            const __sortedPlayers = await sortAllPlayers();
+            setSortedPlayers(__sortedPlayers);
+        };
+        fetchSortedPlayers();
         setTotalPoints(getTotalPointsEarned());
         setUsername(localStorage.getItem("tg_name"));
         setUserRanking(getPlayerRanking());
-        setSortedPlayers(sortAllPlayers());
+        setIsLoading(false);
     }, [allPlayers, playerDetails]); // Add dependencies to prevent infinite loop
 
     return (
@@ -93,17 +120,23 @@ export default function Leaderboard() {
                 <h4 className="text-base leading-5 font-extrabold my-6 text-center">
                     {totalPoints} Points Earned
                 </h4>
-                <div className="flex flex-col gap-y-6">
-                    {sortedPlayers
-                        .sort((a, b) => b.points - a.points)
-                        .map((player, i) => ({
-                            ...player,
-                            position: i + 1,
-                        }))
-                        .map((player, i) => (
-                            <PlayerStrip key={i} player={player} />
-                        ))}
-                </div>
+                {!isLoading && (
+                    <div className="flex flex-col gap-y-6">
+                        {sortedPlayers
+                            .map((player, i) => ({
+                                ...player,
+                                position: i + 1,
+                            }))
+                            .map((player, i) => (
+                                <PlayerStrip key={i} player={player} />
+                            ))}
+                    </div>
+                )}
+                {isLoading && (
+                    <div className="flex items-center justify-center">
+                        <ClipLoader color="#fff" size={20} />
+                    </div>
+                )}
             </div>
         </div>
     );
