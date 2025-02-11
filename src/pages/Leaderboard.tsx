@@ -76,16 +76,16 @@ export default function Leaderboard() {
     };
 
     useEffect(() => {
-        setIsLoading(true);
         const fetchSortedPlayers = async () => {
+            setIsLoading(true);
             const __sortedPlayers = await sortAllPlayers();
             setSortedPlayers(__sortedPlayers);
+            setIsLoading(false);
         };
         fetchSortedPlayers();
         setTotalPoints(getTotalPointsEarned());
         setUsername(localStorage.getItem("tg_name"));
         setUserRanking(getPlayerRanking());
-        setIsLoading(false);
     }, [allPlayers, playerDetails]); // Add dependencies to prevent infinite loop
 
     return (
@@ -134,7 +134,7 @@ export default function Leaderboard() {
                 )}
                 {isLoading && (
                     <div className="flex items-center justify-center">
-                        <ClipLoader color="#fff" size={20} />
+                        <ClipLoader color="#fff" size={55} />
                     </div>
                 )}
             </div>
