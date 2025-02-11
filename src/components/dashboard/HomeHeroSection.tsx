@@ -3,12 +3,14 @@ import readingOwl from "../../assets/reading-owl.png";
 import Navbar from "./Navbar";
 interface HomeHeroSectionProps {
   isNavbarActive: boolean;
+  useBackground?: boolean;
 }
 export default function HomeHeroSection({
   isNavbarActive,
+  useBackground = true,
 }: HomeHeroSectionProps) {
   return (
-    <div className="bg-gradient-svg bg-cover">
+    <div className={`${useBackground && "bg-gradient-svg bg-cover"}`}>
       {isNavbarActive && <Navbar />}
       <div className="flex flex-col items-center pb-3">
         <img src={readingOwl} className="mb-2 w-[80px]" />
