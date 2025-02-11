@@ -697,8 +697,8 @@ const Play = () => {
     };
 
     return (
-        <div>
-            <div className="flex flex-col">
+        <div className="h-full">
+            <div className="flex flex-col justify-stretch h-full">
                 <div>
                     <GameTopNav />
                 </div>
@@ -716,7 +716,7 @@ const Play = () => {
                         />
                     ))}
                 </div>
-                <div className="bg-black pb--1">
+                <div className="flex flex-col bg-black flex-1 min-h-0">
                     <div className="mt-2">
                         <Keyboard clickHandler={getKeyboardInput} />
                     </div>
